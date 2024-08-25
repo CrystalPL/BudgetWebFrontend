@@ -2,13 +2,17 @@ import axios from "axios";
 import {ResponseAPI} from "@/components/share/ResponseAPI";
 import {
     AccountConfirmationMessage,
-    AccountConfirmationResendEmailMessage, LoginMessage, PasswordRecoveryMessage,
-    PasswordResetMessage, PasswordValidationMessage, RegisterMessage
+    AccountConfirmationResendEmailMessage,
+    LoginMessage,
+    PasswordRecoveryMessage,
+    PasswordResetMessage,
+    PasswordValidationMessage,
+    RegisterMessage
 } from "./ResponseMessages";
 import {RegisterRequest} from "./RegisterRequest";
 
-export const API_URL: string = "https://budgetapp.pl/api"
-// export const API_URL: string = "http://localhost:8092"
+// export const API_URL: string = "https://budgetapp.pl/api"
+export const API_URL: string = "http://localhost:8092"
 
 export async function resendEmail(): Promise<ResponseAPI<AccountConfirmationResendEmailMessage>> {
     let message: string
