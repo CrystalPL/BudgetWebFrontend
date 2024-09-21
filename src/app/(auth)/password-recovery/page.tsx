@@ -12,10 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Alert} from "@mui/material";
-import {useRouter} from "next/navigation";
-import {passwordRecovery, resetPassword} from "../../../auth/AuthenticationService";
+import {passwordRecovery} from "../../../auth/AuthenticationService";
 import {ResponseAPI} from "../../../components/share/ResponseAPI";
-import {PasswordRecoveryMessage} from "../../../auth/ResponseMessages";
+import {PasswordRecoveryMessage} from "../../../auth/AuthResponseMessages";
 
 export default function ResetPassword() {
     const [status, setStatus] = useState<'success' | 'error'>('error');

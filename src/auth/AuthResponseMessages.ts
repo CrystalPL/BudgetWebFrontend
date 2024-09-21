@@ -46,7 +46,7 @@ export enum LoginMessage {
 
 export enum RegisterMessage {
     MISSING_USERNAME = "Podaj nazwę użytkownika",
-    TOO_LONG_USERNAME = "Nazwa użytkownika może mieć maksymalnie 64 znaków",
+    TOO_LONG_USERNAME = "Nazwa użytkownika może mieć maksymalnie 64 znaki",
     MISSING_EMAIL = "Podaj adres e-mail",
     INVALID_EMAIL = "Niepoprawny format adresu email",
     TOO_LONG_EMAIL = "Adres email może mieć maksymalnie 255 znaków",

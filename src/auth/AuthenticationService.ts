@@ -8,7 +8,7 @@ import {
     PasswordResetMessage,
     PasswordValidationMessage,
     RegisterMessage
-} from "./ResponseMessages";
+} from "./AuthResponseMessages";
 import {RegisterRequest} from "./RegisterRequest";
 
 // export const API_URL: string = "https://budgetapp.pl/api"

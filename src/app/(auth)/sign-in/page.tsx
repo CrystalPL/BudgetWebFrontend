@@ -17,7 +17,7 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {Alert} from "@mui/material";
 import {useRouter} from "next/navigation";
 import {login} from "../../../auth/AuthenticationService";
-import {LoginMessage} from "../../../auth/ResponseMessages";
+import {LoginMessage} from "../../../auth/AuthResponseMessages";
 
 function readCookie(name: string): string | null {
     const nameEQ = `${name}=`;
@@ -74,7 +74,7 @@ export default function SignIn() {
             router.push(cookiePath)
             document.cookie = `redirectPath=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
         } else {
-            router.push('/dashboard');
+            router.push('/');
         }
     };
 
@@ -94,6 +94,7 @@ export default function SignIn() {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, []);
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>

@@ -1,4 +1,4 @@
-import {PasswordValidationMessage, RegisterMessage} from "./ResponseMessages";
+import {PasswordValidationMessage, RegisterMessage} from "./AuthResponseMessages";
 
 export function validatePassword(password: string): PasswordValidationMessage {
     if (password.length < 8) {
@@ -29,7 +29,7 @@ export function validatePassword(password: string): PasswordValidationMessage {
 }
 
 export function validateUserData(username: string, email: string, confirmEmail: string, password: string, confirmPassword: string): RegisterMessage {
-    if (!username) {
+    if (!username || username.trim() === '') {
         return RegisterMessage.MISSING_USERNAME
     }
 
@@ -76,6 +76,6 @@ function validateLength(field: string, maxFieldLength: number): boolean {
     return field.length <= maxFieldLength;
 }
 
-function validateEmailFormat(email: string): boolean {
+export function validateEmailFormat(email: string): boolean {
     return /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/.test(email);
 }

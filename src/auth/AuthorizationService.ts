@@ -1,9 +1,17 @@
 import axios, {HttpStatusCode} from "axios";
 import {API_URL} from "./AuthenticationService";
+import {cookies} from "next/headers";
 
 export async function VerifyAccessAxios(): Promise<boolean> {
+    const authCookie = cookies().get("auth_token")
+
     try {
-        const response = await axios.post(API_URL + "/auth/verify", {}, {withCredentials: true})
+        const response = await axios.post(API_URL + "/auth/verify", {}, {
+            withCredentials: true,
+            headers: {
+                Cookie: `${authCookie?.name}=${authCookie?.value}`,
+            },
+        })
 
         return response.status == 200
     } catch (error) {

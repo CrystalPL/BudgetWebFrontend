@@ -14,10 +14,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {Alert, CircularProgress} from "@mui/material";
+import {Alert} from "@mui/material";
 import {useRouter} from "next/navigation";
-import {validatePassword, validateUserData} from "../../../auth/RegisterDataValidator";
-import {PasswordValidationMessage, RegisterMessage} from "../../../auth/ResponseMessages";
+import {validatePassword, validateUserData} from "../../../auth/DataValidator";
+import {PasswordValidationMessage, RegisterMessage} from "../../../auth/AuthResponseMessages";
 import {ResponseAPI} from "../../../components/share/ResponseAPI";
 import {register} from "../../../auth/AuthenticationService";
 

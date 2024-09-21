@@ -21,7 +21,6 @@ export default function ResetPasswordForm() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [token, setToken] = useState<string | null>();
 
-
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         const tokenFromUrl = queryParams.get('token');
@@ -103,7 +102,8 @@ export default function ResetPasswordForm() {
                                 cursor="pointer"
                                 onClick={(): void => {
                                     setShowPassword(false);
-                                }}/> : <VisibilityOff
+                                }}/> :
+                                <VisibilityOff
                                 cursor="pointer"
                                 onClick={(): void => {
                                     setShowPassword(true);
