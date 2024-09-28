@@ -11,15 +11,14 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
-import {API_URL} from "../../auth/AuthenticationService";
 import {getAccountInfo, uploadAvatar} from "../AccountService";
 import {Alert, Skeleton, Snackbar} from "@mui/material";
-import {AccountInfoResponse} from "../AccountResponses";
+import {API_URL} from "../../components/share/ResponseAPI";
+import {AccountProps} from "../../app/(dashboard)/profile/page";
 
-export default function AccountInfo(): React.JSX.Element {
+export default function AccountInfo({accountProps}: { accountProps: AccountProps }): React.JSX.Element {
     const inputFile = useRef<HTMLInputElement | null>(null);
-    const [accountInfo, setAccountInfo] = useState<AccountInfoResponse | null>(null); // Przechowuje dane użytkownika
-    const [loading, setLoading] = useState<boolean>(true); // Status ładowania
+    const [loading, setLoading] = useState<boolean>(true);
     const [reloadKey, setReloadKey] = useState<number>(0);
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
@@ -28,7 +27,7 @@ export default function AccountInfo(): React.JSX.Element {
     useEffect(() => {
         const fetchAccountInfo = async () => {
             const data = await getAccountInfo();
-            setAccountInfo(data);
+            accountProps.setAccountInfo(data);
             setLoading(false)
         };
 
@@ -75,9 +74,9 @@ export default function AccountInfo(): React.JSX.Element {
                             </>
                         ) : (
                             <>
-                                <Typography variant="h5">{accountInfo?.nickname}</Typography>
+                                <Typography variant="h5">{accountProps.accountInfo?.nickname}</Typography>
                                 <Typography color="text.secondary" variant="body2">
-                                    {accountInfo?.email}
+                                    {accountProps.accountInfo?.email}
                                 </Typography>
                             </>
                         )}

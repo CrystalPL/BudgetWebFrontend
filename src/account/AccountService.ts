@@ -1,62 +1,26 @@
 import axios from "axios";
-import {ResponseAPI} from "@/components/share/ResponseAPI";
-import {API_URL} from "@/auth/AuthenticationService";
+import {API_URL, handleRequest, ResponseAPI} from "@/components/share/ResponseAPI";
 import {
     AccountInfoResponse,
     ChangeEmailMessage,
     ChangeNicknameMessage,
     ChangePasswordMessage,
+    ConfirmEmailChanging,
     UploadAvatarMessage
 } from "@/account/AccountResponses";
 import {ChangeEmailRequest} from "@/account/ChangeEmailRequest";
 import {ChangePasswordRequest} from "@/account/ChangePasswordRequest";
 
 export async function changeNickname(nickname: string): Promise<ResponseAPI<ChangeNicknameMessage>> {
-    let message: string
-    try {
-        const response = await axios.post(API_URL + "/account/change-nickname", nickname, {withCredentials: true})
-        message = response.data.message
-    } catch (error) {
-        if (!axios.isAxiosError(error) || !error.response?.data) {
-            return new ResponseAPI<ChangeNicknameMessage>(false, ChangeNicknameMessage.UNDEFINED_ERROR)
-        }
-
-        message = error.response.data.message;
-    }
-
-    return new ResponseAPI<ChangeNicknameMessage>(message, ChangeNicknameMessage[message as keyof typeof ChangeNicknameMessage])
+    return handleRequest<typeof ChangeNicknameMessage>("/account/change-nickname", {nickname}, ChangeNicknameMessage);
 }
 
 export async function changePassword(changePasswordRequest: ChangePasswordRequest): Promise<ResponseAPI<ChangePasswordMessage>> {
-    let message: string
-    try {
-        const response = await axios.post(API_URL + "/account/change-password", changePasswordRequest, {withCredentials: true})
-        message = response.data.message
-    } catch (error) {
-        if (!axios.isAxiosError(error) || !error.response?.data) {
-            return new ResponseAPI<ChangePasswordMessage>(false, ChangePasswordMessage.UNDEFINED_ERROR)
-        }
-
-        message = error.response.data.message;
-    }
-
-    return new ResponseAPI<ChangePasswordMessage>(message, ChangePasswordMessage[message as keyof typeof ChangePasswordMessage])
+    return handleRequest<typeof ChangePasswordMessage>("/account/change-password", changePasswordRequest, ChangePasswordMessage);
 }
 
 export async function changeEmailAddress(changeEmailRequest: ChangeEmailRequest): Promise<ResponseAPI<ChangeEmailMessage>> {
-    let message: string
-    try {
-        const response = await axios.post(API_URL + "/account/change-email", changeEmailRequest, {withCredentials: true})
-        message = response.data.message
-    } catch (error) {
-        if (!axios.isAxiosError(error) || !error.response?.data) {
-            return new ResponseAPI<ChangeEmailMessage>(false, ChangeEmailMessage.UNDEFINED_ERROR)
-        }
-
-        message = error.response.data.message;
-    }
-
-    return new ResponseAPI<ChangeEmailMessage>(message, ChangeEmailMessage[message as keyof typeof ChangeEmailMessage])
+    return handleRequest<typeof ChangeEmailMessage>("/account/change-email", changeEmailRequest, ChangeEmailMessage);
 }
 
 export async function getAccountInfo(): Promise<AccountInfoResponse> {
@@ -65,23 +29,22 @@ export async function getAccountInfo(): Promise<AccountInfoResponse> {
     return response.data
 }
 
+export async function confirmEmailChanging(confirmationToken: string): Promise<ResponseAPI<ConfirmEmailChanging>> {
+    return handleRequest<typeof ConfirmEmailChanging>("/account/confirm-change-email", {token: confirmationToken}, ConfirmEmailChanging);
+}
+
 export async function uploadAvatar(formData: FormData): Promise<ResponseAPI<UploadAvatarMessage>> {
-    let message: string
-    try {
-        const response = await axios.post(API_URL + "/account/avatar", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            withCredentials: true
-        })
-        message = response.data.message
-    } catch (error) {
-        if (!axios.isAxiosError(error) || !error.response?.data) {
-            return new ResponseAPI<UploadAvatarMessage>(false, UploadAvatarMessage.UNDEFINED_ERROR)
+    return handleRequest<typeof UploadAvatarMessage>("/account/avatar", formData, UploadAvatarMessage, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
         }
+    });
+}
 
-        message = error.response.data.message;
-    }
+export async function isEmailChangingWaitingToConfirm(): Promise<boolean> {
+    const response = await axios.get<{
+        emailWaitingToConfirm: boolean
+    }>(API_URL + "/account/email-changing-wait-to-confirm", {withCredentials: true,})
 
-    return new ResponseAPI<UploadAvatarMessage>(message, UploadAvatarMessage[message as keyof typeof UploadAvatarMessage])
+    return response.data.emailWaitingToConfirm
 }

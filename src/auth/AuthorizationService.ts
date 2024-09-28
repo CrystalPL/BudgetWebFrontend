@@ -1,6 +1,6 @@
 import axios, {HttpStatusCode} from "axios";
-import {API_URL} from "./AuthenticationService";
 import {cookies} from "next/headers";
+import {API_URL} from "@/components/share/ResponseAPI";
 
 export async function VerifyAccessAxios(): Promise<boolean> {
     const authCookie = cookies().get("auth_token")

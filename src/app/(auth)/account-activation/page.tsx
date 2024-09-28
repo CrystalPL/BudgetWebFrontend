@@ -11,6 +11,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
 import {confirmRegister} from "../../../auth/AuthenticationService";
 import InfoIcon from '@mui/icons-material/Info';
+import {AccountConfirmationMessage} from "../../../auth/AuthResponseMessages";
 
 export default function AccountActivation() {
     const [headMessage, setHeadMessage] = useState<string>("Trwa weryfikowanie...");
@@ -24,7 +25,7 @@ export default function AccountActivation() {
         if (!token) {
             setIcon(<ErrorIcon/>)
             setHeadMessage('Błąd aktywacji konta')
-            setSecondMessage('Token aktywacyjny jest wymagany.');
+            setSecondMessage(AccountConfirmationMessage.MISSING_TOKEN);
             return;
         }
 

@@ -1,10 +1,9 @@
-import Box from "@mui/material/Box";
 import React from "react";
 
 export default function About() {
     return (
-        <Box>
-            user
-        </Box>
-    )
+        <div>
+            <h3></h3>
+        </div>
+    );
 }

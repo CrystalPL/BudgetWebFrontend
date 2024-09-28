@@ -5,8 +5,9 @@ import {useState} from "react";
 import {ChangeNicknameMessage} from "../../AccountResponses";
 import {ResponseAPI} from "../../../components/share/ResponseAPI";
 import {changeNickname} from "../../AccountService";
+import {AccountProps} from "../../../app/(dashboard)/profile/page";
 
-export default function ChangeNicknameForm(form: StatusController) {
+export default function ChangeNicknameForm(form: StatusController & AccountProps) {
     const [nickname, setNickname] = useState('');
     const [nicknameError, setNicknameError] = useState('');
 
@@ -21,6 +22,11 @@ export default function ChangeNicknameForm(form: StatusController) {
         form.setStatus(response.success ? 'success' : 'error')
         form.setOpenSnackbar(true)
         form.setStatusMessage(response.message)
+
+        if (response.success) {
+            form.setAccountInfo({nickname: nickname, email: form.accountInfo!.email})
+            setNickname("")
+        }
     }
 
     const validateNickname = () => {

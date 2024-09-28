@@ -22,7 +22,6 @@ export default function ChangeEmailForm(form: StatusController) {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(1)
         validateNewEmail()
         if (emailError !== '') {
             return
@@ -52,6 +51,12 @@ export default function ChangeEmailForm(form: StatusController) {
                 form.setStatus(response.success ? 'success' : 'error')
                 form.setOpenSnackbar(true)
                 form.setStatusMessage(message)
+        }
+
+        if (response.success) {
+            setEmail("")
+            setConfirmEmail("")
+            setPassword("")
         }
     }
 

@@ -11,6 +11,7 @@ import {ErrorOutline} from "@mui/icons-material";
 import ChangeEmailForm from "./form/ChangeEmailForm";
 import ChangePasswordForm from "./form/ChangePasswordForm";
 import ChangeNicknameForm from "./form/ChangeNicknameForm";
+import {AccountProps} from "../../app/(dashboard)/profile/page";
 
 export interface CustomFormControlProps {
     valueState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -58,7 +59,7 @@ export interface StatusController {
     setStatusMessage: (message: string) => void
 }
 
-export function AccountDetails(): React.JSX.Element {
+export function AccountDetails({accountProps}: { accountProps: AccountProps }): React.JSX.Element {
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
@@ -78,7 +79,7 @@ export function AccountDetails(): React.JSX.Element {
                 <ChangePasswordForm {...statusController}></ChangePasswordForm>
             </Grid>
             <Grid lg={6} xs={12}>
-                <ChangeNicknameForm {...statusController}></ChangeNicknameForm>
+                <ChangeNicknameForm {...statusController} {...accountProps}></ChangeNicknameForm>
             </Grid>
             <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}
                       anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>

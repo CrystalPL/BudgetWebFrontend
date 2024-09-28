@@ -2,11 +2,11 @@ import {PasswordValidationMessage, RegisterMessage} from "./AuthResponseMessages
 
 export function validatePassword(password: string): PasswordValidationMessage {
     if (password.length < 8) {
-        return PasswordValidationMessage.SHORT_PASSWORD;
+        return PasswordValidationMessage.PASSWORD_TOO_SHORT;
     }
 
     if (password.length > 255) {
-        return PasswordValidationMessage.TOO_LONG_PASSWORD;
+        return PasswordValidationMessage.PASSWORD_TOO_LONG;
     }
 
     if (!/[A-Z]/.test(password)) {
@@ -54,7 +54,7 @@ export function validateUserData(username: string, email: string, confirmEmail: 
     }
 
     if (!validateLength(email, 255)) {
-        return RegisterMessage.TOO_LONG_EMAIL
+        return RegisterMessage.EMAIL_TOO_LONG
     }
 
     if (!password) {
@@ -72,7 +72,7 @@ export function validateUserData(username: string, email: string, confirmEmail: 
     return RegisterMessage.SUCCESS;
 }
 
-function validateLength(field: string, maxFieldLength: number): boolean {
+export function validateLength(field: string, maxFieldLength: number): boolean {
     return field.length <= maxFieldLength;
 }
 

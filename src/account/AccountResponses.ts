@@ -33,6 +33,13 @@ export enum ChangeNicknameMessage {
     MISSING_USERNAME = "Podaj nazwę użytkownika"
 }
 
+export enum ConfirmEmailChanging {
+    INVALID_TOKEN = "Token jest nieprawidłowy.",
+    TOKEN_EXPIRED = "Adres email został już zmieniony",
+    UNDEFINED_ERROR = "Wystąpił nieoczekiwany błąd",
+    SUCCESS = "Twój adres e-mail został pomyślnie zmieniony.",
+}
+
 export interface AccountInfoResponse {
     nickname: string,
     email: string

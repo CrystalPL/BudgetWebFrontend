@@ -58,6 +58,12 @@ export default function ChangePasswordForm(form: StatusController) {
                 form.setStatusMessage(message)
         }
 
+        if (response.success) {
+            setNewPassword("")
+            setOldPassword("")
+            setConfirmNewPassword("")
+        }
+
     }
 
     const validateOldPassword = () => {
@@ -126,12 +132,6 @@ export default function ChangePasswordForm(form: StatusController) {
 
         if (newPassword !== confirmNewPassword) {
             setConfirmNewPasswordError(ChangePasswordMessage.PASSWORD_MISMATCH)
-            return
-        }
-
-        const validatePasswordResult: PasswordValidationMessage = validatePassword(confirmNewPassword)
-        if (validatePasswordResult !== PasswordValidationMessage.OK) {
-            setConfirmNewPasswordError(validatePasswordResult)
             return
         }
     }

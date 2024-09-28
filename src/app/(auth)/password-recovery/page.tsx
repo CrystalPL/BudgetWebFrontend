@@ -4,7 +4,6 @@ import {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,32 +14,55 @@ import {Alert} from "@mui/material";
 import {passwordRecovery} from "../../../auth/AuthenticationService";
 import {ResponseAPI} from "../../../components/share/ResponseAPI";
 import {PasswordRecoveryMessage} from "../../../auth/AuthResponseMessages";
+import {CustomFormControl, CustomFormControlProps} from "../../../account/components/AccountDetails";
+import {validateEmailFormat} from "../../../auth/DataValidator";
 
 export default function ResetPassword() {
-    const [status, setStatus] = useState<'success' | 'error'>('error');
+    const [status, setStatus] = useState<'success' | 'error'>();
     const [statusMessage, setStatusMessage] = useState<string>("");
-    const [email, setEmail] = useState("");
+
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const email = data.get("email") as string;
 
-        setStatus('error')
-        if (!email) {
-            setStatusMessage("Podaj adres e-mail");
-            return;
-        }
-
-        if (!email.includes("@")) {
-            setStatusMessage("Adres email musi mieć znak @!");
-            return;
+        validateEmail()
+        if (emailError !== '') {
+            return
         }
 
         const response: ResponseAPI<PasswordRecoveryMessage> = await passwordRecovery(email)
-        setStatus(response.success ? 'success' : 'error')
-        setStatusMessage(response.message)
-        setEmail("");
+        const message: string = response.message;
+        switch (message) {
+            case PasswordRecoveryMessage.USER_NOT_FOUND:
+                setEmailError(message)
+                break
+            default:
+                setStatus(response.success ? 'success' : 'error')
+                setStatusMessage(response.message)
+        }
+    };
+
+
+    const validateEmail = () => {
+        if (!email) {
+            setEmailError(PasswordRecoveryMessage.MISSING_EMAIL)
+            return
+        }
+
+        if (!validateEmailFormat(email)) {
+            setEmailError(PasswordRecoveryMessage.INVALID_EMAIL)
+            return
+        }
+    }
+
+    const emailFieldProps: CustomFormControlProps = {
+        valueState: [email, setEmail],
+        errorState: [emailError, setEmailError],
+        label: 'Adres e-mail',
+        name: 'email',
+        validateFunction: validateEmail
     };
 
     return (
@@ -61,23 +83,13 @@ export default function ResetPassword() {
                 {statusMessage && (
                     <Alert sx={{mt: 2}} severity={status}>{statusMessage}</Alert>
                 )}
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Adres e-mail"
-                        name="email"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 2, width: '90%'}}>
+                    <CustomFormControl {...emailFieldProps}></CustomFormControl>
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={{mt: 1, mb: 2}}
                     >
                         Wyślij link resetujący
                     </Button>

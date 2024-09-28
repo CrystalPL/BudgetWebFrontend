@@ -18,6 +18,7 @@ import {LogoutOutlined} from "@mui/icons-material";
 import {GetUserPopoverController, UserPopoverController} from "../../controllers/UserPopoverController";
 import GetMobileSidebarController, {MobileSidebarController} from "../../controllers/MobileSidebarController";
 import {DrawerSidebar} from "./Sidebar";
+import {API_URL} from "../share/ResponseAPI";
 
 const HeaderComponent = () => {
     const popoverController: UserPopoverController = GetUserPopoverController();
@@ -50,7 +51,7 @@ const HeaderComponent = () => {
                     <Avatar
                         onClick={popoverController.handleOpen}
                         ref={popoverController.anchorElement}
-                        src="/avatar-1.png"
+                        src={`${API_URL}/account/avatar`}
                         sx={{
                             cursor: 'pointer',
                             width: 50,

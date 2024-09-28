@@ -1,5 +1,6 @@
 export enum AccountConfirmationMessage {
     INVALID_TOKEN = "Token jest nieprawidłowy.",
+    MISSING_TOKEN = "Token aktywacyjny jest wymagany.",
     TOKEN_EXPIRED = "Konto zostało już aktywowane.",
     SUCCESS = "Twoje konto zostało pomyślnie aktywowane. Jeśli byłeś zalogowany, możesz teraz przejść do serwisu, w przeciwnym wypadku prosimy się zalogować.",
     UNDEFINED_ERROR = "Wystąpił nieoczekiwany błąd"
@@ -14,15 +15,18 @@ export enum AccountConfirmationResendEmailMessage {
 
 export enum PasswordResetMessage {
     INVALID_TOKEN = "Niepoprawny token resetowania hasła",
+    MISSING_TOKEN = "Token resetowania hasła jest wymagany.",
     SUCCESS = "Hasło zostało pomyślnie zresetowane, możesz teraz się zalogować.",
     TOKEN_EXPIRED = "Hasło zostało już zresetowane",
     PASSWORD_MISMATCH = "Podane hasła do siebie nie pasują.",
+    MISSING_CONFIRM_PASSWORD = "Podaj hasło",
+    MISSING_PASSWORD = "Podaj hasło",
     UNDEFINED_ERROR = "Wystąpił nieoczekiwany błąd"
 }
 
 export enum PasswordValidationMessage {
-    SHORT_PASSWORD = "Hasło musi mieć co najmniej 8 znaków",
-    TOO_LONG_PASSWORD = "Hasło może mieć maksymalnie 255 znaków",
+    PASSWORD_TOO_SHORT = "Hasło musi mieć co najmniej 8 znaków",
+    PASSWORD_TOO_LONG = "Hasło może mieć maksymalnie 255 znaków",
     MISSING_UPPERCASE = "Hasło musi zawierać przynajmniej jedną wielką literę",
     MISSING_LOWERCASE = "Hasło musi zawierać przynajmniej jedną małą literę",
     MISSING_NUMBER = "Hasło musi zawierać przynajmniej jedną cyfrę",
@@ -31,12 +35,17 @@ export enum PasswordValidationMessage {
 }
 
 export enum PasswordRecoveryMessage {
+    MISSING_EMAIL = "Podaj adres email",
+    INVALID_EMAIL = "Niepoprawny format adresu email",
     USER_NOT_FOUND = "Nie odnaleziono użytkownika o podanym adresie email.",
     SUCCESS = "Email z linikiem do resetowania hasła został wysłany.",
     UNDEFINED_ERROR = "Wystąpił nieoczekiwany błąd"
 }
 
 export enum LoginMessage {
+    MISSING_EMAIL = "Podaj adres e-mail",
+    MISSING_PASSWORD = "Podaj hasło",
+    INVALID_EMAIL = "Niepoprawny format adresu email",
     ACCOUNT_NOT_CONFIRMED = "Konto nie zostało aktywowane. Potwierdź założenie konta klikając w link aktywacyjny wysyłany na adres e-mail podany podczas rejestracji.",
     SUCCESS = "Zalogowano",
     BAD_CREDENTIALS = "Niepoprawne hasło!",
@@ -49,7 +58,7 @@ export enum RegisterMessage {
     TOO_LONG_USERNAME = "Nazwa użytkownika może mieć maksymalnie 64 znaki",
     MISSING_EMAIL = "Podaj adres e-mail",
     INVALID_EMAIL = "Niepoprawny format adresu email",
-    TOO_LONG_EMAIL = "Adres email może mieć maksymalnie 255 znaków",
+    EMAIL_TOO_LONG = "Adres email może mieć maksymalnie 255 znaków",
     MISSING_CONFIRM_EMAIL = "Powtórz adres e-mail",
     EMAIL_MISMATCH = "Podane adresy email nie są takie same",
     MISSING_PASSWORD = "Podaj hasło",
