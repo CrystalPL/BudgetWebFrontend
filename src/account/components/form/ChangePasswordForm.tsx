@@ -26,18 +26,21 @@ export default function ChangePasswordForm(form: StatusController) {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        validateOldPassword()
-        if (oldPassword !== '') {
+        const oldPasswordValidationError = validateOldPassword()
+        setOldPasswordError(oldPasswordValidationError)
+        if (oldPasswordValidationError !== '') {
             return
         }
 
-        validateNewPassword()
-        if (newPasswordError !== '') {
+        const newPasswordValidationError = validateNewPassword()
+        setNewPasswordError(newPasswordValidationError)
+        if (newPasswordValidationError !== '') {
             return
         }
 
-        validateConfirmNewPassword()
-        if (confirmNewPasswordError !== '') {
+        const confirmPasswordValidationError = validateConfirmNewPassword()
+        setConfirmNewPasswordError(confirmPasswordValidationError)
+        if (confirmPasswordValidationError !== '') {
             return
         }
 
@@ -66,11 +69,12 @@ export default function ChangePasswordForm(form: StatusController) {
 
     }
 
-    const validateOldPassword = () => {
+    const validateOldPassword = (): string => {
         if (!oldPassword) {
-            setOldPasswordError(ChangePasswordMessage.MISSING_PASSWORD)
-            return
+            return ChangePasswordMessage.MISSING_PASSWORD
         }
+
+        return ""
     }
 
     const oldPasswordFieldProps: CustomFormControlProps = {
@@ -94,15 +98,15 @@ export default function ChangePasswordForm(form: StatusController) {
 
     const validateNewPassword = () => {
         if (!newPassword) {
-            setNewPasswordError(ChangePasswordMessage.MISSING_PASSWORD)
-            return
+            return ChangePasswordMessage.MISSING_PASSWORD
         }
 
         const validatePasswordResult: PasswordValidationMessage = validatePassword(newPassword)
         if (validatePasswordResult !== PasswordValidationMessage.OK) {
-            setNewPasswordError(validatePasswordResult)
-            return
+            return validatePasswordResult
         }
+
+        return ""
     }
 
     const newPasswordFieldProps: CustomFormControlProps = {
@@ -126,14 +130,14 @@ export default function ChangePasswordForm(form: StatusController) {
 
     const validateConfirmNewPassword = () => {
         if (!confirmNewPassword) {
-            setConfirmNewPasswordError(ChangePasswordMessage.MISSING_PASSWORD)
-            return
+            return ChangePasswordMessage.MISSING_PASSWORD
         }
 
         if (newPassword !== confirmNewPassword) {
-            setConfirmNewPasswordError(ChangePasswordMessage.PASSWORD_MISMATCH)
-            return
+            return ChangePasswordMessage.PASSWORD_MISMATCH
         }
+
+        return ""
     }
 
     const confirmNewPasswordFieldProps: CustomFormControlProps = {

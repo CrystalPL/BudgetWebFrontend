@@ -1,5 +1,4 @@
 import {Alert, Snackbar} from "@mui/material";
-import Button from "@mui/material/Button";
 import React, {useEffect, useState} from "react";
 import {isEmailChangingWaitingToConfirm} from "../../account/AccountService";
 
@@ -19,16 +18,16 @@ export default function EmailToConfirmAlert() {
         anchorOrigin={{vertical: 'top', horizontal: 'center'}}
     >
         <Alert variant="filled" severity="warning"
-               action={
-                   <Button color="inherit" size="small">
-                       Wyślij ponownie
-                   </Button>
-               }
-               sx={{
-                   '.MuiAlert-action': {
-                       paddingTop: 0
-                   }
-               }}
+            // action={ //TODO KIEDYŚ
+            //     <Button color="inherit" size="small">
+            //         Wyślij ponownie
+            //     </Button>
+            // }
+            // sx={{
+            //     '.MuiAlert-action': {
+            //         paddingTop: 0
+            //     }
+            // }}
         >
             Potwierdź zmiane adresu email klikając na link, który do Ciebie wysłaliśmy.
         </Alert>

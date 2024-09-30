@@ -1,4 +1,4 @@
-import {handleRequest, ResponseAPI} from "@/components/share/ResponseAPI";
+import {API_URL, handleRequest, ResponseAPI} from "@/components/share/ResponseAPI";
 import {
     AccountConfirmationMessage,
     AccountConfirmationResendEmailMessage,
@@ -9,6 +9,7 @@ import {
     RegisterMessage
 } from "./AuthResponseMessages";
 import {RegisterRequest} from "./RegisterRequest";
+import axios from "axios";
 
 export async function resendEmail(): Promise<ResponseAPI<AccountConfirmationResendEmailMessage>> {
     return handleRequest<typeof AccountConfirmationResendEmailMessage>("/auth/resend-email", {}, AccountConfirmationResendEmailMessage);
@@ -50,4 +51,12 @@ export async function register(registerRequest: RegisterRequest): Promise<Respon
 
             return response;
         });
+}
+
+export async function logout() {
+    try {
+        await axios.post(API_URL + "/auth/logout", {}, {withCredentials: true})
+    } catch (error) {
+
+    }
 }

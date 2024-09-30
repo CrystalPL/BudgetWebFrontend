@@ -22,18 +22,21 @@ export default function ChangeEmailForm(form: StatusController) {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        validateNewEmail()
-        if (emailError !== '') {
+        const emailValidationError = validateNewEmail()
+        setEmailError(emailValidationError)
+        if (emailValidationError !== '') {
             return
         }
 
-        validateConfirmNewEmail()
-        if (confirmEmailError !== '') {
+        const confirmEmailValidationError = validateConfirmNewEmail()
+        setConfirmEmailError(confirmEmailValidationError)
+        if (confirmEmailValidationError !== '') {
             return
         }
 
-        validatePassword()
-        if (passwordError !== '') {
+        const passwordValidationError = validatePassword()
+        setPasswordError(passwordValidationError)
+        if (passwordValidationError !== '') {
             return
         }
 
@@ -60,16 +63,16 @@ export default function ChangeEmailForm(form: StatusController) {
         }
     }
 
-    const validateNewEmail = () => {
+    const validateNewEmail = (): string => {
         if (!email) {
-            setEmailError(ChangeEmailMessage.MISSING_EMAIL)
-            return
+            return ChangeEmailMessage.MISSING_EMAIL
         }
 
         if (!validateEmailFormat(email)) {
-            setEmailError(ChangeEmailMessage.INVALID_EMAIL)
-            return;
+            return ChangeEmailMessage.INVALID_EMAIL
         }
+
+        return ""
     }
 
     const newEmailFieldProps: CustomFormControlProps = {
@@ -80,21 +83,20 @@ export default function ChangeEmailForm(form: StatusController) {
         validateFunction: validateNewEmail
     };
 
-    const validateConfirmNewEmail = () => {
+    const validateConfirmNewEmail = (): string => {
         if (!confirmEmail) {
-            setConfirmEmailError(ChangeEmailMessage.MISSING_EMAIL)
-            return
+            return ChangeEmailMessage.MISSING_EMAIL
         }
 
         if (!validateEmailFormat(confirmEmail)) {
-            setConfirmEmailError(ChangeEmailMessage.INVALID_EMAIL)
-            return
+            return ChangeEmailMessage.INVALID_EMAIL
         }
 
         if (email !== confirmEmail) {
-            setConfirmEmailError(ChangeEmailMessage.EMAIL_MISMATCH)
-            return
+            return ChangeEmailMessage.EMAIL_MISMATCH
         }
+
+        return ""
     }
 
     const confirmNewEmailFieldProps: CustomFormControlProps = {
@@ -105,11 +107,12 @@ export default function ChangeEmailForm(form: StatusController) {
         validateFunction: validateConfirmNewEmail
     };
 
-    const validatePassword = () => {
+    const validatePassword = (): string => {
         if (!password) {
-            setPasswordError(ChangeEmailMessage.MISSING_PASSWORD)
-            return
+            return ChangeEmailMessage.MISSING_PASSWORD
         }
+
+        return ""
     }
 
     const passwordFieldProps: CustomFormControlProps = {

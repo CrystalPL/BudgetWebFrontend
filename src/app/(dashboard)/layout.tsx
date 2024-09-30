@@ -7,6 +7,7 @@ import {SidebarComponent} from "../../components/layout/Sidebar";
 import Box from "@mui/material/Box";
 import {GlobalStyles} from "@mui/material";
 import EmailToConfirmAlert from "../../components/layout/EmailToConfirmAlert";
+import {AvatarProvider} from "../../components/AccountHeaderInfo";
 
 export default function RootLayout(props: PropsWithChildren) {
     return (
@@ -21,18 +22,20 @@ export default function RootLayout(props: PropsWithChildren) {
                     }
                 }}></GlobalStyles>
                 <EmailToConfirmAlert></EmailToConfirmAlert>
-                <HeaderComponent></HeaderComponent>
-                <SidebarComponent></SidebarComponent>
-                <Box
-                    component={"main"}
-                    sx={{
-                        pl: {
-                            xs: '0px',
-                            lg: 'var(--SideBar-width)'
-                        }
-                    }}>
-                    {props.children}
-                </Box>
+                <AvatarProvider>
+                    <HeaderComponent></HeaderComponent>
+                    <SidebarComponent></SidebarComponent>
+                    <Box
+                        component={"main"}
+                        sx={{
+                            pl: {
+                                xs: '0px',
+                                lg: 'var(--SideBar-width)'
+                            }
+                        }}>
+                        {props.children}
+                    </Box>
+                </AvatarProvider>
             </ThemeProvider>
         </AppRouterCacheProvider>
         </body>

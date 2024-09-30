@@ -5,16 +5,18 @@ import {useState} from "react";
 import {ChangeNicknameMessage} from "../../AccountResponses";
 import {ResponseAPI} from "../../../components/share/ResponseAPI";
 import {changeNickname} from "../../AccountService";
-import {AccountProps} from "../../../app/(dashboard)/profile/page";
+import {AvatarContextType, useAvatarContext} from "../../../components/AccountHeaderInfo";
 
-export default function ChangeNicknameForm(form: StatusController & AccountProps) {
+export default function ChangeNicknameForm(form: StatusController) {
     const [nickname, setNickname] = useState('');
     const [nicknameError, setNicknameError] = useState('');
+    const avatarContext: AvatarContextType = useAvatarContext();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        validateNickname()
-        if (nicknameError !== '') {
+        const validationError = validateNickname()
+        setNicknameError(validationError)
+        if (validationError !== '') {
             return
         }
 
@@ -24,21 +26,21 @@ export default function ChangeNicknameForm(form: StatusController & AccountProps
         form.setStatusMessage(response.message)
 
         if (response.success) {
-            form.setAccountInfo({nickname: nickname, email: form.accountInfo!.email})
+            avatarContext.setAccountInfo({nickname: nickname, email: avatarContext.accountInfo!.email})
             setNickname("")
         }
     }
 
     const validateNickname = () => {
         if (!nickname || nickname.trim() === '') {
-            setNicknameError(ChangeNicknameMessage.MISSING_USERNAME)
-            return
+            return ChangeNicknameMessage.MISSING_USERNAME
         }
 
         if (nickname.length > 64) {
-            setNicknameError(ChangeNicknameMessage.TOO_LONG_USERNAME)
-            return
+            return ChangeNicknameMessage.TOO_LONG_USERNAME
         }
+
+        return ""
     }
 
     const nicknameFieldProps: CustomFormControlProps = {

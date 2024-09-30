@@ -53,11 +53,6 @@ function GetSidebarItems(): React.JSX.Element {
                 icon={<SettingsOutlinedIcon/>}
             ></CreateSidebarButton>
             <CreateSidebarButton
-                buttonName="Profil"
-                href="/profile"
-                icon={<SettingsOutlinedIcon/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
                 buttonName="Logi"
                 href="/logs"
                 icon={<SettingsOutlinedIcon/>}

@@ -14,7 +14,7 @@ interface BasicFormProps extends PropsWithChildren {
 }
 
 export default function BasicForm(props: BasicFormProps) {
-    return <Card component="form" onSubmit={props.onSubmit}>
+    return <Card component="form" onSubmit={props.onSubmit} noValidate>
         <CardHeader title={props.title}/>
         <Divider/>
         <CardContent>

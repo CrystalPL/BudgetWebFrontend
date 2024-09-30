@@ -11,14 +11,13 @@ import {ErrorOutline} from "@mui/icons-material";
 import ChangeEmailForm from "./form/ChangeEmailForm";
 import ChangePasswordForm from "./form/ChangePasswordForm";
 import ChangeNicknameForm from "./form/ChangeNicknameForm";
-import {AccountProps} from "../../app/(dashboard)/profile/page";
 
 export interface CustomFormControlProps {
     valueState: [string, React.Dispatch<React.SetStateAction<string>>];
     errorState: [string, React.Dispatch<React.SetStateAction<string>>];
     label: string
     name: string
-    validateFunction: () => void
+    validateFunction: () => string
     endAdornment?: React.ReactNode
     type?: string;
 }
@@ -26,6 +25,15 @@ export interface CustomFormControlProps {
 export function CustomFormControl(props: CustomFormControlProps) {
     const [value, setValue] = props.valueState;
     const [error, setError] = props.errorState;
+
+    const validate = () => {
+        const validate: string = props.validateFunction()
+        if (!validate) {
+            return;
+        }
+
+        setError(validate)
+    }
 
     return <FormControl fullWidth required error={!!error}>
         <InputLabel>{props.label}</InputLabel>
@@ -35,7 +43,7 @@ export function CustomFormControl(props: CustomFormControlProps) {
             value={value}
             type={props.type}
             onChange={(e) => setValue(e.target.value)}
-            onBlur={props.validateFunction}
+            onBlur={validate}
             onFocus={() => setError('')}
             endAdornment={props.endAdornment}
         />
@@ -59,7 +67,7 @@ export interface StatusController {
     setStatusMessage: (message: string) => void
 }
 
-export function AccountDetails({accountProps}: { accountProps: AccountProps }): React.JSX.Element {
+export function AccountDetails(): React.JSX.Element {
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
@@ -79,8 +87,32 @@ export function AccountDetails({accountProps}: { accountProps: AccountProps }): 
                 <ChangePasswordForm {...statusController}></ChangePasswordForm>
             </Grid>
             <Grid lg={6} xs={12}>
-                <ChangeNicknameForm {...statusController} {...accountProps}></ChangeNicknameForm>
+                <ChangeNicknameForm {...statusController}></ChangeNicknameForm>
             </Grid>
+
+            {/*<Card sx={{border: '1px solid red', mt: 6, p: 2}}> //TODO USUWANIE KONTA*/}
+            {/*    <CardContent>*/}
+            {/*        <Typography variant="h6" sx={{color: 'red'}}>*/}
+            {/*            Usuń konto*/}
+            {/*        </Typography>*/}
+            {/*        <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>*/}
+            {/*            Po usunięciu konta, nie będzie można go przywrócić. Proszę, upewnij się, że chcesz kontynuować.*/}
+            {/*        </Typography>*/}
+            {/*        <Button*/}
+            {/*            variant="outlined"*/}
+            {/*            color="error"*/}
+            {/*            sx={{*/}
+            {/*                borderColor: 'red',*/}
+            {/*                color: 'red',*/}
+            {/*                '&:hover': {*/}
+            {/*                    backgroundColor: '#ffe6e6',  // Jasnoczerwone tło po najechaniu*/}
+            {/*                }*/}
+            {/*            }}*/}
+            {/*        >*/}
+            {/*            Tak, usuń*/}
+            {/*        </Button>*/}
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
             <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}
                       anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>
                 <Alert onClose={handleCloseSnackbar} severity={status} sx={{width: '100%'}}>

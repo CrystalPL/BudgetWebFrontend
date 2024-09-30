@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {useEffect, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -11,28 +11,17 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
-import {getAccountInfo, uploadAvatar} from "../AccountService";
+import {uploadAvatar} from "../AccountService";
 import {Alert, Skeleton, Snackbar} from "@mui/material";
 import {API_URL} from "../../components/share/ResponseAPI";
-import {AccountProps} from "../../app/(dashboard)/profile/page";
+import {AvatarContextType, useAvatarContext} from "../../components/AccountHeaderInfo";
 
-export default function AccountInfo({accountProps}: { accountProps: AccountProps }): React.JSX.Element {
+export default function AccountInfo(): React.JSX.Element {
     const inputFile = useRef<HTMLInputElement | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [reloadKey, setReloadKey] = useState<number>(0);
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-
-    useEffect(() => {
-        const fetchAccountInfo = async () => {
-            const data = await getAccountInfo();
-            accountProps.setAccountInfo(data);
-            setLoading(false)
-        };
-
-        fetchAccountInfo();
-    }, []);
+    const avatarContext: AvatarContextType = useAvatarContext();
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -46,7 +35,7 @@ export default function AccountInfo({accountProps}: { accountProps: AccountProps
         const response = await uploadAvatar(formData);
         setStatus(response.success ? 'success' : 'error');
         setStatusMessage(response.message);
-        setReloadKey((prevKey) => prevKey + 1);
+        avatarContext.incrementReloadKey()
         setOpenSnackbar(true);
     };
 
@@ -59,24 +48,24 @@ export default function AccountInfo({accountProps}: { accountProps: AccountProps
             <CardContent>
                 <Stack spacing={2} sx={{alignItems: 'center'}}>
                     <Box>
-                        {loading ? (
+                        {!avatarContext.accountInfo ? (
                             <Skeleton variant="circular" width={80} height={80}/>
                         ) : (
-                            <Avatar key={reloadKey} src={`${API_URL}/account/avatar`}
+                            <Avatar key={avatarContext.reloadKey} src={`${API_URL}/account/avatar`}
                                     sx={{height: '80px', width: '80px'}}/>
                         )}
                     </Box>
                     <Stack spacing={1} sx={{textAlign: 'center'}}>
-                        {loading ? (
+                        {!avatarContext.accountInfo ? (
                             <>
                                 <Skeleton variant="text" width={150} height={20}/>
                                 <Skeleton variant="text" width={150} height={20}/>
                             </>
                         ) : (
                             <>
-                                <Typography variant="h5">{accountProps.accountInfo?.nickname}</Typography>
+                                <Typography variant="h5">{avatarContext.accountInfo?.nickname}</Typography>
                                 <Typography color="text.secondary" variant="body2">
-                                    {accountProps.accountInfo?.email}
+                                    {avatarContext.accountInfo?.email}
                                 </Typography>
                             </>
                         )}

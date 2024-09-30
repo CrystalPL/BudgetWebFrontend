@@ -19,10 +19,14 @@ import {GetUserPopoverController, UserPopoverController} from "../../controllers
 import GetMobileSidebarController, {MobileSidebarController} from "../../controllers/MobileSidebarController";
 import {DrawerSidebar} from "./Sidebar";
 import {API_URL} from "../share/ResponseAPI";
+import {AvatarContextType, useAvatarContext} from "../AccountHeaderInfo";
+import {useRouter} from "next/navigation";
+import {logout} from "../../auth/AuthenticationService";
 
 const HeaderComponent = () => {
     const popoverController: UserPopoverController = GetUserPopoverController();
     const sidebarController: MobileSidebarController = GetMobileSidebarController();
+    const avatarContext: AvatarContextType = useAvatarContext();
 
     return (
         <>
@@ -51,6 +55,7 @@ const HeaderComponent = () => {
                     <Avatar
                         onClick={popoverController.handleOpen}
                         ref={popoverController.anchorElement}
+                        key={avatarContext.reloadKey}
                         src={`${API_URL}/account/avatar`}
                         sx={{
                             cursor: 'pointer',
@@ -68,6 +73,14 @@ const HeaderComponent = () => {
 }
 
 function ShowMenuItems({popoverController}: { popoverController: UserPopoverController }): React.JSX.Element {
+    const avatarContext: AvatarContextType = useAvatarContext();
+    const router = useRouter()
+
+    const handleLogout = () => {
+        logout()
+        router.push("/sign-in")
+    }
+
     return (
         <Popover
             anchorOrigin={{
@@ -78,22 +91,21 @@ function ShowMenuItems({popoverController}: { popoverController: UserPopoverCont
             anchorEl={popoverController.anchorElement.current}
             onClose={popoverController.handleClose}
             slotProps={{paper: {sx: {width: '240px'}}}}
+            disableScrollLock
         >
             <Box sx={{p: '16px 20px '}}>
-                <Typography variant="subtitle1">twój star pies</Typography>
-                <Typography color="error.dark" variant="body2">
-                    Twój stary pies jebany@gmail.com
-                </Typography>
+                <Typography variant="subtitle1">{avatarContext.accountInfo?.nickname}</Typography>
+                <Typography variant="body2">{avatarContext.accountInfo?.email}</Typography>
             </Box>
             <Divider/>
             <MenuList disablePadding sx={{p: '8px'}}>
-                <MenuItem>
+                <MenuItem onClick={() => router.push("/profile")}>
                     <ListItemIcon>
                         <PersonOutlinedIcon/>
                     </ListItemIcon>
                     <ListItemText primary="Profil"/>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <LogoutOutlined></LogoutOutlined>
                     </ListItemIcon>
