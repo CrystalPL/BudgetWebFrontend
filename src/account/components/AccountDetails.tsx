@@ -5,12 +5,16 @@ import {useState} from 'react';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import {Alert, FormHelperText, Snackbar} from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
+import {Alert, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Snackbar} from "@mui/material";
 import {ErrorOutline} from "@mui/icons-material";
 import ChangeEmailForm from "./form/ChangeEmailForm";
 import ChangePasswordForm from "./form/ChangePasswordForm";
 import ChangeNicknameForm from "./form/ChangeNicknameForm";
+import Grid from "@mui/material/Grid2";
+import Typography from "@mui/material/Typography";
+import CardContent from "@mui/material/CardContent";
+import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
 
 export interface CustomFormControlProps {
     valueState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -71,6 +75,7 @@ export function AccountDetails(): React.JSX.Element {
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
@@ -79,40 +84,63 @@ export function AccountDetails(): React.JSX.Element {
     const statusController: StatusController = {setStatus, setOpenSnackbar, setStatusMessage};
 
     return (
-        <Grid container spacing={3}>
-            <Grid lg={6} xs={12}>
+        <Grid container spacing={4}>
+            <Grid size={12}>
                 <ChangeEmailForm {...statusController}></ChangeEmailForm>
             </Grid>
-            <Grid lg={6} xs={12}>
+            <Grid size={12}>
                 <ChangePasswordForm {...statusController}></ChangePasswordForm>
             </Grid>
-            <Grid lg={6} xs={12}>
+            <Grid size={12}>
                 <ChangeNicknameForm {...statusController}></ChangeNicknameForm>
             </Grid>
-
-            {/*<Card sx={{border: '1px solid red', mt: 6, p: 2}}> //TODO USUWANIE KONTA*/}
-            {/*    <CardContent>*/}
-            {/*        <Typography variant="h6" sx={{color: 'red'}}>*/}
-            {/*            Usuń konto*/}
-            {/*        </Typography>*/}
-            {/*        <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>*/}
-            {/*            Po usunięciu konta, nie będzie można go przywrócić. Proszę, upewnij się, że chcesz kontynuować.*/}
-            {/*        </Typography>*/}
-            {/*        <Button*/}
-            {/*            variant="outlined"*/}
-            {/*            color="error"*/}
-            {/*            sx={{*/}
-            {/*                borderColor: 'red',*/}
-            {/*                color: 'red',*/}
-            {/*                '&:hover': {*/}
-            {/*                    backgroundColor: '#ffe6e6',  // Jasnoczerwone tło po najechaniu*/}
-            {/*                }*/}
-            {/*            }}*/}
-            {/*        >*/}
-            {/*            Tak, usuń*/}
-            {/*        </Button>*/}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
+            <Grid size={12}>
+                <Card sx={{border: '1px solid red'}}>
+                    <CardContent>
+                        <Typography variant="h6" sx={{color: 'red'}}>
+                            Usuń konto
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
+                            Po usunięciu konta, nie będzie można go przywrócić. Proszę, upewnij się, że chcesz
+                            kontynuować.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => setConfirmDeleteOpen(true)}
+                            sx={{
+                                borderColor: 'red',
+                                color: 'red',
+                                '&:hover': {
+                                    backgroundColor: '#ffe6e6',  // Jasnoczerwone tło po najechaniu
+                                }
+                            }}
+                        >
+                            Tak, usuń
+                        </Button>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle sx={{fontWeight: 'medium'}}>Potwierdzenie usunięcia</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Czy na pewno chcesz usunąć konto?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmDeleteOpen(false)} variant="text" sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(169, 190, 119, 0.2)',
+                        },
+                    }}>
+                        Anuluj
+                    </Button>
+                    <Button variant="contained" color="error">
+                        Usuń
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={handleCloseSnackbar}
                       anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>
                 <Alert onClose={handleCloseSnackbar} severity={status} sx={{width: '100%'}}>

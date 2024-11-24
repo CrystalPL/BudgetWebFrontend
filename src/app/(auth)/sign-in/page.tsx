@@ -21,7 +21,7 @@ import {validateEmailFormat} from "../../../auth/DataValidator";
 import {CustomFormControl, CustomFormControlProps} from "../../../account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
 
-function readCookie(name: string): string | null {
+export function readCookie(name: string): string | null {
     const nameEQ = `${name}=`;
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
 
@@ -102,11 +102,12 @@ export default function SignIn() {
         };
     }, []);
 
-    const validatePasswordHandler = () => {
+    const validatePasswordHandler = (): string => {
         if (!password) {
-            setPasswordError(LoginMessage.MISSING_PASSWORD)
-            return
+            return LoginMessage.MISSING_PASSWORD
         }
+
+        return ""
     }
 
     const passwordFieldProps: CustomFormControlProps = {
@@ -130,14 +131,14 @@ export default function SignIn() {
 
     const validateEmail = () => {
         if (!email) {
-            setEmailError(LoginMessage.MISSING_EMAIL)
-            return
+            return LoginMessage.MISSING_EMAIL
         }
 
         if (!validateEmailFormat(email)) {
-            setEmailError(LoginMessage.INVALID_EMAIL)
-            return
+            return LoginMessage.INVALID_EMAIL
         }
+
+        return ""
     }
 
     const emailFieldProps: CustomFormControlProps = {

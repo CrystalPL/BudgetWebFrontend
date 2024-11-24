@@ -5,6 +5,7 @@ import {usePathname} from "next/navigation";
 import {MobileSidebarController} from "../../controllers/MobileSidebarController";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
+import {Groups} from "@mui/icons-material";
 
 interface SidebarItem {
     buttonName: string
@@ -48,14 +49,14 @@ function GetSidebarItems(): React.JSX.Element {
             }}
         >
             <CreateSidebarButton
-                buttonName="Użytkownicy"
-                href="/users"
-                icon={<SettingsOutlinedIcon/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
                 buttonName="Logi"
                 href="/logs"
                 icon={<SettingsOutlinedIcon/>}
+            ></CreateSidebarButton>
+            <CreateSidebarButton
+                buttonName="Gospodarstwo domowe"
+                href="/house-hold"
+                icon={<Groups/>}
             ></CreateSidebarButton>
         </Stack>
     );

@@ -42,5 +42,6 @@ export enum ConfirmEmailChanging {
 
 export interface AccountInfoResponse {
     nickname: string,
-    email: string
+    email: string,
+    userId: number
 }

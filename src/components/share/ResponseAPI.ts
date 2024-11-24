@@ -3,6 +3,9 @@ import axios from "axios";
 // export const API_URL: string = "https://budgetapp.pl/api"
 export const API_URL: string = "http://localhost:8092"
 
+// export const WEBSOCKET_URL: string = "wss://budgetapp.pl/ws"
+export const WEBSOCKET_URL: string = "ws://localhost:8092/ws"
+
 export class ResponseAPI<T> {
     private readonly _message: T;
     private readonly _success: boolean

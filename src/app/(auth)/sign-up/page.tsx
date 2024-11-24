@@ -112,16 +112,16 @@ export default function SignUp() {
         };
     }, []);
 
-    const validateUsername = () => {
+    const validateUsername = (): string => {
         if (!username || username.trim() === '') {
-            setUsernameError(RegisterMessage.MISSING_USERNAME)
-            return
+            return RegisterMessage.MISSING_USERNAME
         }
 
         if (!validateLength(username, 64)) {
-            setUsernameError(RegisterMessage.TOO_LONG_USERNAME)
-            return
+            return RegisterMessage.TOO_LONG_USERNAME
         }
+
+        return ""
     }
 
     const usernameFieldProps: CustomFormControlProps = {
@@ -132,21 +132,20 @@ export default function SignUp() {
         validateFunction: validateUsername
     };
 
-    const validateEmail = () => {
+    const validateEmail = (): string => {
         if (!email) {
-            setEmailError(RegisterMessage.MISSING_EMAIL)
-            return
+            return RegisterMessage.MISSING_EMAIL
         }
 
         if (!validateLength(email, 255)) {
-            setEmailError(RegisterMessage.EMAIL_TOO_LONG)
-            return
+            return RegisterMessage.EMAIL_TOO_LONG
         }
 
         if (!validateEmailFormat(email)) {
-            setEmailError(RegisterMessage.INVALID_EMAIL)
-            return
+            return RegisterMessage.INVALID_EMAIL
         }
+
+        return ""
     }
 
     const emailFieldProps: CustomFormControlProps = {
@@ -157,16 +156,16 @@ export default function SignUp() {
         validateFunction: validateEmail
     };
 
-    const validateConfirmEmail = () => {
+    const validateConfirmEmail = (): string => {
         if (!confirmEmail) {
-            setConfirmEmailError(RegisterMessage.MISSING_CONFIRM_EMAIL)
-            return
+            return RegisterMessage.MISSING_CONFIRM_EMAIL
         }
 
         if (email !== confirmEmail) {
-            setConfirmEmailError(RegisterMessage.EMAIL_MISMATCH)
-            return
+            return RegisterMessage.EMAIL_MISMATCH
         }
+
+        return ""
     }
 
     const confirmEmailFieldProps: CustomFormControlProps = {
@@ -177,17 +176,17 @@ export default function SignUp() {
         validateFunction: validateConfirmEmail
     };
 
-    const validatePasswordHandler = () => {
+    const validatePasswordHandler = (): string => {
         if (!password) {
-            setPasswordError(RegisterMessage.MISSING_PASSWORD)
-            return
+            return RegisterMessage.MISSING_PASSWORD
         }
 
         const validatePasswordResult: PasswordValidationMessage = validatePassword(password)
         if (validatePasswordResult !== PasswordValidationMessage.OK) {
-            setPasswordError(validatePasswordResult)
-            return
+            return validatePasswordResult
         }
+
+        return ""
     }
 
     const passwordFieldProps: CustomFormControlProps = {
@@ -209,16 +208,16 @@ export default function SignUp() {
         ),
     };
 
-    const validateConfirmPassword = () => {
+    const validateConfirmPassword = (): string => {
         if (!confirmPassword) {
-            setConfirmPasswordError(RegisterMessage.MISSING_CONFIRM_PASSWORD)
-            return
+            return RegisterMessage.MISSING_CONFIRM_PASSWORD
         }
 
         if (password !== confirmPassword) {
-            setConfirmPasswordError(RegisterMessage.PASSWORD_MISMATCH)
-            return
+            return RegisterMessage.PASSWORD_MISMATCH
         }
+
+        return ""
     }
 
     const confirmPasswordFieldProps: CustomFormControlProps = {

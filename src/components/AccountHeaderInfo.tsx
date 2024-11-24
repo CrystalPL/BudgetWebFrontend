@@ -13,9 +13,7 @@ export function AvatarProvider({children}: { children: ReactNode }) {
     useEffect(() => {
         const fetchUserInfo = async () => {
             const data: AccountInfoResponse = await getAccountInfo();
-            console.log(data)
             setAccountInfo(data);
-            console.log("refresz")
         };
 
         fetchUserInfo();
