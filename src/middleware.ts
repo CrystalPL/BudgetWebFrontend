@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     const hasAccess = await VerifyAccess(authToken);
     const url = request.nextUrl.clone();
     if (hasAccess === HttpStatusCode.Ok) {
-        if (url.pathname.startsWith('/account-inactive')) {
+        if (url.pathname.startsWith('/account-inactive') || url.pathname.startsWith('/sign-in')) {
             url.pathname = '/';
             return NextResponse.redirect(url);
         }
@@ -40,5 +40,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/account-inactive/:path*', '/profile/:path*', '/house-hold/:path*', '/logs/:path*', '/'],
+    matcher: ['/account-inactive/:path*', '/profile/:path*', '/house-hold/:path*', '/logs/:path*', '/'], //sign-in
 };
