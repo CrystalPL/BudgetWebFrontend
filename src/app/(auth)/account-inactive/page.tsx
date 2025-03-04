@@ -6,8 +6,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Box from '@mui/material/Box';
-import { useRouter } from "next/navigation";
-import {ResendEmailButton} from "../../../auth/components/ResendEmailComponent";
+import {useRouter} from "next/navigation";
+import {ResendEmailButton} from "../../../features/auth/components/ResendEmailComponent";
 import Button from "@mui/material/Button";
 
 export default function AccountInactive() {

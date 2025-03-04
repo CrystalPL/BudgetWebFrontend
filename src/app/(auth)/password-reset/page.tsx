@@ -10,10 +10,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Alert, IconButton} from '@mui/material';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {resetPassword} from "../../../auth/AuthenticationService";
-import {PasswordResetMessage, PasswordValidationMessage} from "../../../auth/AuthResponseMessages";
-import {validatePassword} from "../../../auth/DataValidator";
-import {CustomFormControl, CustomFormControlProps} from "../../../account/components/AccountDetails";
+import {resetPassword} from "../../../features/auth/api/AuthenticationService";
+import {PasswordResetMessage, PasswordValidationMessage} from "../../../features/auth/api/AuthResponseMessages";
+import {validatePassword} from "../../../features/auth/util/DataValidator";
+import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
 
 export default function ResetPasswordForm() {
@@ -70,14 +70,16 @@ export default function ResetPasswordForm() {
     const validateNewPassword = () => {
         if (!password) {
             setPasswordError(PasswordResetMessage.MISSING_PASSWORD)
-            return
+            return ""
         }
 
         const validatePasswordResult: PasswordValidationMessage = validatePassword(password)
         if (validatePasswordResult !== PasswordValidationMessage.OK) {
             setPasswordError(validatePasswordResult)
-            return
+            return ""
         }
+
+        return ""
     }
 
     const newPasswordFieldProps: CustomFormControlProps = {
@@ -102,13 +104,15 @@ export default function ResetPasswordForm() {
     const validateConfirmPassword = () => {
         if (!confirmPassword) {
             setConfirmPasswordError(PasswordResetMessage.MISSING_CONFIRM_PASSWORD)
-            return
+            return ""
         }
 
         if (password !== confirmPassword) {
             setConfirmPasswordError(PasswordResetMessage.PASSWORD_MISMATCH)
-            return
+            return ""
         }
+
+        return ""
     }
 
     const confirmNewPasswordFieldProps: CustomFormControlProps = {

@@ -1,9 +1,9 @@
 'use client'
 import {Container, Stack, Typography} from "@mui/material";
-import {AccountDetails} from "../../../account/components/AccountDetails";
-import AccountInfo from "../../../account/components/AccountInfo";
+import {AccountDetails} from "../../../features/account/components/AccountDetails";
+import AccountInfo from "../../../features/account/components/AccountInfo";
 import Grid from "@mui/material/Grid2";
-import LoginHistory from "../../../account/LoginHistory";
+import LoginHistory from "../../../features/account/LoginHistory";
 
 export default function Page() {
     return (

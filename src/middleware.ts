@@ -1,7 +1,7 @@
 import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
 import {HttpStatusCode} from "axios";
-import {VerifyAccess} from "./auth/AuthorizationService";
+import {VerifyAccess} from "@/features/auth/api/AuthorizationService";
 
 export async function middleware(request: NextRequest) {
 
@@ -11,19 +11,21 @@ export async function middleware(request: NextRequest) {
 
     const hasAccess = await VerifyAccess(authToken);
     const url = request.nextUrl.clone();
-    if (hasAccess === HttpStatusCode.Ok) {
-        if (url.pathname.startsWith('/account-inactive') || url.pathname.startsWith('/sign-in')) {
-            url.pathname = '/';
-            return NextResponse.redirect(url);
-        }
-
-        return NextResponse.next();
-    }
-
-    const response = NextResponse.redirect(url);
     switch (hasAccess) {
+        case HttpStatusCode.Ok:
+            if (url.pathname.startsWith('/account-inactive') || url.pathname.startsWith('/sign-in')) {
+                url.pathname = '/';
+                return NextResponse.redirect(url);
+            }
+
+            return NextResponse.next();
         case HttpStatusCode.Unauthorized:
+            if (url.pathname.startsWith('/sign-in')) {
+                return NextResponse.next();
+            }
+
             url.pathname = '/sign-in';
+            const response = NextResponse.redirect(url);
             response.headers.set('Set-Cookie', `redirectPath=${request.nextUrl.pathname}; Path=/;`);
             return NextResponse.redirect(url);
         case HttpStatusCode.Forbidden:
@@ -40,5 +42,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/account-inactive/:path*', '/profile/:path*', '/house-hold/:path*', '/logs/:path*', '/'], //sign-in
+    matcher: ['/account-inactive/:path*', '/profile/:path*', '/household/:path*', '/logs/:path*', '/', '/sign-in'],
 };

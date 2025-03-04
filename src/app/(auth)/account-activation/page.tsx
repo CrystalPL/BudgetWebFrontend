@@ -9,9 +9,9 @@ import Container from '@mui/material/Container';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
-import {confirmRegister} from "../../../auth/AuthenticationService";
+import {confirmRegister} from "../../../features/auth/api/AuthenticationService";
 import InfoIcon from '@mui/icons-material/Info';
-import {AccountConfirmationMessage} from "../../../auth/AuthResponseMessages";
+import {AccountConfirmationMessage} from "../../../features/auth/api/AuthResponseMessages";
 
 export default function AccountActivation() {
     const [headMessage, setHeadMessage] = useState<string>("Trwa weryfikowanie...");

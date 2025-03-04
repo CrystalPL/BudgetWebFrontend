@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import InfoIcon from "@mui/icons-material/Info";
 import ErrorIcon from "@mui/icons-material/Error";
-import {confirmEmailChanging} from "../../../../account/AccountService";
+import {confirmEmailChanging} from "../../../../features/account/api/AccountService";
 
 //TODO gdy użytkownik ma otwarte /profile, dynamicznie zmienić mu wyświetlany adres email (bez potrzeby odświeżania całej strony)
 export default function EmailChangeConfirmation() {

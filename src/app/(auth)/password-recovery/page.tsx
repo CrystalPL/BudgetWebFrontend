@@ -11,11 +11,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Alert} from "@mui/material";
-import {passwordRecovery} from "../../../auth/AuthenticationService";
-import {ResponseAPI} from "../../../components/share/ResponseAPI";
-import {PasswordRecoveryMessage} from "../../../auth/AuthResponseMessages";
-import {CustomFormControl, CustomFormControlProps} from "../../../account/components/AccountDetails";
-import {validateEmailFormat} from "../../../auth/DataValidator";
+import {passwordRecovery} from "../../../features/auth/api/AuthenticationService";
+import {ResponseAPI} from "../../../service/ResponseAPI";
+import {PasswordRecoveryMessage} from "../../../features/auth/api/AuthResponseMessages";
+import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
+import {validateEmailFormat} from "../../../features/auth/util/DataValidator";
 
 export default function ResetPassword() {
     const [status, setStatus] = useState<'success' | 'error'>();
@@ -48,13 +48,15 @@ export default function ResetPassword() {
     const validateEmail = () => {
         if (!email) {
             setEmailError(PasswordRecoveryMessage.MISSING_EMAIL)
-            return
+            return ""
         }
 
         if (!validateEmailFormat(email)) {
             setEmailError(PasswordRecoveryMessage.INVALID_EMAIL)
-            return
+            return ""
         }
+
+        return ""
     }
 
     const emailFieldProps: CustomFormControlProps = {

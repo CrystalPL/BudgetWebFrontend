@@ -15,24 +15,12 @@ import Container from '@mui/material/Container';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {Alert, IconButton} from "@mui/material";
 import {useRouter} from "next/navigation";
-import {login} from "../../../auth/AuthenticationService";
-import {LoginMessage} from "../../../auth/AuthResponseMessages";
-import {validateEmailFormat} from "../../../auth/DataValidator";
-import {CustomFormControl, CustomFormControlProps} from "../../../account/components/AccountDetails";
+import {login} from "../../../features/auth/api/AuthenticationService";
+import {LoginMessage} from "../../../features/auth/api/AuthResponseMessages";
+import {validateEmailFormat} from "../../../features/auth/util/DataValidator";
+import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
-
-export function readCookie(name: string): string | null {
-    const nameEQ = `${name}=`;
-    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-
-    for (const cookie of cookies) {
-        if (cookie.startsWith(nameEQ)) {
-            return cookie.substring(nameEQ.length);
-        }
-    }
-
-    return null;
-}
+import {readCookie} from "../../../features/auth/util/Cookies";
 
 export default function SignIn() {
     const router = useRouter();

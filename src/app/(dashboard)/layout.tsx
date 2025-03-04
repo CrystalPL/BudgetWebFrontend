@@ -1,13 +1,14 @@
 'use client'
 import {AppRouterCacheProvider} from '@mui/material-nextjs/v13-appRouter';
 import React, {PropsWithChildren} from "react";
-import ThemeProvider from "../../components/theme/ThemeProvider";
-import HeaderComponent from "../../components/layout/Header";
-import {SidebarComponent} from "../../components/layout/Sidebar";
+import ThemeProvider from "../../styles/ThemeProvider";
+import HeaderComponent from "../../components/common/Header";
+import {SidebarComponent} from "../../components/common/Sidebar";
 import Box from "@mui/material/Box";
 import {GlobalStyles} from "@mui/material";
-import EmailToConfirmAlert from "../../components/layout/EmailToConfirmAlert";
-import {AvatarProvider} from "../../components/AccountHeaderInfo";
+import EmailToConfirmAlert from "../../components/common/EmailToConfirmAlert";
+import {AvatarProvider} from "../../context/AccountHeaderInfo";
+import SnackbarProvider from "../../context/SnackbarContext";
 
 export default function RootLayout(props: PropsWithChildren) {
     return (
@@ -33,7 +34,9 @@ export default function RootLayout(props: PropsWithChildren) {
                                 lg: 'var(--SideBar-width)'
                             }
                         }}>
-                        {props.children}
+                        <SnackbarProvider>
+                            {props.children}
+                        </SnackbarProvider>
                     </Box>
                 </AvatarProvider>
             </ThemeProvider>
