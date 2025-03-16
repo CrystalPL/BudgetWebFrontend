@@ -11,8 +11,8 @@ import {
 import {RegisterRequest} from "./RegisterRequest";
 import axios from "axios";
 
-export async function resendEmail(): Promise<ResponseAPI<AccountConfirmationResendEmailMessage>> {
-    return handleRequest<typeof AccountConfirmationResendEmailMessage>("/auth/resend-email", {}, AccountConfirmationResendEmailMessage);
+export async function resendEmail(token: string | null): Promise<ResponseAPI<AccountConfirmationResendEmailMessage>> {
+    return handleRequest<typeof AccountConfirmationResendEmailMessage>("/auth/resend-email", {registrationToken: token}, AccountConfirmationResendEmailMessage);
 }
 
 export async function confirmRegister(confirmationToken: string): Promise<ResponseAPI<AccountConfirmationMessage>> {
@@ -38,8 +38,16 @@ export async function passwordRecovery(emailToReset: string): Promise<ResponseAP
     return handleRequest<typeof PasswordRecoveryMessage>("/auth/password/recovery", {emailToReset}, PasswordRecoveryMessage);
 }
 
-export async function login(email: string, password: string, rememberMe: boolean): Promise<ResponseAPI<LoginMessage>> {
-    return handleRequest<typeof LoginMessage>("/auth/login", {email, password, rememberMe}, LoginMessage);
+export interface RegistrationToken {
+    registrationToken: string;
+}
+
+export async function login(email: string, password: string, rememberMe: boolean): Promise<ResponseAPI<LoginMessage, RegistrationToken>> {
+    return handleRequest<typeof LoginMessage, RegistrationToken>("/auth/login", {
+        email,
+        password,
+        rememberMe
+    }, LoginMessage);
 }
 
 export async function register(registerRequest: RegisterRequest): Promise<ResponseAPI<any>> {

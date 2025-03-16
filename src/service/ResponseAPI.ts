@@ -6,16 +6,15 @@ export const API_URL: string = "http://localhost:8092"
 // export const WEBSOCKET_URL: string = "wss://budgetapp.pl/ws"
 export const WEBSOCKET_URL: string = "ws://localhost:8092/ws"
 
-export class ResponseAPI<T> {
+export class ResponseAPI<T, U = {}> {
     private readonly _message: T;
-    private readonly _success: boolean
+    private readonly _success: boolean;
+    private readonly _additionalData: U;
 
-    constructor(success: boolean, message: T);
-    constructor(success: string, message: T);
-
-    constructor(success: boolean | string, message: T) {
-        this._success = typeof success === "boolean" ? success : success === "SUCCESS"
+    constructor(success: boolean | string, message: T, additionalData: U = {} as U) {
+        this._success = typeof success === "boolean" ? success : success === "SUCCESS";
         this._message = message;
+        this._additionalData = additionalData;
     }
 
     get message(): string {
@@ -25,24 +24,48 @@ export class ResponseAPI<T> {
     get success(): boolean {
         return this._success;
     }
+
+    get additionalData(): U {
+        return this._additionalData;
+    }
 }
 
-export async function handleRequest<T extends Record<string, string>>(url: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T]>> {
-    let message: string;
+async function handleApiRequest<T extends Record<string, string>, U>(
+    method: 'post' | 'delete',
+    url: string,
+    responseEnum: T,
+    data?: any,
+    config = {}
+): Promise<ResponseAPI<T[keyof T], U>> {
     try {
-        const response = await axios.post(API_URL + url, data, {withCredentials: true, ...config});
-        message = response.data.message;
+        const response = await axios({
+            method,
+            url: API_URL + url,
+            data,
+            withCredentials: true,
+            ...config
+        });
+
+        const message = response.data.message;
+
+        const additionalData: U = response.data as U;
+
+        return new ResponseAPI<T[keyof T], U>(message, responseEnum[message as keyof T], additionalData);
     } catch (error) {
         if (!axios.isAxiosError(error) || !error.response || (error.response.status !== HttpStatusCode.Forbidden && !error.response.data)) {
-            return new ResponseAPI<T[keyof T]>(false, responseEnum['UNDEFINED_ERROR'] as T[keyof T]);
+            return new ResponseAPI<T[keyof T], U>(false, responseEnum['UNDEFINED_ERROR'] as T[keyof T], {} as U);
         }
-
         if (error.response.status === HttpStatusCode.Forbidden) {
-            return new ResponseAPI<T[keyof T]>(false, responseEnum['NO_PERMISSION'] as T[keyof T]);
+            return new ResponseAPI<T[keyof T], U>(false, responseEnum['NO_PERMISSION'] as T[keyof T], {} as U);
         }
-
-        message = error.response.data.message;
+        return new ResponseAPI<T[keyof T], U>(error.response.data.message, responseEnum[error.response.data.message as keyof T], error.response.data as U);
     }
+}
 
-    return new ResponseAPI<T[keyof T]>(message, responseEnum[message as keyof T]);
+export async function handleRequest<T extends Record<string, string>, U = {}>(url: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T], U>> {
+    return handleApiRequest<T, U>('post', url, responseEnum, data, config);
+}
+
+export async function handleDeleteRequest<T extends Record<string, string>>(urlWithData: string, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T]>> {
+    return handleApiRequest('delete', urlWithData, responseEnum, undefined, config);
 }

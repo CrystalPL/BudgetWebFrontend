@@ -13,8 +13,8 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {resetPassword} from "../../../features/auth/api/AuthenticationService";
 import {PasswordResetMessage, PasswordValidationMessage} from "../../../features/auth/api/AuthResponseMessages";
 import {validatePassword} from "../../../features/auth/util/DataValidator";
-import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function ResetPasswordForm() {
     const [status, setStatus] = useState<'success' | 'error'>('error');

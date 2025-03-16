@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import {Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import ChangeEmailForm from "./form/ChangeEmailForm";
 import ChangePasswordForm from "./form/ChangePasswordForm";
 import ChangeNicknameForm from "./form/ChangeNicknameForm";
@@ -10,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
+import CustomDialog from "../../../components/CustomDialog";
 
 export function AccountDetails(): React.JSX.Element {
     const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
@@ -52,26 +52,16 @@ export function AccountDetails(): React.JSX.Element {
                     </CardContent>
                 </Card>
             </Grid>
-            <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{fontWeight: 'medium'}}>Potwierdzenie usunięcia</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        Czy na pewno chcesz usunąć konto?
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setConfirmDeleteOpen(false)} variant="text" sx={{
-                        '&:hover': {
-                            backgroundColor: 'rgba(169, 190, 119, 0.2)',
-                        },
-                    }}>
-                        Anuluj
-                    </Button>
-                    <Button variant="contained" color="error">
-                        Usuń
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <CustomDialog
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                title="Potwierdzenie usunięcia"
+                content="Czy na pewno chcesz usunąć konto?"
+                confirmText="Usuń"
+                confirmAction={() => {
+                }} // Musisz stworzyć funkcję usuwania konta
+                confirmColor="error"
+            />
         </Grid>
     );
 }

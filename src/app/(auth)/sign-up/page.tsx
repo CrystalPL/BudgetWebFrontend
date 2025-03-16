@@ -17,10 +17,10 @@ import {validateEmailFormat, validateLength, validatePassword} from "../../../fe
 import {PasswordValidationMessage, RegisterMessage} from "../../../features/auth/api/AuthResponseMessages";
 import {ResponseAPI} from "../../../service/ResponseAPI";
 import {register} from "../../../features/auth/api/AuthenticationService";
-import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function SignUp() {
     const router = useRouter();

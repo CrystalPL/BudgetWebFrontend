@@ -2,11 +2,14 @@ import {Box, Button, Typography} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import AddIcon from "@mui/icons-material/Add";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import {AdminPanelSettings, TextFields} from "@mui/icons-material";
+import {AdminPanelSettings, DeleteForever, DoorBack, TextFields} from "@mui/icons-material";
 import * as React from "react";
 
 interface DashboardHeaderProps {
     openInvitingDialog: () => void
+    openHouseholdChangeNameDialog: () => void
+    openDeleteHouseholdDialog: () => void
+    openLeaveHouseholdDialog: () => void
 }
 
 export default function DashboardHeader(props: DashboardHeaderProps) {
@@ -16,18 +19,27 @@ export default function DashboardHeader(props: DashboardHeaderProps) {
             justifyContent: 'space-between',
             alignItems: 'center',
             mb: 4,
-            flexDirection: {xs: 'column', md: 'row'}
+            flexDirection: 'column'
         }}>
-            <Typography variant="h5" sx={{fontWeight: 'medium'}}>
+            <Typography variant="h4" sx={{fontWeight: 'medium'}}>
                 Zarządzanie gospodarstwem
             </Typography>
 
-            <Stack direction={{xs: 'column', md: 'row'}} component="div" spacing={3} mt={{xs: 3, md: 0}}>
+            <Stack direction={{xs: 'column', lg: 'row'}} component="div" spacing={3} mt={3}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DeleteForever/>}
+                    onClick={props.openDeleteHouseholdDialog}
+                >
+                    Usuń gospodarstwo
+                </Button>
+
                 <Button
                     variant="contained"
                     color="primary"
                     startIcon={<TextFields/>}
-                    // onClick={zmiana nazwy}
+                    onClick={props.openHouseholdChangeNameDialog}
                 >
                     Zmień nazwe
                 </Button>
@@ -57,6 +69,15 @@ export default function DashboardHeader(props: DashboardHeaderProps) {
                     href="/household/roles"
                 >
                     Zarządzanie rolami
+                </Button>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<DoorBack/>}
+                    onClick={props.openLeaveHouseholdDialog}
+                >
+                    Opuść gospodarstwo
                 </Button>
             </Stack>
         </Box>

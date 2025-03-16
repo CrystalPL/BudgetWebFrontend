@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import {Alert} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {resendEmail} from "../api/AuthenticationService";
+import {useSearchParams} from "next/navigation";
 
 interface ResendEmailButtonProps {
     children: React.ReactNode;
@@ -13,6 +14,15 @@ export const ResendEmailButton: React.FC<ResendEmailButtonProps> = ({ children }
     const [timeLeft, setTimeLeft] = useState(0);
     const [status, setStatus] = useState<'success' | 'error'>();
     const [statusMessage, setStatusMessage] = useState<string>("");
+
+    const searchParams = useSearchParams();
+    const registrationToken = searchParams.get("registrationToken");
+    useEffect(() => {
+        if (!registrationToken) {
+            setStatus("error");
+            setStatusMessage("Nie odnaleziono tokenu do potwierdzenia rejestracji");
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const storedTimeString = localStorage.getItem('resendEmailTime');
@@ -37,7 +47,11 @@ export const ResendEmailButton: React.FC<ResendEmailButtonProps> = ({ children }
     }, []);
 
     const handleResendConfirmationEmail = async () => {
-        const resendEmailResponse = await resendEmail();
+        if (!registrationToken) {
+            return
+        }
+
+        const resendEmailResponse = await resendEmail(registrationToken);
         setStatus(resendEmailResponse.success ? 'success' : 'error')
         setStatusMessage(resendEmailResponse.message)
 

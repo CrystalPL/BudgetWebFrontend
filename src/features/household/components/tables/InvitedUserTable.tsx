@@ -1,12 +1,23 @@
-import {IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tooltip
+} from "@mui/material";
 import UndoIcon from "@mui/icons-material/Undo";
 import * as React from "react";
 import {useState} from "react";
-import {sort} from "../../../util/SortUtil";
-import TableColumn from "./base/TableColumn";
-import {undoInvitation} from "../api/HouseholdService";
-import {useSnackbarContext} from "../../../context/SnackbarContext";
-import {HouseholdInvitedMember, HouseholdReloadKeyProps} from "../api/HouseholdModel";
+import {sort} from "../../../../util/SortUtil";
+import TableColumn from "../base/TableColumn";
+import {HouseholdInvitedMember, HouseholdReloadKeyProps} from "../../api/HouseholdModel";
+import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
+import {undoInvitation} from "../../api/HouseholdService";
+import ConfirmationDialog from "../base/ConfirmationDialog";
 
 interface InvitedUserTableProps extends HouseholdReloadKeyProps {
     householdInviteMembers: HouseholdInvitedMember[]
@@ -16,18 +27,16 @@ export default function InvitedUserTable({householdInviteMembers: members, reloa
     const [orderEmail, setOrderEmail] = useState<'asc' | 'desc'>('asc');
     const [orderInvitationDate, setOrderInvitationDate] = useState<'asc' | 'desc'>('asc');
     const [orderBy, setOrderBy] = useState<'email' | 'invitedDate'>('email');
+    const [editedMember, setEditedMember] = useState<HouseholdInvitedMember | null>(null);
+    const undoInvitationController: DialogShowingController = GetShowingController()
 
     const sortedMembers: HouseholdInvitedMember[] = orderBy === 'email'
         ? sort(orderEmail, members, value => value.email)
         : sort(orderInvitationDate, members, value => value.invitedTime.getMilliseconds());
 
-    const snackbarController = useSnackbarContext();
-    const handleUndoInvite = async (member: HouseholdInvitedMember) => {
-        const result = await undoInvitation(member.userId)
-        snackbarController.setOpenSnackbar(true)
-        snackbarController.setStatusMessage(result.message)
-        snackbarController.setStatus(result.success ? 'success' : 'error')
-        reloadTable()
+    const handleUndoInvite = (member: HouseholdInvitedMember) => {
+        setEditedMember(member)
+        undoInvitationController.openDialog()
     }
 
     return (
@@ -72,17 +81,30 @@ export default function InvitedUserTable({householdInviteMembers: members, reloa
                                     second: '2-digit'
                                 })}</TableCell>
                                 <TableCell align="right">
-                                    <IconButton
-                                        color="error"
-                                        onClick={() => handleUndoInvite(member)}
-                                    >
-                                        <UndoIcon/>
-                                    </IconButton>
+                                    <Tooltip title="Cofnij zaproszenie">
+                                        <IconButton
+                                            color="error"
+                                            onClick={() => handleUndoInvite(member)}
+                                        >
+                                            <UndoIcon/>
+                                        </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </TableRow>
                         ))}
                 </TableBody>
             </Table>
+
+            <ConfirmationDialog
+                open={undoInvitationController.openDialogStatus}
+                closeDialog={undoInvitationController.closeDialog}
+                title="Potwierdzenie cofnięcia zaproszenia"
+                content={`Czy na pewno chcesz cofnąć zaproszenie dla użytkownika ${editedMember?.email}?`}
+                confirmText="Cofnij"
+                confirmColor="error"
+                action={() => undoInvitation(editedMember?.userId)}
+                reloadTable={reloadTable}
+            />
         </TableContainer>
     )
 }

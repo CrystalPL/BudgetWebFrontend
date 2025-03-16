@@ -18,3 +18,8 @@ export interface HouseholdInvitedMember {
 export interface HouseholdReloadKeyProps {
     reloadTable: () => void;
 }
+
+export interface EditUserRole {
+    roleId: number
+    roleName: string
+}

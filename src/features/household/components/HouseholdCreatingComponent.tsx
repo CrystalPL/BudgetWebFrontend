@@ -1,13 +1,14 @@
-import {Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
+import {Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import * as React from "react";
-import {validateLength} from "../../auth/util/DataValidator";
 import {CreateHouseholdMessage} from "../api/HouseholdMessage";
 import {createHousehold} from "../api/HouseholdService";
 import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 import {useSnackbarContext} from "../../../context/SnackbarContext";
 import {HouseholdReloadKeyProps} from "../api/HouseholdModel";
+import {validateHouseholdName} from "../HouseholdUtil";
+import CustomDialog from "../../../components/CustomDialog";
 
 export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProps) {
     const [open, setOpen] = React.useState(false);
@@ -16,7 +17,7 @@ export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProp
     const snackbarController = useSnackbarContext();
 
     const handleCreate = async () => {
-        validateName()
+        setNameError(validateHouseholdName(name))
         if (nameError !== '') {
             return
         }
@@ -40,28 +41,12 @@ export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProp
         setNameError('')
     }
 
-    const validateName = (): string => {
-        if (!name || name.trim() === '') {
-            return CreateHouseholdMessage.NAME_NOT_EXISTS
-        }
-
-        if (!validateLength(name, 65)) {
-            return CreateHouseholdMessage.NAME_TOO_LONG
-        }
-
-        if (validateLength(name, 1)) {
-            return CreateHouseholdMessage.NAME_TOO_SHORT
-        }
-
-        return ""
-    }
-
     const nameFieldProps: CustomFormControlProps = {
         valueState: [name, setName],
         errorState: [nameError, setNameError],
         label: 'Nazwa gospodarstwa',
         name: 'username',
-        validateFunction: validateName
+        validateFunction: () => validateHouseholdName(name)
     };
 
     return (
@@ -89,30 +74,14 @@ export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProp
                 Utwórz gospodarstwo
             </Button>
 
-            <Dialog open={open} onClose={() => handleClose()} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{fontWeight: 'medium'}}>Stwórz gospodarstwo</DialogTitle>
-                <DialogContent>
-                    <Box mt={'8px'}>
-                        <CustomFormControl {...nameFieldProps}></CustomFormControl>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() => handleClose()}
-                        variant="text"
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(169, 190, 119, 0.2)',
-                            },
-                        }}
-                    >
-                        Anuluj
-                    </Button>
-                    <Button onClick={handleCreate} variant="contained">
-                        Stwórz
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <CustomDialog
+                open={open}
+                onClose={handleClose}
+                title="Stwórz gospodarstwo"
+                content={<Box mt={1}><CustomFormControl {...nameFieldProps} /></Box>}
+                confirmText="Stwórz"
+                confirmAction={handleCreate}
+            />
         </Box>
     );
 }

@@ -3,10 +3,10 @@ import HouseholdNotExists from "../../../features/household/components/Household
 import {useEffect, useState} from "react";
 import {getInvitedMembers, getMembers} from "../../../features/household/api/HouseholdService";
 import TableSkeleton from "../../../features/household/components/base/HouseholdTableSkeleton";
-import NewHouseholdDashboard from "../../../features/household/NewHouseholdDashboard";
+import HouseholdDashboard from "../../../features/household/HouseholdDashboard";
 import {HouseholdInvitedMember, HouseholdMember} from "../../../features/household/api/HouseholdModel";
 
-export default function HouseholdDashboard() {
+export default function HouseholdDashboardPage() {
     const [reloadKey, setReloadKey] = useState(0)
     const [members, setMembers] = useState<HouseholdMember[]>()
     const [invitedMembers, setInvitedMembers] = useState<HouseholdInvitedMember[]>()
@@ -29,9 +29,9 @@ export default function HouseholdDashboard() {
     }
 
     if (members.length !== 0) {
-        return <NewHouseholdDashboard householdMembers={members}
-                                      householdInviteMembers={invitedMembers}
-                                      reloadTable={reloadTable}></NewHouseholdDashboard>;
+        return <HouseholdDashboard householdMembers={members}
+                                   householdInviteMembers={invitedMembers}
+                                   reloadTable={reloadTable}></HouseholdDashboard>;
     } else {
         return <HouseholdNotExists reloadTable={reloadTable}></HouseholdNotExists>
     }

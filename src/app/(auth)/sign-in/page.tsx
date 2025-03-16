@@ -15,12 +15,14 @@ import Container from '@mui/material/Container';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {Alert, IconButton} from "@mui/material";
 import {useRouter} from "next/navigation";
-import {login} from "../../../features/auth/api/AuthenticationService";
+import {login, RegistrationToken} from "../../../features/auth/api/AuthenticationService";
 import {LoginMessage} from "../../../features/auth/api/AuthResponseMessages";
 import {validateEmailFormat} from "../../../features/auth/util/DataValidator";
-import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import Stack from "@mui/material/Stack";
 import {readCookie} from "../../../features/auth/util/Cookies";
+
+import {ResponseAPI} from "../../../service/ResponseAPI";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function SignIn() {
     const router = useRouter();
@@ -48,12 +50,12 @@ export default function SignIn() {
             return
         }
 
-        const response = await login(email, password, rememberMe);
+        const response: ResponseAPI<LoginMessage, RegistrationToken> = await login(email, password, rememberMe);
         if (!response.success) {
             const message: string = response.message;
             switch (message) {
                 case LoginMessage.ACCOUNT_NOT_CONFIRMED:
-                    router.push('/account-inactive')
+                    router.push(`/account-inactive?registrationToken=${response.additionalData.registrationToken}`);
                     break
                 case LoginMessage.USER_NOT_EXIST:
                     setEmailError(message)

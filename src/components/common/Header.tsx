@@ -251,6 +251,7 @@ function ShowMenuItems({popoverController}: { popoverController: UserPopoverCont
             onClose={popoverController.handleClose}
             slotProps={{paper: {sx: {width: '240px'}}}}
             disableScrollLock
+            onBlur={popoverController.handleClose}
         >
             <Box sx={{p: '16px 20px '}}>
                 <Typography variant="subtitle1">{avatarContext.accountInfo?.nickname}</Typography>

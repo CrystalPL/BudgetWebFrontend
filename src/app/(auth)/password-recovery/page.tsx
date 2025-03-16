@@ -14,8 +14,8 @@ import {Alert} from "@mui/material";
 import {passwordRecovery} from "../../../features/auth/api/AuthenticationService";
 import {ResponseAPI} from "../../../service/ResponseAPI";
 import {PasswordRecoveryMessage} from "../../../features/auth/api/AuthResponseMessages";
-import {CustomFormControl, CustomFormControlProps} from "../../../features/account/components/AccountDetails";
 import {validateEmailFormat} from "../../../features/auth/util/DataValidator";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function ResetPassword() {
     const [status, setStatus] = useState<'success' | 'error'>();
