@@ -26,12 +26,18 @@ export enum UndoInvitationMessage {
     INVITATION_NOT_FOUND = "Nie znaleziono użytkownika"
 }
 
-export enum EditUserRoleMessage {
+export enum ChangeUserRoleMessage {
     SUCCESS = "Pomyślnie zmieniono role użytkownika",
     NO_PERMISSION = "Nie masz uprawnień do zmiany roli",
     MISSING_MEMBER_ID = "Nie odnaleziono id użytkownika",
     MISSING_ROLE_ID = "Nie odnaleziono id roli",
     ERROR_NUMBER_FORMAT = "Błąd strony: Nieprawidłowe id użytkownika lub roli",
+    UNDEFINED_ERROR = "Wystąpił nieoczekiwany błąd",
+    USER_NOT_FOUND = "Taki użytkownik nie istnieje",
+    DIFFERENT_HOUSEHOLD = "Użytkownik nie jest w twoim gospodarstwie",
+    ROLE_NOT_FOUND = "Taka rola nie istnieje",
+    SET_OWNER_ROLE_ERROR = "Nie można ustawiać roli właścicielskiej",
+    CHANGE_OWNER_ROLE = "Nie możesz zmienić roli właściciela gospodarstwa"
 }
 
 export enum DeleteUserMessage {

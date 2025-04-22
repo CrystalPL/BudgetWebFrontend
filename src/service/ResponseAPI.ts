@@ -31,7 +31,7 @@ export class ResponseAPI<T, U = {}> {
 }
 
 async function handleApiRequest<T extends Record<string, string>, U>(
-    method: 'post' | 'delete',
+    method: 'post' | 'delete' | 'patch' | 'get',
     url: string,
     responseEnum: T,
     data?: any,
@@ -55,17 +55,27 @@ async function handleApiRequest<T extends Record<string, string>, U>(
         if (!axios.isAxiosError(error) || !error.response || (error.response.status !== HttpStatusCode.Forbidden && !error.response.data)) {
             return new ResponseAPI<T[keyof T], U>(false, responseEnum['UNDEFINED_ERROR'] as T[keyof T], {} as U);
         }
+
         if (error.response.status === HttpStatusCode.Forbidden) {
             return new ResponseAPI<T[keyof T], U>(false, responseEnum['NO_PERMISSION'] as T[keyof T], {} as U);
         }
+
         return new ResponseAPI<T[keyof T], U>(error.response.data.message, responseEnum[error.response.data.message as keyof T], error.response.data as U);
     }
 }
 
-export async function handleRequest<T extends Record<string, string>, U = {}>(url: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T], U>> {
+export async function handleGetRequest<T extends Record<string, string>, U = {}>(url: string, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T], U>> {
+    return handleApiRequest<T, U>('get', url, responseEnum, {}, config);
+}
+
+export async function handlePostRequest<T extends Record<string, string>, U = {}>(url: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T], U>> {
     return handleApiRequest<T, U>('post', url, responseEnum, data, config);
 }
 
-export async function handleDeleteRequest<T extends Record<string, string>>(urlWithData: string, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T]>> {
-    return handleApiRequest('delete', urlWithData, responseEnum, undefined, config);
+export async function handlePatchRequest<T extends Record<string, string>, U = {}>(url: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T], U>> {
+    return handleApiRequest<T, U>('patch', url, responseEnum, data, config);
+}
+
+export async function handleDeleteRequest<T extends Record<string, string>>(urlWithData: string, data: any, responseEnum: T, config = {}): Promise<ResponseAPI<T[keyof T]>> {
+    return handleApiRequest('delete', urlWithData, responseEnum, data, config);
 }

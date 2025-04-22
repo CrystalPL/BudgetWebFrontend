@@ -1,5 +1,5 @@
 import axios from "axios";
-import {API_URL, handleRequest, ResponseAPI} from "@/service/ResponseAPI";
+import {API_URL, handlePostRequest, ResponseAPI} from "@/service/ResponseAPI";
 import {
     ChangeEmailMessage,
     ChangeNicknameMessage,
@@ -10,15 +10,15 @@ import {
 import {AccountInfoResponse, ChangeEmailRequest, ChangePasswordRequest} from "@/features/account/api/AccountModel";
 
 export async function changeNickname(nickname: string): Promise<ResponseAPI<ChangeNicknameMessage>> {
-    return handleRequest<typeof ChangeNicknameMessage>("/account/change-nickname", {nickname}, ChangeNicknameMessage);
+    return handlePostRequest<typeof ChangeNicknameMessage>("/account/change-nickname", {nickname}, ChangeNicknameMessage);
 }
 
 export async function changePassword(changePasswordRequest: ChangePasswordRequest): Promise<ResponseAPI<ChangePasswordMessage>> {
-    return handleRequest<typeof ChangePasswordMessage>("/account/change-password", changePasswordRequest, ChangePasswordMessage);
+    return handlePostRequest<typeof ChangePasswordMessage>("/account/change-password", changePasswordRequest, ChangePasswordMessage);
 }
 
 export async function changeEmailAddress(changeEmailRequest: ChangeEmailRequest): Promise<ResponseAPI<ChangeEmailMessage>> {
-    return handleRequest<typeof ChangeEmailMessage>("/account/change-email", changeEmailRequest, ChangeEmailMessage);
+    return handlePostRequest<typeof ChangeEmailMessage>("/account/change-email", changeEmailRequest, ChangeEmailMessage);
 }
 
 export async function getAccountInfo(): Promise<AccountInfoResponse> {
@@ -28,11 +28,11 @@ export async function getAccountInfo(): Promise<AccountInfoResponse> {
 }
 
 export async function confirmEmailChanging(confirmationToken: string): Promise<ResponseAPI<ConfirmEmailChanging>> {
-    return handleRequest<typeof ConfirmEmailChanging>("/account/confirm-change-email", {token: confirmationToken}, ConfirmEmailChanging);
+    return handlePostRequest<typeof ConfirmEmailChanging>("/account/confirm-change-email", {token: confirmationToken}, ConfirmEmailChanging);
 }
 
 export async function uploadAvatar(formData: FormData): Promise<ResponseAPI<UploadAvatarMessage>> {
-    return handleRequest<typeof UploadAvatarMessage>("/account/avatar", formData, UploadAvatarMessage, {
+    return handlePostRequest<typeof UploadAvatarMessage>("/account/avatar", formData, UploadAvatarMessage, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

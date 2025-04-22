@@ -1,3 +1,4 @@
+'use client'
 import {
     Chip,
     IconButton,
@@ -17,7 +18,7 @@ import {useState} from "react";
 import {sort} from "../../../../util/SortUtil";
 import TableColumn from "../base/TableColumn";
 import {HouseholdMember, HouseholdMemberRole, HouseholdReloadKeyProps} from "../../api/HouseholdModel";
-import EditUserRoleDialog from "../dialogs/EditUserRoleDialog";
+import ChangeUserRoleDialog from "../dialogs/ChangeUserRoleDialog";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import {deleteUser, transferHouseholdOwner} from "../../api/HouseholdService";
 import ConfirmationDialog from "../base/ConfirmationDialog";
@@ -74,7 +75,6 @@ export default function UserTable({householdMembers: members, reloadTable}: User
                     </TableRow>
                 </TableHead>
 
-
                 <TableBody>
                     {sortedMembers
                         .map((member) => (
@@ -128,8 +128,8 @@ export default function UserTable({householdMembers: members, reloadTable}: User
                         ))}
                 </TableBody>
             </Table>
-            <EditUserRoleDialog reloadTable={reloadTable}
-                                editedMember={editedMember} {...editUserRoleDialogController}></EditUserRoleDialog>
+            <ChangeUserRoleDialog reloadTable={reloadTable}
+                                  editedMember={editedMember} {...editUserRoleDialogController}></ChangeUserRoleDialog>
 
             {/*Dialog go usuwania użytkownika*/}
             <ConfirmationDialog

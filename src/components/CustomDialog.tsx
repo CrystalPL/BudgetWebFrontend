@@ -30,7 +30,11 @@ export default function CustomDialog({
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="text"
-                        sx={{"&:hover": {backgroundColor: "rgba(169, 190, 119, 0.2)"}}}>
+                        sx={{
+                            "&:hover": {
+                                backgroundColor: "rgba(75,187,71,0.2)",
+                            },
+                        }}>
                     {cancelText}
                 </Button>
                 <Button onClick={confirmAction} variant="contained" color={confirmColor}>

@@ -15,30 +15,31 @@ export default function AccountInactive() {
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
+            <CssBaseline/>
             <Box
-                marginTop={{ lg: 5, xl: 20 }}
+                marginTop={{lg: 5, xl: 20}}
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
+                <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                    <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">Konto nieaktywne</Typography>
 
                 <ResendEmailButton>
-                    <Typography sx={{ mt: 2 }} variant="body1">
-                        Twoje konto nie zostało jeszcze aktywowane. Prosimy sprawdzić swoją skrzynkę pocztową i kliknąć w
+                    <Typography sx={{mt: 2}} variant="body1">
+                        Twoje konto nie zostało jeszcze aktywowane. Prosimy sprawdzić swoją skrzynkę pocztową i kliknąć
+                        w
                         link aktywacyjny.
                     </Typography>
                 </ResendEmailButton>
                 <Button
                     fullWidth
                     variant="outlined"
-                    sx={{ mt: 2, mb: 2 }}
+                    sx={{mt: 2, mb: 2}}
                     onClick={() => router.push('/sign-in')}
                 >
                     Wróć do logowania

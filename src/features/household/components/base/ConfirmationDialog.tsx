@@ -6,7 +6,7 @@ interface ConfirmationDialogProps {
     open: boolean;
     closeDialog: () => void;
     title: string;
-    content: string;
+    content: React.ReactNode;
     confirmText: string;
     confirmColor?: "primary" | "secondary" | "error";
     action: () => Promise<{ success: boolean, message: string }>;

@@ -1,38 +1,16 @@
-'use client'
-import HouseholdNotExists from "../../../features/household/components/HouseholdCreatingComponent";
-import {useEffect, useState} from "react";
 import {getInvitedMembers, getMembers} from "../../../features/household/api/HouseholdService";
-import TableSkeleton from "../../../features/household/components/base/HouseholdTableSkeleton";
-import HouseholdDashboard from "../../../features/household/HouseholdDashboard";
-import {HouseholdInvitedMember, HouseholdMember} from "../../../features/household/api/HouseholdModel";
+import {HouseholdInvitedMember} from "../../../features/household/api/HouseholdModel";
+import HouseholdDashboardWrapper from "../../../features/household/HouseholdDashboardWrapper";
+import {getCookie} from "../../../util/CookieUtil";
 
-export default function HouseholdDashboardPage() {
-    const [reloadKey, setReloadKey] = useState(0)
-    const [members, setMembers] = useState<HouseholdMember[]>()
-    const [invitedMembers, setInvitedMembers] = useState<HouseholdInvitedMember[]>()
+export default async function page() {
+    const members = await getMembers(getCookie())
+    const invitedMembers: HouseholdInvitedMember[] = await getInvitedMembers(getCookie())
 
-    const reloadTable = () => {
-        setReloadKey(reloadKey + 1);
-    }
-
-    useEffect(() => {
-        async function fetchMembers() {
-            setMembers(await getMembers());
-            setInvitedMembers(await getInvitedMembers());
-        }
-
-        fetchMembers();
-    }, [reloadKey]);
-
-    if (!members || !invitedMembers) {
-        return <TableSkeleton></TableSkeleton>
-    }
-
-    if (members.length !== 0) {
-        return <HouseholdDashboard householdMembers={members}
-                                   householdInviteMembers={invitedMembers}
-                                   reloadTable={reloadTable}></HouseholdDashboard>;
-    } else {
-        return <HouseholdNotExists reloadTable={reloadTable}></HouseholdNotExists>
-    }
+    return (
+        <HouseholdDashboardWrapper
+            initialMembers={members}
+            initialInvitedMembers={invitedMembers}
+        />
+    );
 }

@@ -1,9 +1,10 @@
+'use client'
 import {FormControl, FormHelperText, InputLabel, MenuItem, Select} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {DialogShowingController} from "../../../../controllers/DialogShowingController";
-import {EditUserRole, HouseholdMember, HouseholdReloadKeyProps} from "../../api/HouseholdModel";
-import {editRole, getRoles} from "../../api/HouseholdService";
+import {ChangeUserRole, HouseholdMember, HouseholdReloadKeyProps} from "../../api/HouseholdModel";
+import {changeRole, getRoles} from "../../api/HouseholdService";
 import {ErrorOutline} from "@mui/icons-material";
 import CustomDialog from "../../../../components/CustomDialog";
 
@@ -11,21 +12,19 @@ interface EditUserRoleDialogProps extends DialogShowingController, HouseholdRelo
     editedMember: HouseholdMember | null
 }
 
-export default function EditUserRoleDialog({
+export default function ChangeUserRoleDialog({
                                                openDialogStatus: open,
                                                closeDialog,
                                                reloadTable,
                                                editedMember
                                            }: EditUserRoleDialogProps) {
-    const [roles, setRoles] = useState<EditUserRole[]>([])
+    const [roles, setRoles] = useState<ChangeUserRole[]>([])
     const [choosenRole, setChoosenRole] = useState<string | String>()
     const [error, setError] = useState<string>("")
 
     useEffect(() => {
-        // setError("Odjebałeś")
         const fetchRoles = async () => {
-            const roles1 = await getRoles();
-            setRoles(roles1)
+            setRoles(await getRoles())
         }
 
         fetchRoles()
@@ -34,7 +33,7 @@ export default function EditUserRoleDialog({
 
     const saveRoleEdit = async () => {
         const role = roles.filter(x => x.roleName === choosenRole)[0];
-        const result = await editRole(editedMember?.userId, role.roleId);
+        const result = await changeRole(editedMember?.userId, role.roleId);
         if (!result.success) {
             setError(result.message)
             return

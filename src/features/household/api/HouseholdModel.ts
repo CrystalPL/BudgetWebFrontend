@@ -19,7 +19,7 @@ export interface HouseholdReloadKeyProps {
     reloadTable: () => void;
 }
 
-export interface EditUserRole {
+export interface ChangeUserRole {
     roleId: number
     roleName: string
 }

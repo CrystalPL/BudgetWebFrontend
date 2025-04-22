@@ -1,3 +1,4 @@
+'use client'
 import CustomDialog from "../../../../components/CustomDialog";
 import * as React from "react";
 import {useState} from "react";

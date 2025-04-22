@@ -1,3 +1,4 @@
+'use client'
 import Container from "@mui/material/Container";
 import * as React from "react";
 import DashboardHeader from "./components/DashboardHeader";
