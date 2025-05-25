@@ -2,11 +2,11 @@ import * as React from "react";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import {FormHelperText} from "@mui/material";
+import {FormHelperText, Typography} from "@mui/material";
 import {ErrorOutline} from "@mui/icons-material";
 
 export interface CustomFormControlProps {
-    valueState: [string, React.Dispatch<React.SetStateAction<string>>];
+    valueState: [any, React.Dispatch<React.SetStateAction<any>>];
     errorState: [string, React.Dispatch<React.SetStateAction<string>>];
     label: string
     name: string
@@ -29,9 +29,16 @@ export function CustomFormControl(props: CustomFormControlProps) {
     }
 
     return <FormControl fullWidth required error={!!error}>
-        <InputLabel>{props.label}</InputLabel>
+        <InputLabel
+            sx={{
+                fontSize: '16px',
+                '&.Mui-focused, &.MuiInputLabel-shrink': {
+                    fontSize: '22px',
+                },
+            }}
+        >{props.label}</InputLabel>
         <OutlinedInput
-            label={props.label}
+            label={<Typography>{props.label} + {""}</Typography>}
             name={props.name}
             value={value}
             type={props.type}

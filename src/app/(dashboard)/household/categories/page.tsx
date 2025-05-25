@@ -1,11 +1,9 @@
 import CategoryDashboardWrapper from "../../../../features/categories/CategoryDashboardWrapper";
+import {getCookie} from "../../../../util/CookieUtil";
+import {getCategories} from "../../../../features/categories/api/CategoryService";
 
-export default function Page() {
-    const categories = [
-        {id: 1, name: "Jedzenie", color: "#FF5722"},
-        {id: 2, name: "Technologia", color: "#2196F3"},
-        {id: 3, name: "Sport", color: "#4CAF50"},
-    ]
+export default async function Page() {
+    const categories = await getCategories(getCookie());
 
     return <CategoryDashboardWrapper categories={categories}></CategoryDashboardWrapper>
 }

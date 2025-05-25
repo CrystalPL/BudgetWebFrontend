@@ -2,6 +2,7 @@
 import {useEffect, useState} from "react";
 import CategoryDashboard from "./CategoryDashboard";
 import {Category} from "./api/CategoryModel";
+import {getCategories} from "./api/CategoryService";
 
 interface Props {
     categories: Category[]
@@ -17,12 +18,7 @@ export default function CategoryDashboardWrapper(props: Props) {
 
     useEffect(() => {
         async function fetchCategories() {
-            await new Promise((resolve) => setTimeout(resolve, 500)); // Opóźnienie 500 ms
-            setCategories([
-                {id: 1, name: "Jedzenie", color: "#FF5722"},
-                {id: 2, name: "Technologia", color: "#2196F3"},
-                {id: 3, name: "Sport", color: "#4CAF50"},
-            ]);
+            setCategories(await getCategories())
         }
 
         if (reloadKey != 0) {

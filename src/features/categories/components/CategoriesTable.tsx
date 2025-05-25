@@ -20,9 +20,9 @@ import {DialogShowingController, GetShowingController} from "../../../controller
 import EditCategoryDialog from "./EditCategoryDialog";
 import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {deleteUser} from "../../household/api/HouseholdService";
 import ConfirmationDialog from "../../household/components/base/ConfirmationDialog";
 import {Category} from "../api/CategoryModel";
+import {deleteCategory} from "../api/CategoryService";
 
 interface CategoriesTableProps extends HouseholdReloadKeyProps {
     categories: Category[]
@@ -113,8 +113,7 @@ export default function CategoriesTable(props: CategoriesTableProps) {
                 content={
                     <>
                         <Typography variant="body1">
-                            Usunięcie kategorii spowoduje usunięcie wszystkich powiązań z nią, tj. produktów i
-                            paragonów.
+                            Usunięcie kategorii spowoduje usunięcie kategorii ze wszystkich produktów.
                         </Typography>
                         <Typography variant="body1">
                             Czy na pewno chcesz usunąć kategorię <strong>{editedCategory?.name}</strong>?
@@ -126,7 +125,7 @@ export default function CategoriesTable(props: CategoriesTableProps) {
                 }
                 confirmText="Usuń"
                 confirmColor="error"
-                action={() => deleteUser(editedCategory?.id)} //TODO
+                action={() => deleteCategory(editedCategory?.id)} //TODO
                 reloadTable={props.reloadTable}
             />
         </TableContainer>

@@ -20,10 +20,7 @@ export default function HouseholdDashboardWrapper({
     const [invitedMembers, setInvitedMembers] = useState(initialInvitedMembers)
 
     const reloadTable = () => {
-        setReloadKey(prev => {
-            console.log("xd")
-            return prev + 1
-        })
+        setReloadKey(prev => prev + 1)
     }
 
     useEffect(() => {

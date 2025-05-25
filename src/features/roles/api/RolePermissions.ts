@@ -14,7 +14,11 @@ export const Permission = {
     ROLE_MAKE_DEFAULT: "Ustawianie roli jako domyślnej",
 
     ROLE_PERMISSIONS_VIEW: "Podgląd uprawnień ról",
-    ROLE_PERMISSIONS_EDIT: "Edycja uprawnień ról"
+    ROLE_PERMISSIONS_EDIT: "Edycja uprawnień ról",
+
+    CATEGORY_CREATE: "Tworzenie kategorii",
+    CATEGORY_DELETE: "Usuwanie kategorii",
+    CATEGORY_EDIT: "Edycja kategorii"
 } as const;
 
 export type PermissionKey = keyof typeof Permission;
@@ -61,6 +65,15 @@ export const roles: GroupPermission[] = [
         permissions: [
             "ROLE_PERMISSIONS_VIEW",
             "ROLE_PERMISSIONS_EDIT"
+        ]
+    },
+    {
+        id: 5,
+        name: "Kategorie",
+        permissions: [
+            "CATEGORY_CREATE",
+            "CATEGORY_DELETE",
+            "CATEGORY_EDIT"
         ]
     }
 ];

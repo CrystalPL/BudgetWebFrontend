@@ -7,6 +7,7 @@ import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
 import {useSnackbarContext} from "../../../context/SnackbarContext";
 import Stack from "@mui/material/Stack";
 import {MuiColorInput} from "mui-color-input";
+import {createCategory} from "../api/CategoryService";
 
 interface CreateCategoryProps extends DialogShowingController, HouseholdReloadKeyProps {
 }
@@ -25,10 +26,16 @@ export default function CreateCategoryDialog({openDialogStatus: open, closeDialo
         setColorPickerValue(newValue)
     }
 
-    const create = () => {
+    const create = async () => {
+        const response = await createCategory(categoryName, colorPickerValue);
+        if (!response.success) {
+            setCategoryNameError(response.message)
+            return
+        }
+
         reloadTable()
         close()
-        snackbarController.setStatusMessage("SUCCESS")
+        snackbarController.setStatusMessage(response.message)
         snackbarController.setStatus('success')
         snackbarController.setOpenSnackbar(true)
     }

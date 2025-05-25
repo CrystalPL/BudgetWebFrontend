@@ -7,6 +7,8 @@ import {CustomFormControl, CustomFormControlProps} from "../../../components/Cus
 import {MuiColorInput} from "mui-color-input";
 import Stack from "@mui/material/Stack";
 import {Category} from "../api/CategoryModel";
+import {editCategory} from "../api/CategoryService";
+import {useSnackbarContext} from "../../../context/SnackbarContext";
 
 interface EditCategoryProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedCategory: Category | null
@@ -37,8 +39,22 @@ export default function EditCategoryDialog({
         setColorPickerValue(newValue)
     }
 
-    const saveCategory = () => {
-        reloadTable()
+    const snackbarController = useSnackbarContext()
+    const saveCategory = async () => {
+        const response = await editCategory({
+            categoryId: editedCategory!.id,
+            name: categoryName,
+            color: colorPickerValue,
+        });
+
+        snackbarController.setStatus(response.success ? "success" : "error");
+        snackbarController.setStatusMessage(response.message);
+        snackbarController.setOpenSnackbar(true);
+
+        closeDialog()
+        if (response.success) {
+            reloadTable()
+        }
     }
 
     const close = () => {
