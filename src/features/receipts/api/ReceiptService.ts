@@ -1,4 +1,4 @@
-import {API_URL, handleDeleteRequest} from "@/service/ResponseAPI";
+import {API_URL, handleDeleteRequest, handlePostRequest, ResponseAPI} from "@/service/ResponseAPI";
 import axios from "axios";
 import {
     Category,
@@ -6,9 +6,15 @@ import {
     GetProductListResponse,
     Receipt,
     ReceiptItem,
+    SaveReceiptRequest,
     SuggestCategoryResponse
 } from "@/features/receipts/api/ReceiptModel";
-import {DeleteReceiptMessage} from "@/features/receipts/api/ReceiptMessages";
+import {
+    DeleteReceiptMessage,
+    SaveReceiptAdditionalMessage,
+    SaveReceiptMessage
+} from "@/features/receipts/api/ReceiptMessages";
+import {UploadAvatarMessage} from "@/features/account/api/AccountResponseMessage";
 
 export async function getReceipts(cookie?: string) {
     const response = await axios.get<Receipt[]>(API_URL + "/receipts", {
@@ -16,7 +22,17 @@ export async function getReceipts(cookie?: string) {
         headers: cookie ? {Cookie: `auth_token=${cookie}`} : {}
     })
 
-    return response.data
+    return response.data.map((receipt: any) => ({
+        id: receipt.id,
+        shop: receipt.shop,
+        shoppingTime: new Date(receipt.shoppingTime),
+        receiptAmount: receipt.receiptAmount,
+        whoPaid: {
+            userId: receipt.whoPaid.userId,
+            userName: receipt.whoPaid.userName
+        },
+        settled: receipt.settled
+    }));
 }
 
 export async function getCreateReceiptDetails() {
@@ -32,7 +48,7 @@ export async function getProductListResponse() {
 }
 
 export async function deleteReceipt(receiptId: number | undefined) {
-    return handleDeleteRequest<typeof DeleteReceiptMessage>(`/household/receipts/${receiptId}`, {}, DeleteReceiptMessage);
+    return handleDeleteRequest<typeof DeleteReceiptMessage>(`/receipts/${receiptId}`, {}, DeleteReceiptMessage);
 }
 
 export async function suggestCategory(productName: string) {
@@ -53,3 +69,14 @@ export async function getReceiptItems(receiptId: number) {
     return response.data
 }
 
+export async function saveReceiptRequest(request: SaveReceiptRequest) {
+    return handlePostRequest<typeof SaveReceiptMessage, SaveReceiptAdditionalMessage>("/receipts/save", request, SaveReceiptMessage);
+}
+
+export async function uploadFotoToAI(formData: FormData): Promise<ResponseAPI<UploadAvatarMessage>> {
+    return handlePostRequest<typeof UploadAvatarMessage>("/receipts/loadByAI", formData, UploadAvatarMessage, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}

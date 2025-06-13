@@ -1,6 +1,6 @@
-'use client'
 import {
     Box,
+    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -17,35 +17,87 @@ import {
     Tooltip
 } from "@mui/material";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {forwardRef, useImperativeHandle, useState} from "react";
+import {categories, ReceiptItem} from "../api/ReceiptModel";
+import {users} from "../../../app/(dashboard)/household/receipts/page";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
-import {AIReceiptItem, Category, ReceiptItem, UserWhoPaid} from "../api/ReceiptModel";
-import Button from "@mui/material/Button";
-import CloseIcon from "@mui/icons-material/Close";
-import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {AILoaderProps} from "./AILoader";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import CloseIcon from "@mui/icons-material/Close";
+
+export interface GetProductsByAIComponentRef {
+    handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 interface Props {
     getProductsByAIController: DialogShowingController;
     setAiProcessing: (ai: boolean) => void;
-    categoryList: Category[]
-    userWhoPaid: UserWhoPaid[]
-    setItems: (receiptItems: ReceiptItem[]) => void
-    aiLoader: AILoaderProps
 }
 
-export default function AIProductRecognitionDialog(props: Props) {
-    const [aiRecognizedItems, setAiRecognizedItems] = useState<AIReceiptItem[]>([]);
+const GetProductsByAIComponent = forwardRef<GetProductsByAIComponentRef, Props>((props, ref) => {
+    const [aiRecognizedItems, setAiRecognizedItems] = useState<ReceiptItem[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [editedItem, setEditedItem] = useState<AIReceiptItem | null>(null);
+    const [editedItem, setEditedItem] = useState<ReceiptItem | null>(null);
 
-    useEffect(() => {
-        if (props.aiLoader.aiReceipt !== null) {
-            setAiRecognizedItems(props.aiLoader.aiReceipt.AIReceiptItems)
+    useImperativeHandle(ref, () => ({
+        handleUpload
+    }));
+
+    const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            props.setAiProcessing(true);
+
+            setTimeout(() => {
+                const newItems: ReceiptItem[] = [
+                    {
+                        productName: "Bread",
+                        quantity: 2,
+                        money: 10.00,
+                        category: categories[0],
+                        moneyDividing: 5.00,
+                        userToReturnMoney: users[1]
+                    },
+                    {
+                        productName: "Bread",
+                        quantity: 2,
+                        money: 10.00,
+                        category: categories[0],
+                        moneyDividing: 5.00,
+                        userToReturnMoney: users[1]
+                    },
+                    {
+                        productName: "Bread",
+                        quantity: 2,
+                        money: 10.00,
+                        category: categories[0],
+                        moneyDividing: 5.00,
+                        userToReturnMoney: users[1]
+                    },
+                    {
+                        productName: "Laptop",
+                        quantity: 1,
+                        money: 3500.00,
+                        category: categories[1],
+                        moneyDividing: 1750.00,
+                        userToReturnMoney: users[2]
+                    },
+                    {
+                        productName: "Detergent",
+                        quantity: 3,
+                        money: 45.00,
+                        category: categories[2],
+                        moneyDividing: 15.00,
+                        userToReturnMoney: users[0]
+                    }
+                ];
+                props.setAiProcessing(false);
+                setAiRecognizedItems(newItems);
+                props.getProductsByAIController.openDialog();
+            }, 3000);
         }
-    }, [props.aiLoader.aiReceipt]);
+    };
 
     const startEditing = (index: number) => {
         setEditingIndex(index);
@@ -72,10 +124,6 @@ export default function AIProductRecognitionDialog(props: Props) {
             setEditedItem({...editedItem, [field]: value});
         }
     };
-
-    const mapAiItemsToReceiptItems = (aiItems: AIReceiptItem[]) => {
-
-    }
 
     return (
         <Dialog open={props.getProductsByAIController.openDialogStatus}
@@ -132,9 +180,9 @@ export default function AIProductRecognitionDialog(props: Props) {
                                             </TableCell>
                                             <TableCell align="left">
                                                 <TextField
-                                                    value={editedItem?.price || 0}
+                                                    value={editedItem?.money || 0}
                                                     type="number"
-                                                    onChange={(e) => handleFieldChange('price', Number(e.target.value))}
+                                                    onChange={(e) => handleFieldChange('money', Number(e.target.value))}
                                                     variant="standard"
                                                     fullWidth
                                                     size="small"
@@ -149,13 +197,13 @@ export default function AIProductRecognitionDialog(props: Props) {
                                                 />
                                             </TableCell>
                                             <TableCell align="left">
-                                                {(editedItem?.price || 0) * (editedItem?.quantity || 0)}
+                                                {(editedItem?.money || 0) * (editedItem?.quantity || 0)}
                                             </TableCell>
                                             <TableCell align="left">
                                                 <Select
-                                                    value={editedItem?.category?.id || ""}
+                                                    value={editedItem?.category.id || ""}
                                                     onChange={(e) => {
-                                                        const selected = props.categoryList.find(c => c.id === e.target.value);
+                                                        const selected = categories.find(c => c.id === e.target.value);
                                                         handleFieldChange('category', selected);
                                                     }}
                                                     variant="standard"
@@ -171,7 +219,7 @@ export default function AIProductRecognitionDialog(props: Props) {
                                                         }
                                                     }}
                                                 >
-                                                    {props.categoryList.map(cat => (
+                                                    {categories.map(cat => (
                                                         <MenuItem key={cat.id} value={cat.id}>
                                                             {cat.name}
                                                         </MenuItem>
@@ -181,7 +229,8 @@ export default function AIProductRecognitionDialog(props: Props) {
                                             <TableCell align="left">
                                                 <TextField
                                                     value={editedItem?.moneyDividing || 0}
-                                                    onChange={e => handleFieldChange('moneyDividing', e.target.value.replace("%", ""))}
+                                                    type="number"
+                                                    onChange={(e) => handleFieldChange('moneyDividing', Number(e.target.value))}
                                                     variant="standard"
                                                     fullWidth
                                                     size="small"
@@ -197,9 +246,9 @@ export default function AIProductRecognitionDialog(props: Props) {
                                             </TableCell>
                                             <TableCell align="left">
                                                 <Select
-                                                    value={editedItem?.userToReturnMoney?.userId || ""}
+                                                    value={editedItem?.userToReturnMoney.id || ""}
                                                     onChange={(e) => {
-                                                        const selected = props.userWhoPaid.find(u => u.userId === e.target.value);
+                                                        const selected = users.find(u => u.id === e.target.value);
                                                         handleFieldChange('userToReturnMoney', selected);
                                                     }}
                                                     variant="standard"
@@ -215,9 +264,9 @@ export default function AIProductRecognitionDialog(props: Props) {
                                                         }
                                                     }}
                                                 >
-                                                    {props.userWhoPaid.map(u => (
-                                                        <MenuItem key={u.userId} value={u.userId}>
-                                                            {u.userName}
+                                                    {users.map(u => (
+                                                        <MenuItem key={u.id} value={u.id}>
+                                                            {u.name}
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
@@ -240,21 +289,21 @@ export default function AIProductRecognitionDialog(props: Props) {
                                         <>
                                             <TableCell>{item.productName}</TableCell>
                                             <TableCell align="left">{item.quantity}</TableCell>
-                                            <TableCell align="left">{item.price?.toFixed(2) || 0}</TableCell>
+                                            <TableCell align="left">{item.money.toFixed(2)}</TableCell>
                                             <TableCell
-                                                align="left">{((item.price ?? 0) * (item.quantity ?? 0)).toFixed(2)}</TableCell>
+                                                align="left">{(item.money * item.quantity).toFixed(2)}</TableCell>
                                             <TableCell sx={{
                                                 overflow: "hidden",
                                                 whiteSpace: "nowrap",
                                                 textOverflow: "ellipsis"
-                                            }} align="left">{item.category?.name}</TableCell>
+                                            }} align="left">{item.category.name}</TableCell>
                                             <TableCell align="left">{item.moneyDividing}</TableCell>
                                             <TableCell align="left" sx={{
                                                 overflow: "hidden",
                                                 whiteSpace: "nowrap",
                                                 textOverflow: "ellipsis"
                                             }}>
-                                                {item.userToReturnMoney?.userName}
+                                                {item.userToReturnMoney.name}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title="Edytuj">
@@ -287,11 +336,14 @@ export default function AIProductRecognitionDialog(props: Props) {
                         },
                     }}>Anuluj</Button>
                     <Button
-                        variant="contained" onClick={() => mapAiItemsToReceiptItems(aiRecognizedItems)}>
+                        variant="contained"> {/* onClick={() => setItems(prev => [...prev, ...aiRecognizedItems])} */}
                         Zatwierdź i dodaj do listy
                     </Button>
                 </Box>
             </DialogContent>
         </Dialog>
     );
-};
+});
+GetProductsByAIComponent.displayName = "GetProductsByAIComponent";
+
+export default GetProductsByAIComponent;

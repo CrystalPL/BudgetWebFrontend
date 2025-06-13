@@ -3,15 +3,16 @@ import {DialogShowingController, GetShowingController} from "../../../../control
 import {Dialog, Paper, Step, StepLabel, Stepper, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {CreateReceiptDetails, Receipt} from "../../api/ReceiptModel";
-import AITransactionDetailsDialog, {GetTransactionDetailsByAIComponentRef} from "../../ai/AITransactionDetailsDialog";
+import AITransactionDetailsDialog from "../../ai/AITransactionDetailsDialog";
 import {getCreateReceiptDetails} from "../../api/ReceiptService";
 import {validateLength} from "../../../auth/util/DataValidator";
 import {CreateReceiptDetailMessage} from "../../api/ReceiptMessages";
 import FirstStepFooterForm from "./FirstStepFooterForm";
 import FirstStepFormContent from "./FirstStepFormContent";
-import {FirstStepFormState, useFirstStepFormState} from "./FirstStepFormState";
+import {FirstStepFormState} from "./FirstStepFormState";
+import {AILoaderProps} from "../../ai/AILoader";
 
 interface Props {
     creatingController: DialogShowingController
@@ -20,6 +21,8 @@ interface Props {
     setEditedReceipt: (newReceipt: Receipt | null) => void
     createReceiptDetails: CreateReceiptDetails | null
     setCreateReceiptDetails: (value: CreateReceiptDetails | null) => void
+    firstStepFormState: FirstStepFormState
+    aiLoader: AILoaderProps
 }
 
 export const steps = ["Informacje o paragonie", "Dodaj produkty"]
@@ -27,7 +30,6 @@ export const steps = ["Informacje o paragonie", "Dodaj produkty"]
 export default function FirstStepDialog(props: Props) {
     const [aiProcessing, setAiProcessing] = useState<boolean>(false);
     const aiTransactionDetailsDialog: DialogShowingController = GetShowingController()
-    const firstStepFormState: FirstStepFormState = useFirstStepFormState();
 
     useEffect(() => {
         if (props.creatingController.openDialogStatus) {
@@ -37,10 +39,11 @@ export default function FirstStepDialog(props: Props) {
             };
 
             if (props.editedReceipt) {
-                firstStepFormState.setShopName(props.editedReceipt.shop);
-                firstStepFormState.setDate(props.editedReceipt.shoppingTime);
-                firstStepFormState.setIsSettled(props.editedReceipt.settled);
-                firstStepFormState.setWhoPaid(props.editedReceipt.whoPaid);
+                props.firstStepFormState.setReceiptId(props.editedReceipt.id);
+                props.firstStepFormState.setShopName(props.editedReceipt.shop);
+                props.firstStepFormState.setDate(props.editedReceipt.shoppingTime);
+                props.firstStepFormState.setIsSettled(props.editedReceipt.settled);
+                props.firstStepFormState.setWhoPaid(props.editedReceipt.whoPaid);
             }
 
             fetchCreateReceiptDetails();
@@ -53,50 +56,50 @@ export default function FirstStepDialog(props: Props) {
         }
     };
 
-    const aiComponentRef = useRef<GetTransactionDetailsByAIComponentRef>(null);
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        aiComponentRef.current?.handleUpload(e);
-    };
-
-
     const loadByAi = (shopName: string, date: Date) => {
-        // setReceipt({...receipt, ['shop']: shopName})
-        // setReceipt({...receipt, ['shoppingTime']: date})
+        props.firstStepFormState.setShopName(shopName);
+        props.firstStepFormState.setDate(date);
     }
+
+    useEffect(() => {
+        if (!props.creatingController.openDialogStatus && !props.addItemsToReceiptController.openDialogStatus) {
+            handleClose()
+        }
+    }, [props.addItemsToReceiptController.openDialogStatus])
 
     const handleClose = () => {
         props.creatingController.closeDialog()
-        firstStepFormState.setIsSettled(false)
-        firstStepFormState.setDate(null)
-        firstStepFormState.setDateError('')
-        firstStepFormState.setShopName('')
-        firstStepFormState.setShopNameError('')
-        firstStepFormState.setWhoPaid(null)
-        firstStepFormState.setWhoPaidError('')
+        props.firstStepFormState.setIsSettled(false)
+        props.firstStepFormState.setDate(null)
+        props.firstStepFormState.setDateError('')
+        props.firstStepFormState.setShopName('')
+        props.firstStepFormState.setShopNameError('')
+        props.firstStepFormState.setWhoPaid(null)
+        props.firstStepFormState.setWhoPaidError('')
         props.setEditedReceipt(null)
     }
 
     const validateForm = (): boolean => {
         let isValid = true;
 
-        if (!firstStepFormState.shopName) {
-            firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_EMPTY);
+        if (!props.firstStepFormState.shopName) {
+            props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_EMPTY);
             isValid = false;
-        } else if (validateLength(firstStepFormState.shopName, 1)) {
-            firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_SHORT);
+        } else if (validateLength(props.firstStepFormState.shopName, 1)) {
+            props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_SHORT);
             isValid = false;
-        } else if (!validateLength(firstStepFormState.shopName, 64)) {
-            firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_LONG);
-            isValid = false;
-        }
-
-        if (!firstStepFormState.whoPaid) {
-            firstStepFormState.setWhoPaidError(CreateReceiptDetailMessage.WHO_PAID_EMPTY);
+        } else if (!validateLength(props.firstStepFormState.shopName, 64)) {
+            props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_LONG);
             isValid = false;
         }
 
-        if (!firstStepFormState.date) {
-            firstStepFormState.setDateError(CreateReceiptDetailMessage.DATE_EMPTY);
+        if (!props.firstStepFormState.whoPaid) {
+            props.firstStepFormState.setWhoPaidError(CreateReceiptDetailMessage.WHO_PAID_EMPTY);
+            isValid = false;
+        }
+
+        if (!props.firstStepFormState.date) {
+            props.firstStepFormState.setDateError(CreateReceiptDetailMessage.DATE_EMPTY);
             isValid = false;
         }
 
@@ -123,14 +126,16 @@ export default function FirstStepDialog(props: Props) {
                 <FirstStepFormContent
                     createReceiptDetails={props.createReceiptDetails}
                     editedReceipt={props.editedReceipt}
-                    firstStepFormState={firstStepFormState}
+                    firstStepFormState={props.firstStepFormState}
                 />
 
-                <FirstStepFooterForm aiProcessing={aiProcessing} handleUpload={handleUpload} handleNext={handleNext}/>
+                <FirstStepFooterForm aiProcessing={aiProcessing} handleNext={handleNext}
+                                     setAiProcessing={setAiProcessing} aiLoader={props.aiLoader}
+                                     getTransactionDetailsController={aiTransactionDetailsDialog}/>
             </Paper>
-            <AITransactionDetailsDialog onChange={loadByAi} ref={aiComponentRef}
+            <AITransactionDetailsDialog onChange={loadByAi}
                                         getTransactionDetailsByAIController={aiTransactionDetailsDialog}
-                                        setAiProcessing={setAiProcessing}/>
+                                        aiLoader={props.aiLoader}/>
         </Dialog>
     )
 }

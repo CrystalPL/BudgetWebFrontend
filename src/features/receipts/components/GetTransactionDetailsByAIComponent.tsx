@@ -12,44 +12,58 @@ import {
     Tooltip
 } from "@mui/material";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {forwardRef, useImperativeHandle, useState} from "react";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 import EditIcon from "@mui/icons-material/Edit";
 import {ErrorOutline} from "@mui/icons-material";
-import DateChooserComponent from "../forms/DateChooserComponent";
+import DateChooserComponent from "./DateChooserComponent";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-import {AILoaderProps} from "./AILoader";
+
+export interface GetTransactionDetailsByAIComponentRef {
+    handleUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 interface Props {
     getTransactionDetailsByAIController: DialogShowingController;
+    setAiProcessing: (ai: boolean) => void;
     onChange: (shopName: string, date: Date) => void;
-    aiLoader: AILoaderProps;
 }
 
-export default function AITransactionDetailsDialog(props: Props) {
+const GetTransactionDetailsByAIComponent = forwardRef<GetTransactionDetailsByAIComponentRef, Props>((props, ref) => {
     const [shopName, setShopName] = useState<string>('');
     const [date, setDate] = useState<Date>();
 
     const [tempShopName, setTempShopName] = useState<string>('');
     const [tempShopNameError, setTempShopNameError] = useState('');
-    const [tempDate, setTempDate] = useState<Date | null>(null);
+    const [tempDate, setTempDate] = useState<Date | null>();
+
 
     const [editingField, setEditingField] = useState<"none" | "shopName" | "transactionDate">("none");
 
-    const aiReceipt = props.aiLoader.aiReceipt;
-    useEffect(() => {
-        if (aiReceipt != null) {
-            setShopName(aiReceipt?.shop || '')
-            setTempShopName(aiReceipt?.shop || '')
-            setDate(aiReceipt.shoppingTime || undefined)
-            setTempDate(aiReceipt?.shoppingTime || null)
+    useImperativeHandle(ref, () => ({
+        handleUpload
+    }));
+
+    const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            props.setAiProcessing(true);
+
+            setTimeout(() => {
+                props.setAiProcessing(false);
+                setShopName("SuperMarket ABC")
+                setTempShopName("SuperMarket ABC")
+                setDate(new Date());
+                setTempDate(new Date());
+                props.getTransactionDetailsByAIController.openDialog();
+            }, 1);
         }
-    }, [aiReceipt]);
+    };
 
     const startEditing = (field: "shopName" | "transactionDate") => {
         setTempShopName(shopName)
-        setTempDate(date ?? null)
+        setTempDate(date)
         setEditingField(field);
     };
 
@@ -70,7 +84,7 @@ export default function AITransactionDetailsDialog(props: Props) {
 
     const cancelEditDate = () => {
         setEditingField("none");
-        setTempDate(date ?? null)
+        setTempDate(date)
     }
 
     const close = () => {
@@ -162,8 +176,8 @@ export default function AITransactionDetailsDialog(props: Props) {
                 {/* Data transakcji */}
                 <Box sx={{mb: 3, display: "flex", alignItems: "center"}}>
                     <DateChooserComponent disabled={editingField !== "transactionDate"}
-                                          date={tempDate}
-                                          setDate={setTempDate}></DateChooserComponent>
+                                          defaultValue={tempDate ? tempDate : new Date()}
+                                          onChange={date => setTempDate(date)}></DateChooserComponent>
                     {editingField !== "transactionDate" ? (
                         <Tooltip title="Edytuj">
                             <IconButton color="primary" onClick={() => startEditing("transactionDate")} size="medium"
@@ -212,4 +226,8 @@ export default function AITransactionDetailsDialog(props: Props) {
             </DialogContent>
         </Dialog>
     );
-}
+});
+
+GetTransactionDetailsByAIComponent.displayName = "GetTransactionDetailsByAIComponent";
+
+export default GetTransactionDetailsByAIComponent;

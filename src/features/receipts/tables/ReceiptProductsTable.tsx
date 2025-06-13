@@ -38,6 +38,12 @@ export default function ReceiptProductsTable(props: Props) {
         setEditingIndex(index);
         setEditedItem({...props.items[index]});
     };
+
+    const deleteItem = (receiptItem: ReceiptItem) => {
+        const updatedItems = props.items.filter(item => JSON.stringify(item) !== JSON.stringify(receiptItem));
+        props.setItems(updatedItems);
+    };
+
     return (
         <Box sx={{width: {xs: "100%", lg: "60%"}, p: 3, display: "flex", flexDirection: "column"}}>
             <Typography variant="subtitle1" fontWeight="bold" sx={{mb: 2}}>
@@ -96,7 +102,7 @@ export default function ReceiptProductsTable(props: Props) {
                                                 <TableCell sx={{px: 1, py: 1}}
                                                            align="right">{item.category.name}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}}
-                                                           align="right">{item.moneyDividing}</TableCell>
+                                                           align="right">{item.moneyDividing == 0 ? "" : item.moneyDividing + "%"}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}}
                                                            align="right">{item.userToReturnMoney ? item.userToReturnMoney.userName : ''}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}} align="right">
@@ -108,7 +114,8 @@ export default function ReceiptProductsTable(props: Props) {
                                                         </IconButton>
                                                     </Tooltip>
                                                     <Tooltip title="Usuń">
-                                                        <IconButton color="error" size="small">
+                                                        <IconButton color="error" size="small"
+                                                                    onClick={() => deleteItem(item)}>
                                                             <DeleteIcon fontSize="small"/>
                                                         </IconButton>
                                                     </Tooltip>

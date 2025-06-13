@@ -3,8 +3,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import * as React from "react";
 import {Category, GetProductListResponse, ReceiptItem, UserWhoPaid} from "../api/ReceiptModel";
-import {CreateReceiptItemMessage} from "../api/ReceiptMessages";
 import {useSnackbarContext} from "../../../context/SnackbarContext";
+import {verifyFields} from "../VerifyFields";
 
 interface Props {
     editedItem: ReceiptItem | null
@@ -17,7 +17,6 @@ interface Props {
     categoryList: Category[]
     users: UserWhoPaid[]
 }
-
 
 export default function EditableProductRow(props: Props) {
     const snackbarController = useSnackbarContext();
@@ -35,29 +34,9 @@ export default function EditableProductRow(props: Props) {
         }
     };
 
-    const verifyFields = (): string => {
-        if (props.editedItem!.productName === '') {
-            return CreateReceiptItemMessage.PRODUCT_NAME_EMPTY;
-        } else if (props.editedItem!.productName.length <= 1) {
-            return CreateReceiptItemMessage.PRODUCT_NAME_TOO_SHORT;
-        } else if (props.editedItem!.productName.length > 64) {
-            return CreateReceiptItemMessage.PRODUCT_NAME_TOO_LONG;
-        }
-
-        if (props.editedItem!.quantity < 0) {
-            return CreateReceiptItemMessage.AMOUNT_NEGATIVE;
-        }
-
-        if (props.editedItem!.price < 0) {
-            return CreateReceiptItemMessage.PRICE_NEGATIVE;
-        }
-
-        return ""
-    }
-
     const saveEditing = () => {
         if (props.editingIndex !== null && props.editedItem) {
-            const error = verifyFields();
+            const error = verifyFields(props.editedItem);
             if (error !== "") {
                 showSnackbar(error)
                 return
@@ -71,7 +50,6 @@ export default function EditableProductRow(props: Props) {
             props.setEditedItem(null);
         }
     };
-
 
     const cancelEditing = () => {
         props.setEditingIndex(null);
@@ -181,9 +159,9 @@ export default function EditableProductRow(props: Props) {
                     freeSolo
                     forcePopupIcon
                     disableClearable={true}
-                    value={String(props.editedItem?.moneyDividing || 0)}
+                    value={String(props.editedItem?.moneyDividing + "%" || 0)}
                     options={['10%', '30%', '50%', '70%', '100%']}
-                    onInputChange={(_, newValue) => handleFieldChange('moneyDividing', newValue)}
+                    onInputChange={(_, newValue) => handleFieldChange('moneyDividing', newValue.replace("%", ""))}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -203,10 +181,9 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <Autocomplete
-                    disableClearable={true}
-                    value={props.editedItem?.userToReturnMoney || undefined}
+                    value={props.editedItem?.userToReturnMoney ?? null}
                     options={props.users}
-                    getOptionLabel={(option) => option.userName}
+                    getOptionLabel={(option) => option?.userName || ''}
                     onChange={(_, newValue) => handleFieldChange('userToReturnMoney', newValue)}
                     renderInput={(params) => (
                         <TextField

@@ -1,24 +1,44 @@
-import {DialogShowingController} from "../../../../controllers/DialogShowingController";
+import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import {Box, Button, Dialog, Divider, Paper, Step, StepLabel, Stepper, Typography} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {Category, GetProductListResponse, Receipt, ReceiptItem, UserWhoPaid} from "../../api/ReceiptModel";
+import {
+    Category,
+    GetProductListResponse,
+    Receipt,
+    ReceiptCreateRequest,
+    ReceiptItem,
+    ReceiptItemCreateRequest,
+    UserWhoPaid
+} from "../../api/ReceiptModel";
 import {steps} from "../firstStep/FirstStepDialog";
-import {getCategories, getProductListResponse, getReceiptItems} from "../../api/ReceiptService";
+import {getCategories, getProductListResponse, getReceiptItems, saveReceiptRequest} from "../../api/ReceiptService";
 import CreateReceiptItemForm from "./CreateReceiptItemForm";
 import ReceiptProductsTable from "../../tables/ReceiptProductsTable";
+import {FirstStepFormState} from "../firstStep/FirstStepFormState";
+import {useSnackbarContext} from "../../../../context/SnackbarContext";
+import {HouseholdReloadKeyProps} from "../../../household/api/HouseholdModel";
+import {ResponseAPI} from "../../../../service/ResponseAPI";
+import {SaveReceiptAdditionalMessage, SaveReceiptMessage} from "../../api/ReceiptMessages";
+import AIProductRecognitionDialog from "../../ai/AIProductRecognitionDialog";
+import {AILoaderProps} from "../../ai/AILoader";
 
-interface Props {
+interface Props extends HouseholdReloadKeyProps {
     addItemController: DialogShowingController,
     receiptCreatingController: DialogShowingController
     userWhoPaid: UserWhoPaid[]
     editedReceipt: Receipt | null
+    firstStepFormState: FirstStepFormState
+    aiLoader: AILoaderProps
 }
 
 export default function ReceiptProductsManager(props: Props) {
     const [items, setItems] = useState<ReceiptItem[]>([]);
     const [categoryList, setCategoryList] = useState<Category[]>([])
     const [productList, setProductList] = useState<GetProductListResponse[]>([])
+    const getProductsByAIController: DialogShowingController = GetShowingController()
+    const [aiProcessing, setAiProcessing] = useState(false);
+    const snackbarController = useSnackbarContext();
 
     const addItem = (item: ReceiptItem) => {
         setItems((prevItems) => [...prevItems, item]);
@@ -46,6 +66,43 @@ export default function ReceiptProductsManager(props: Props) {
     const handleClose = () => {
         props.addItemController.closeDialog()
         setItems([])
+    }
+
+    const saveReceipt = async () => {
+        const firstStepFormState = props.firstStepFormState;
+        const receipt: ReceiptCreateRequest = {
+            receiptId: firstStepFormState.receiptId,
+            shopName: firstStepFormState.shopName,
+            date: firstStepFormState.date,
+            isSettled: firstStepFormState?.isSettled || false,
+            whoPaidId: firstStepFormState.whoPaid?.userId || 0,
+        }
+
+        const receiptItemList: ReceiptItemCreateRequest[] = items.map(item => ({
+            receiptItemId: item.id,
+            productName: item.productName,
+            quantity: item.quantity,
+            price: item.price,
+            categoryId: item.category.id,
+            moneyDividing: item.moneyDividing || null,
+            userToReturnMoneyId: item.userToReturnMoney?.userId || null,
+        }))
+
+        const response: ResponseAPI<SaveReceiptMessage, SaveReceiptAdditionalMessage> = await saveReceiptRequest({
+            receiptDetails: receipt,
+            itemsDataList: receiptItemList
+        })
+        snackbarController.setStatus(response.success ? 'success' : 'error')
+        snackbarController.setOpenSnackbar(true)
+        snackbarController.setStatusMessage(response.message)
+        if (response.additionalData.additionalMessage) {
+            snackbarController.setStatusMessage(response.message + "\n" + response.additionalData.additionalMessage)
+        }
+
+        if (response.success) {
+            props.reloadTable()
+            handleClose()
+        }
     }
 
     return (
@@ -79,7 +136,9 @@ export default function ReceiptProductsManager(props: Props) {
                 <Box sx={{display: "flex", flexGrow: 1, flexDirection: {xs: "column", lg: "row"}, overflow: "auto"}}>
                     <CreateReceiptItemForm productList={productList} categoryList={categoryList}
                                            userWhoPaid={props.userWhoPaid} addItem={addItem}
-                                           addItemController={props.addItemController}></CreateReceiptItemForm>
+                                           addItemController={props.addItemController} aiProcessing={aiProcessing}
+                                           setAiProcessing={setAiProcessing} aiLoader={props.aiLoader}
+                                           aiProductRecognitionDialogController={getProductsByAIController}></CreateReceiptItemForm>
 
                     {/* Divider for mobile */}
                     <Divider sx={{display: {xs: "block", lg: "none"}, my: 2}}/>
@@ -105,11 +164,14 @@ export default function ReceiptProductsManager(props: Props) {
                         }
                     }} onClick={handleBack}>Wstecz</Button>
                     <Button
-                        variant="contained">Zakończ</Button> {/*{initialData ? "Zapisz zmiany" : "Zapisz paragon"}*/}
+                        variant="contained" onClick={saveReceipt}>Zakończ</Button>
                 </Box>
             </Box>
-            {/*<AIProductRecognitionDialog setAiProcessing={setAiProcessing} ref={aiComponentRef}*/}
-            {/*                          getProductsByAIController={getProductsByAIController}/>*/}
+            <AIProductRecognitionDialog setAiProcessing={setAiProcessing}
+                                        getProductsByAIController={getProductsByAIController}
+                                        categoryList={categoryList}
+                                        userWhoPaid={props.userWhoPaid}
+                                        setItems={setItems} aiLoader={props.aiLoader}/>
         </Dialog>
     )
 }

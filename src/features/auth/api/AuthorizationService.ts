@@ -6,7 +6,8 @@ export async function VerifyAccessAxios(): Promise<boolean> {
     const authCookie = cookies().get("auth_token")
 
     try {
-        const response = await axios.post(API_URL + "/auth/verify", {}, {
+        const response = await
+            axios.post(API_URL + "/auth/verify", {}, {
             withCredentials: true,
             headers: {
                 Cookie: `${authCookie?.name}=${authCookie?.value}`,

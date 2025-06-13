@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import {Suspense} from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
@@ -29,13 +30,21 @@ export default function AccountInactive() {
                 </Avatar>
                 <Typography component="h1" variant="h5">Konto nieaktywne</Typography>
 
-                <ResendEmailButton>
-                    <Typography sx={{mt: 2}} variant="body1">
-                        Twoje konto nie zostało jeszcze aktywowane. Prosimy sprawdzić swoją skrzynkę pocztową i kliknąć
-                        w
-                        link aktywacyjny.
-                    </Typography>
-                </ResendEmailButton>
+                <Suspense fallback={<Typography sx={{mt: 2}}>Ładowanie...</Typography>}>
+                    <ResendEmailButton>
+                        <Typography sx={{mt: 2}} variant="body1">
+                            Twoje konto nie zostało jeszcze aktywowane. Prosimy sprawdzić swoją skrzynkę pocztową i
+                            kliknąć w link aktywacyjny.
+                        </Typography>
+                    </ResendEmailButton>
+                </Suspense>
+                {/*<ResendEmailButton>*/}
+                {/*    <Typography sx={{mt: 2}} variant="body1">*/}
+                {/*        Twoje konto nie zostało jeszcze aktywowane. Prosimy sprawdzić swoją skrzynkę pocztową i kliknąć*/}
+                {/*        w*/}
+                {/*        link aktywacyjny.*/}
+                {/*    </Typography>*/}
+                {/*</ResendEmailButton>*/}
                 <Button
                     fullWidth
                     variant="outlined"

@@ -9,6 +9,8 @@ import {DialogShowingController, GetShowingController} from "../../../controller
 import FirstStepDialog from "../forms/firstStep/FirstStepDialog";
 import {CreateReceiptDetails, Receipt} from "../api/ReceiptModel";
 import ReceiptProductsManager from "../forms/secondStep/ReceiptProductsManager";
+import {FirstStepFormState, useFirstStepFormState} from "../forms/firstStep/FirstStepFormState";
+import AILoader, {AILoaderProps} from "../ai/AILoader";
 
 interface ReceiptDashboardData extends HouseholdReloadKeyProps {
     receipts: Receipt[];
@@ -20,6 +22,8 @@ export default function ReceiptDashboard(props: ReceiptDashboardData) {
     const addItemsToReceipt: DialogShowingController = GetShowingController()
     const [editedReceipt, setEditedReceipt] = useState<Receipt | null>(null)
     const [createReceiptDetails, setCreateReceiptDetails] = useState<CreateReceiptDetails | null>(null)
+    const firstStepFormState: FirstStepFormState = useFirstStepFormState();
+    const aiLoader: AILoaderProps = AILoader();
 
     return (
         <Container sx={{
@@ -40,11 +44,13 @@ export default function ReceiptDashboard(props: ReceiptDashboardData) {
                              addItemsToReceiptController={addItemsToReceipt}
                              editedReceipt={editedReceipt}
                              setEditedReceipt={setEditedReceipt} createReceiptDetails={createReceiptDetails}
-                             setCreateReceiptDetails={setCreateReceiptDetails}/>
-            <ReceiptProductsManager addItemController={addItemsToReceipt}
+                             setCreateReceiptDetails={setCreateReceiptDetails} firstStepFormState={firstStepFormState}
+                             aiLoader={aiLoader}/>
+            <ReceiptProductsManager reloadTable={props.reloadTable} addItemController={addItemsToReceipt}
                                     receiptCreatingController={createReceiptDialogController}
                                     userWhoPaid={createReceiptDetails?.whoPaidLists || []}
-                                    editedReceipt={editedReceipt}></ReceiptProductsManager>
+                                    editedReceipt={editedReceipt} firstStepFormState={firstStepFormState}
+                                    aiLoader={aiLoader}></ReceiptProductsManager>
         </Container>
     )
 }

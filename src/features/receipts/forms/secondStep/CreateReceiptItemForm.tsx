@@ -13,20 +13,24 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import {ErrorOutline} from "@mui/icons-material";
 import {CustomFormControl} from "../../../../components/CustomFormControl";
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {Category, GetProductListResponse, ReceiptItem, UserWhoPaid} from "../../api/ReceiptModel";
 import {CreateFormField} from "../../api/CustomFormControlProps";
 import {suggestCategory} from "../../api/ReceiptService";
-import {GetProductsByAIComponentRef} from "../../ai/AIProductRecognitionDialog";
 import {CreateReceiptItemMessage} from "../../api/ReceiptMessages";
-import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
+import {DialogShowingController} from "../../../../controllers/DialogShowingController";
+import {AILoaderProps} from "../../ai/AILoader";
 
 interface Props {
     productList: GetProductListResponse[]
     categoryList: Category[]
+    aiProcessing: boolean
     userWhoPaid: UserWhoPaid[]
     addItem: (item: ReceiptItem) => void
     addItemController: DialogShowingController
+    setAiProcessing: (value: boolean) => void
+    aiLoader: AILoaderProps
+    aiProductRecognitionDialogController: DialogShowingController
 }
 
 export default function CreateReceiptItemForm(props: Props) {
@@ -124,6 +128,16 @@ export default function CreateReceiptItemForm(props: Props) {
             }
         }
 
+        if (dividing !== '' && whoReturn === null) {
+            setWhoReturnError(CreateReceiptItemMessage.WHO_RETURN_EMPTY);
+            hasError = true;
+        }
+
+        if (dividing === '' && whoReturn !== null) {
+            setDividingMoneyError(CreateReceiptItemMessage.DIVIDING_EMPTY);
+            hasError = true;
+        }
+
         return !hasError;
     };
 
@@ -163,13 +177,6 @@ export default function CreateReceiptItemForm(props: Props) {
         }
     }
 
-    const getProductsByAIController: DialogShowingController = GetShowingController()
-    const [aiProcessing, setAiProcessing] = useState(false);
-    const aiComponentRef = useRef<GetProductsByAIComponentRef>(null);
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        aiComponentRef.current?.handleUpload(e);
-    };
-
     return (
         <Box
             sx={{
@@ -198,7 +205,7 @@ export default function CreateReceiptItemForm(props: Props) {
                             handleProductNameChange(newValue)
                         }}
                         renderInput={(params) => (
-                            <FormControl fullWidth error={productNameError !== ''}>
+                            <FormControl fullWidth error={productNameError !== ''} required>
                                 <InputLabel
                                     sx={{
                                         fontSize: '16px',
@@ -243,7 +250,7 @@ export default function CreateReceiptItemForm(props: Props) {
                         onFocus={() => setCategoryError('')}
                         onChange={(_, newValue) => setCategory(newValue)}
                         renderInput={(params) => (
-                            <FormControl fullWidth error={categoryError !== ''}>
+                            <FormControl fullWidth error={categoryError !== ''} required>
                                 <InputLabel
                                     sx={{
                                         fontSize: '16px',
@@ -358,13 +365,23 @@ export default function CreateReceiptItemForm(props: Props) {
                     </Button>
                 </Grid2>
                 <Grid2 size={{xs: 12, sm: 8}}>
-                    <Button component="label" variant="outlined" sx={{
+                    <Button onClick={() => {
+                        if (props.aiLoader.aiReceipt != null) {
+                            props.aiProductRecognitionDialogController.openDialog()
+                        }
+                    }} component="label" variant="outlined" sx={{
                         "&:hover": {
                             backgroundColor: "rgba(75,187,71,0.2)",
                         }
                     }} fullWidth>
-                        {aiProcessing ? <CircularProgress size={24}/> : "Wczytaj produkty (AI)"}
-                        <input type="file" accept="image/*" hidden onChange={handleUpload}/>
+                        {props.aiProcessing ? <CircularProgress size={24}/> : "Wczytaj produkty (AI)"}
+                        {props.aiLoader.aiReceipt == null ?
+                            <input type="file" accept="image/*" hidden onChange={async event => {
+                                props.setAiProcessing(true)
+                                await props.aiLoader.loadAiReceipts(event)
+                                props.aiProductRecognitionDialogController.openDialog()
+                                props.setAiProcessing(false)
+                            }}/> : ""}
                     </Button>
                 </Grid2>
             </Grid2>

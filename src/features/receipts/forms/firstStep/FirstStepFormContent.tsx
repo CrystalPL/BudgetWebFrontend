@@ -109,8 +109,8 @@ export default function FirstStepFormContent(props: FirstStepFormContentProps) {
             </Grid2>
             <Grid2 size={{xs: 12, sm: 6}} mt={2}>
                 <DateChooserComponent
-                    defaultValue={props.firstStepFormState.date}
-                    onChange={(newDate) => props.firstStepFormState.setDate(newDate ? newDate : new Date())}
+                    date={props.firstStepFormState.date}
+                    setDate={props.firstStepFormState.setDate}
                 />
             </Grid2>
             <Grid2 size={{xs: 12, sm: 6}} mt={2}>

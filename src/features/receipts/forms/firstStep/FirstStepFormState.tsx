@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {UserWhoPaid} from "../../api/ReceiptModel";
 
 export interface FirstStepFormState {
+    receiptId: number
+    setReceiptId: React.Dispatch<React.SetStateAction<number>>;
     shopName: string;
     setShopName: React.Dispatch<React.SetStateAction<string>>;
     shopNameError: string;
@@ -19,6 +21,7 @@ export interface FirstStepFormState {
 }
 
 export function useFirstStepFormState(): FirstStepFormState {
+    const [receiptId, setReceiptId] = useState<number>(0)
     const [shopName, setShopName] = useState<string>('');
     const [shopNameError, setShopNameError] = useState<string>('');
     const [whoPaid, setWhoPaid] = useState<UserWhoPaid | null>(null);
@@ -28,6 +31,8 @@ export function useFirstStepFormState(): FirstStepFormState {
     const [isSettled, setIsSettled] = useState<boolean>(false);
 
     return {
+        receiptId,
+        setReceiptId,
         shopName,
         setShopName,
         shopNameError,

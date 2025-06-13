@@ -3,34 +3,22 @@ import {useState} from "react";
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, {Dayjs} from 'dayjs';
+import dayjs from 'dayjs';
 import 'dayjs/locale/pl';
 import {ErrorOutline} from "@mui/icons-material";
 import {FormHelperText} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
 type DateChooserComponentProps = {
-    defaultValue: Date | null;
-    onChange?: (value: Date | null) => void;
+    date: Date | null
+    setDate: (date: Date | null) => void;
     disabled?: boolean;
 };
 
 dayjs.locale('pl');
 
-export default function DateChooserComponent({defaultValue, onChange, disabled}: DateChooserComponentProps) {
-    const [date, setDate] = useState<Date | null>(defaultValue);
+export default function DateChooserComponent({disabled, date, setDate}: DateChooserComponentProps) {
     const [dateError, setDateError] = useState<string>()
-
-    const setNewDate = (value: Dayjs | null) => {
-        if (!value) {
-            setDate(null);
-            onChange?.(null);
-        } else {
-            const newDate = value.toDate()
-            setDate(newDate);
-            onChange?.(newDate);
-        }
-    }
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pl">
@@ -40,7 +28,7 @@ export default function DateChooserComponent({defaultValue, onChange, disabled}:
                     label="Wybierz datę"
                     format="DD/MM/YYYY"
                     value={date ? dayjs(date) : null}
-                    onChange={event => setNewDate(event)}
+                    onChange={event => setDate(event?.toDate() || null)}
                     sx={{
                         width: "100%",
                         "& .MuiInputLabel-root.MuiInputLabel-shrink": {
