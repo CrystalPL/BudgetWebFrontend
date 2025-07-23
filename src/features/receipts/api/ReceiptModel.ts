@@ -23,11 +23,9 @@ export interface ReceiptItem {
 }
 
 export interface AIReceipt {
-    id: number;
     shop: string | null;
     shoppingTime: Date | null
-    whoPaid: UserWhoPaid | null
-    AIReceiptItems: AIReceiptItem[]
+    items: AIReceiptItem[]
 }
 
 export interface AIReceiptItem {
@@ -35,8 +33,6 @@ export interface AIReceiptItem {
     quantity: number | null;
     price: number | null;
     category: Category | null
-    moneyDividing: number | null;
-    userToReturnMoney: UserWhoPaid | null
 }
 
 export interface UserWhoPaid {

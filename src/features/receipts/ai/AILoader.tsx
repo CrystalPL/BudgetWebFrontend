@@ -17,8 +17,8 @@ export default function AILoader(): AILoaderProps {
             const formData = new FormData();
             formData.append('file', file);
 
-            await uploadFotoToAI(formData)
-            // setAiReceipt(null)
+            const a = await uploadFotoToAI(formData)
+            setAiReceipt(a.additionalData.receipt)
         }
     };
 

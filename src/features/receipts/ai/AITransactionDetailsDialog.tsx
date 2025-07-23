@@ -37,15 +37,22 @@ export default function AITransactionDetailsDialog(props: Props) {
 
     const [editingField, setEditingField] = useState<"none" | "shopName" | "transactionDate">("none");
 
-    const aiReceipt = props.aiLoader.aiReceipt;
     useEffect(() => {
+        let aiReceipt = props.aiLoader.aiReceipt;
+        console.log("kurwa")
         if (aiReceipt != null) {
+            console.log("i co")
+            console.log(aiReceipt)
             setShopName(aiReceipt?.shop || '')
             setTempShopName(aiReceipt?.shop || '')
             setDate(aiReceipt.shoppingTime || undefined)
             setTempDate(aiReceipt?.shoppingTime || null)
         }
-    }, [aiReceipt]);
+    }, [props.aiLoader.aiReceipt]);
+
+    useEffect(() => {
+        console.log("tempShopName po zmianie:", tempShopName);
+    }, [tempShopName]);
 
     const startEditing = (field: "shopName" | "transactionDate") => {
         setTempShopName(shopName)
@@ -93,7 +100,6 @@ export default function AITransactionDetailsDialog(props: Props) {
                 onClose={props.getTransactionDetailsByAIController.closeDialog} maxWidth="sm" fullWidth>
             <DialogTitle>Odczytane dane transakcji</DialogTitle>
             <DialogContent>
-                {/* Sklep */}
                 <Box sx={{mb: 1, display: "flex", alignItems: "center"}}>
                     <FormControl required margin="normal" fullWidth error={tempShopNameError !== ""}>
                         <InputLabel sx={{

@@ -1,6 +1,7 @@
 import {API_URL, handleDeleteRequest, handlePostRequest, ResponseAPI} from "@/service/ResponseAPI";
 import axios from "axios";
 import {
+    AIReceipt,
     Category,
     CreateReceiptDetails,
     GetProductListResponse,
@@ -16,7 +17,7 @@ import {
 } from "@/features/receipts/api/ReceiptMessages";
 import {UploadAvatarMessage} from "@/features/account/api/AccountResponseMessage";
 
-export async function getReceipts(cookie?: string) {
+export async function getReceipts(cookie?: string): Promise<Receipt[]> {
     const response = await axios.get<Receipt[]>(API_URL + "/receipts", {
         withCredentials: true,
         headers: cookie ? {Cookie: `auth_token=${cookie}`} : {}
@@ -73,8 +74,12 @@ export async function saveReceiptRequest(request: SaveReceiptRequest) {
     return handlePostRequest<typeof SaveReceiptMessage, SaveReceiptAdditionalMessage>("/receipts/save", request, SaveReceiptMessage);
 }
 
-export async function uploadFotoToAI(formData: FormData): Promise<ResponseAPI<UploadAvatarMessage>> {
-    return handlePostRequest<typeof UploadAvatarMessage>("/receipts/loadByAI", formData, UploadAvatarMessage, {
+export async function uploadFotoToAI(formData: FormData): Promise<ResponseAPI<UploadAvatarMessage, {
+    receipt: AIReceipt
+}>> {
+    return handlePostRequest<typeof UploadAvatarMessage, {
+        receipt: AIReceipt
+    }>("/receipts/loadByAI", formData, UploadAvatarMessage, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

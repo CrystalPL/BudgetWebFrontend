@@ -43,7 +43,7 @@ export default function AIProductRecognitionDialog(props: Props) {
 
     useEffect(() => {
         if (props.aiLoader.aiReceipt !== null) {
-            setAiRecognizedItems(props.aiLoader.aiReceipt.AIReceiptItems)
+            setAiRecognizedItems(props.aiLoader.aiReceipt.items)
         }
     }, [props.aiLoader.aiReceipt]);
 
@@ -67,7 +67,7 @@ export default function AIProductRecognitionDialog(props: Props) {
         }
     };
 
-    const handleFieldChange = (field: keyof ReceiptItem, value: any) => {
+    const handleFieldChange = (field: keyof AIReceiptItem, value: any) => {
         if (editedItem) {
             setEditedItem({...editedItem, [field]: value});
         }
@@ -91,9 +91,6 @@ export default function AIProductRecognitionDialog(props: Props) {
                                 <TableCell align="left" sx={{width: "10%"}}>Cena (zł)</TableCell>
                                 <TableCell align="left" sx={{width: "10%"}}>Suma (zł)</TableCell>
                                 <TableCell align="left" sx={{width: "15%"}}>Kategoria</TableCell>
-                                <TableCell align="left" sx={{width: "5%"}}>Sposób dzielenia</TableCell>
-                                <TableCell align="left" sx={{width: "20%"}}>Kto zwraca
-                                    kasę</TableCell>
                                 <TableCell align="right" sx={{width: "10%"}}>Akcje</TableCell>
                             </TableRow>
                         </TableHead>
@@ -178,51 +175,6 @@ export default function AIProductRecognitionDialog(props: Props) {
                                                     ))}
                                                 </Select>
                                             </TableCell>
-                                            <TableCell align="left">
-                                                <TextField
-                                                    value={editedItem?.moneyDividing || 0}
-                                                    onChange={e => handleFieldChange('moneyDividing', e.target.value.replace("%", ""))}
-                                                    variant="standard"
-                                                    fullWidth
-                                                    size="small"
-                                                    sx={{
-                                                        input: {
-                                                            fontSize: "0.875rem",
-                                                            p: 0,
-                                                            height: "1.5rem",
-                                                            textAlign: "left"
-                                                        }
-                                                    }}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                <Select
-                                                    value={editedItem?.userToReturnMoney?.userId || ""}
-                                                    onChange={(e) => {
-                                                        const selected = props.userWhoPaid.find(u => u.userId === e.target.value);
-                                                        handleFieldChange('userToReturnMoney', selected);
-                                                    }}
-                                                    variant="standard"
-                                                    fullWidth
-                                                    size="small"
-                                                    sx={{
-                                                        maxWidth: "150px",
-                                                        fontSize: "0.875rem",
-                                                        '.MuiSelect-select': {
-                                                            overflow: "hidden",
-                                                            whiteSpace: "nowrap",
-                                                            textOverflow: "ellipsis",
-                                                        }
-                                                    }}
-                                                >
-                                                    {props.userWhoPaid.map(u => (
-                                                        <MenuItem key={u.userId} value={u.userId}>
-                                                            {u.userName}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-
-                                            </TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title="Zapisz">
                                                     <IconButton color="success" onClick={saveEditing} size="small">
@@ -248,14 +200,6 @@ export default function AIProductRecognitionDialog(props: Props) {
                                                 whiteSpace: "nowrap",
                                                 textOverflow: "ellipsis"
                                             }} align="left">{item.category?.name}</TableCell>
-                                            <TableCell align="left">{item.moneyDividing}</TableCell>
-                                            <TableCell align="left" sx={{
-                                                overflow: "hidden",
-                                                whiteSpace: "nowrap",
-                                                textOverflow: "ellipsis"
-                                            }}>
-                                                {item.userToReturnMoney?.userName}
-                                            </TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title="Edytuj">
                                                     <IconButton color="primary" onClick={() => startEditing(index)}
