@@ -3,7 +3,7 @@ import {
     Autocomplete,
     FormControl,
     FormHelperText,
-    Grid2,
+    Grid,
     InputLabel,
     OutlinedInput,
     Switch,
@@ -26,8 +26,8 @@ export default function FirstStepFormContent(props: FirstStepFormContentProps) {
     const sortedShopNames = sort<ShopOccurrence>('desc', props.createReceiptDetails?.shopOccurrences || [], field => field.occurrence)
 
     return (
-        <Grid2 container spacing={2}>
-            <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+        <Grid container spacing={2}>
+            <Grid size={{xs: 12, sm: 6}} mt={2}>
                 <Autocomplete
                     freeSolo
                     forcePopupIcon
@@ -67,8 +67,8 @@ export default function FirstStepFormContent(props: FirstStepFormContentProps) {
                         </FormControl>
                     )}
                 />
-            </Grid2>
-            <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+            </Grid>
+            <Grid size={{xs: 12, sm: 6}} mt={2}>
                 <Autocomplete
                     options={props.createReceiptDetails?.whoPaidLists || []}
                     value={props.firstStepFormState.whoPaid}
@@ -106,14 +106,14 @@ export default function FirstStepFormContent(props: FirstStepFormContentProps) {
                         </FormControl>
                     )}
                 />
-            </Grid2>
-            <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+            </Grid>
+            <Grid size={{xs: 12, sm: 6}} mt={2}>
                 <DateChooserComponent
                     date={props.firstStepFormState.date}
                     setDate={props.firstStepFormState.setDate}
                 />
-            </Grid2>
-            <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+            </Grid>
+            <Grid size={{xs: 12, sm: 6}} mt={2}>
                 <FormControlLabel
                     control={
                         <Switch checked={props.firstStepFormState.isSettled || false}
@@ -121,7 +121,7 @@ export default function FirstStepFormContent(props: FirstStepFormContentProps) {
                     }
                     label="Paragon opłacony?"
                 />
-            </Grid2>
-        </Grid2>
+            </Grid>
+        </Grid>
     );
 }

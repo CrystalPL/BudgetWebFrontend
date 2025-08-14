@@ -2,7 +2,7 @@
 import {Container, Stack, Typography} from "@mui/material";
 import {AccountDetails} from "../../../features/account/components/AccountDetails";
 import AccountInfo from "../../../features/account/components/AccountInfo";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import LoginHistory from "../../../features/account/LoginHistory";
 
 export default function Page() {

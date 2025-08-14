@@ -7,7 +7,7 @@ import {
     Divider,
     FormControl,
     FormHelperText,
-    Grid2,
+    Grid,
     IconButton,
     InputLabel,
     MenuItem,
@@ -149,17 +149,17 @@ export default function ReceiptItemsComponent(props: Props) {
                         <Typography variant="subtitle1" fontWeight="bold" sx={{mb: 2}}>
                             Dodaj nowy produkt
                         </Typography>
-                        <Grid2 container spacing={1} alignItems="flex-end">
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                        <Grid container spacing={1} alignItems="flex-end">
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <CustomFormControl {...productFieldProps.props} />
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <CustomFormControl {...quantityFieldProps.props} />
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <CustomFormControl {...moneyFieldProps.props} />
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <FormControl fullWidth error={categoryError !== ''}>
                                     <InputLabel sx={{
                                         fontSize: '16px',
@@ -189,8 +189,8 @@ export default function ReceiptItemsComponent(props: Props) {
                                         {categoryError}
                                     </FormHelperText>
                                 </FormControl>
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <FormControl fullWidth error={dividingMoneyError !== ""}>
                                     <InputLabel sx={{
                                         fontSize: '16px',
@@ -220,8 +220,8 @@ export default function ReceiptItemsComponent(props: Props) {
                                         {dividingMoneyError}
                                     </FormHelperText>
                                 </FormControl>
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 6}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 6}}>
                                 <FormControl fullWidth error={whoReturnError !== ""}>
                                     <InputLabel sx={{
                                         fontSize: '16px',
@@ -251,13 +251,13 @@ export default function ReceiptItemsComponent(props: Props) {
                                         {whoReturnError}
                                     </FormHelperText>
                                 </FormControl>
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 4}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 4}}>
                                 <Button variant="contained" color="primary" fullWidth>
                                     Dodaj
                                 </Button>
-                            </Grid2>
-                            <Grid2 size={{xs: 12, sm: 8}}>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 8}}>
                                 <Button component="label" variant="outlined" sx={{
                                     "&:hover": {
                                         backgroundColor: "rgba(75,187,71,0.2)",
@@ -266,8 +266,8 @@ export default function ReceiptItemsComponent(props: Props) {
                                     {aiProcessing ? <CircularProgress size={24}/> : "Wczytaj produkty (AI)"}
                                     <input type="file" accept="image/*" hidden onChange={handleUpload}/>
                                 </Button>
-                            </Grid2>
-                        </Grid2>
+                            </Grid>
+                        </Grid>
                     </Box>
 
                     {/* Divider for mobile */}

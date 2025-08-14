@@ -6,12 +6,16 @@ import {GetRolePermissionMessages} from "../../../../../features/roles/api/RoleM
 import PermissionRoleView from "../../../../../features/roles/components/PermissionRoleView";
 
 type PageProps = {
-    params: { roleId: number };
+    params: { roleId: string };
 };
 
-export default async function page(params: PageProps) {
-    const roleId = params.params.roleId;
-    const response: ResponseAPI<GetRolePermissionMessages, Permissions> = await getPermissions(roleId, getCookie())
+export default async function Page({params}: any) {
+    const roleId = parseInt(params.roleId, 10);
+    if (isNaN(roleId)) {
+        throw new Error('Invalid role ID');
+    }
+
+    const response: ResponseAPI<GetRolePermissionMessages, Permissions> = await getPermissions(roleId, await getCookie())
     console.log(response)
     if (!response.success) {
         return <PermissionRoleView content={response.message}></PermissionRoleView>

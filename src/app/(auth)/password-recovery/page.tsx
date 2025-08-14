@@ -96,12 +96,12 @@ export default function ResetPassword() {
                         Wyślij link resetujący
                     </Button>
                     <Grid container>
-                        <Grid item xs>
+                        <Grid>
                             <Link href="sign-in" variant="body2" underline="none" fontWeight="bold">
                                 Zaloguj się
                             </Link>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <Link href="sign-up" variant="body2" underline="none" fontWeight="bold">
                                 Nie masz konta? Zarejestruj się!
                             </Link>

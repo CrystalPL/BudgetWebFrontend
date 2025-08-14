@@ -9,7 +9,7 @@ interface ResendEmailButtonProps {
     children: React.ReactNode;
 }
 
-export const ResendEmailButton: React.FC<ResendEmailButtonProps> = ({ children }) => {
+export const ResendEmailButton: React.FC<ResendEmailButtonProps> = ({children}) => {
     const [isDisabled, setIsDisabled] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [status, setStatus] = useState<'success' | 'error'>();
@@ -22,7 +22,7 @@ export const ResendEmailButton: React.FC<ResendEmailButtonProps> = ({ children }
             setStatus("error");
             setStatusMessage("Nie odnaleziono tokenu do potwierdzenia rejestracji");
         }
-    }, [searchParams]);
+    }, [registrationToken]);
 
     useEffect(() => {
         const storedTimeString = localStorage.getItem('resendEmailTime');

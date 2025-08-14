@@ -176,12 +176,12 @@ export default function SignIn() {
                         Zaloguj
                     </Button>
                     <Grid container>
-                        <Grid item xs>
+                        <Grid>
                             <Link href="password-recovery" variant="body2" underline="none" fontWeight="bold">
                                 Zapomniałeś hasła?
                             </Link>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <Link href="sign-up" variant="body2" underline="none" fontWeight="bold">
                                 Nie masz konta? Zarejestruj się!
                             </Link>

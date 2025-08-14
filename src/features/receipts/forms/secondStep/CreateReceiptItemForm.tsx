@@ -5,7 +5,7 @@ import {
     CircularProgress,
     FormControl,
     FormHelperText,
-    Grid2,
+    Grid,
     InputLabel,
     Typography
 } from "@mui/material";
@@ -65,6 +65,7 @@ export default function CreateReceiptItemForm(props: Props) {
             setDividingMoney('')
             setWhoReturn(null)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.addItemController.openDialogStatus])
 
     const verifyFields = (): boolean => {
@@ -191,8 +192,8 @@ export default function CreateReceiptItemForm(props: Props) {
             <Typography variant="subtitle1" fontWeight="bold" sx={{mb: 2}}>
                 Dodaj nowy produkt
             </Typography>
-            <Grid2 container spacing={1} alignItems="flex-end">
-                <Grid2 size={{xs: 12, sm: 6}}>
+            <Grid container spacing={1} alignItems="flex-end">
+                <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
                         freeSolo
                         forcePopupIcon
@@ -235,14 +236,14 @@ export default function CreateReceiptItemForm(props: Props) {
                             </FormControl>
                         )}
                     />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 6}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 6}}>
                     <CustomFormControl {...quantityFieldProps.props} />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 6}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 6}}>
                     <CustomFormControl {...moneyFieldProps.props} />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 6}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
                         options={props.categoryList}
                         value={category}
@@ -280,8 +281,8 @@ export default function CreateReceiptItemForm(props: Props) {
                             </FormControl>
                         )}
                     />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 6}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
                         freeSolo
                         forcePopupIcon
@@ -320,8 +321,8 @@ export default function CreateReceiptItemForm(props: Props) {
                             </FormControl>
                         )}
                     />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 6}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
                         options={props.userWhoPaid}
                         value={whoReturn || null}
@@ -358,13 +359,13 @@ export default function CreateReceiptItemForm(props: Props) {
                             </FormControl>
                         )}
                     />
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 4}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 4}}>
                     <Button variant="contained" color="primary" fullWidth onClick={createItem}>
                         Dodaj
                     </Button>
-                </Grid2>
-                <Grid2 size={{xs: 12, sm: 8}}>
+                </Grid>
+                <Grid size={{xs: 12, sm: 8}}>
                     <Button onClick={() => {
                         if (props.aiLoader.aiReceipt != null) {
                             props.aiProductRecognitionDialogController.openDialog()
@@ -383,8 +384,8 @@ export default function CreateReceiptItemForm(props: Props) {
                                 props.setAiProcessing(false)
                             }}/> : ""}
                     </Button>
-                </Grid2>
-            </Grid2>
+                </Grid>
+            </Grid>
         </Box>
     )
 }

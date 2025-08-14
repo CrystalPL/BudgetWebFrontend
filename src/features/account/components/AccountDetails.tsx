@@ -4,7 +4,7 @@ import * as React from 'react';
 import ChangeEmailForm from "./form/ChangeEmailForm";
 import ChangePasswordForm from "./form/ChangePasswordForm";
 import ChangeNicknameForm from "./form/ChangeNicknameForm";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";

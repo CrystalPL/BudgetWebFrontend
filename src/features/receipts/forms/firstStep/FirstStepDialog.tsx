@@ -47,7 +47,9 @@ export default function FirstStepDialog(props: Props) {
             }
 
             fetchCreateReceiptDetails();
+
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.creatingController.openDialogStatus])
     const handleNext = () => {
         if (validateForm()) {
@@ -65,6 +67,7 @@ export default function FirstStepDialog(props: Props) {
         if (!props.creatingController.openDialogStatus && !props.addItemsToReceiptController.openDialogStatus) {
             handleClose()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.addItemsToReceiptController.openDialogStatus])
 
     const handleClose = () => {

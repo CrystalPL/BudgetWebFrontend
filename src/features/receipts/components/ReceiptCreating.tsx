@@ -4,7 +4,7 @@ import {
     Dialog,
     FormControl,
     FormHelperText,
-    Grid2,
+    Grid,
     InputLabel,
     MenuItem,
     Paper,
@@ -44,7 +44,7 @@ export default function ReceiptCreatingComponent(props: Props) {
         settled: false,
         shop: "",
         shoppingTime: new Date(),
-        whoPaid: {id: 1, name: "Anna Kowalska"}
+        whoPaid: {userId: 1, userName: "Anna Kowalska"}
     })
     const [aiProcessing, setAiProcessing] = useState(false);
     const getProductsByAIController: DialogShowingController = GetShowingController()
@@ -98,11 +98,11 @@ export default function ReceiptCreatingComponent(props: Props) {
                 </Stepper>
 
                 <Box component="form" sx={{mb: 2}}>
-                    <Grid2 container spacing={2}>
-                        <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+                    <Grid container spacing={2}>
+                        <Grid size={{xs: 12, sm: 6}} mt={2}>
                             <CustomFormControl {...shopFieldProps.props} />
-                        </Grid2>
-                        <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+                        </Grid>
+                        <Grid size={{xs: 12, sm: 6}} mt={2}>
                             <FormControl fullWidth error={whoPaidProps.error !== ""}>
                                 <InputLabel sx={{
                                     fontSize: '16px',
@@ -132,8 +132,8 @@ export default function ReceiptCreatingComponent(props: Props) {
                                     {whoPaidProps.error}
                                 </FormHelperText>
                             </FormControl>
-                        </Grid2>
-                        <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+                        </Grid>
+                        <Grid size={{xs: 12, sm: 6}} mt={2}>
                             <DateChooserComponent
                                 defaultValue={new Date()}
                                 onChange={(newDate) => setReceipt({
@@ -141,8 +141,8 @@ export default function ReceiptCreatingComponent(props: Props) {
                                     ['shoppingTime']: newDate ? newDate : new Date()
                                 })}
                             />
-                        </Grid2>
-                        <Grid2 size={{xs: 12, sm: 6}} mt={2}>
+                        </Grid>
+                        <Grid size={{xs: 12, sm: 6}} mt={2}>
                             <FormControlLabel
                                 control={
                                     <Switch checked={isSettled}
@@ -150,8 +150,8 @@ export default function ReceiptCreatingComponent(props: Props) {
                                 }
                                 label="Paragon opłacony?"
                             />
-                        </Grid2>
-                    </Grid2>
+                        </Grid>
+                    </Grid>
                 </Box>
 
                 <Box sx={{display: "flex", justifyContent: "space-between", mt: 4}}>

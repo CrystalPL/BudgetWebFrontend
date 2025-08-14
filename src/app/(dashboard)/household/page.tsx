@@ -4,8 +4,9 @@ import HouseholdDashboardWrapper from "../../../features/household/HouseholdDash
 import {getCookie} from "../../../util/CookieUtil";
 
 export default async function page() {
-    const members = await getMembers(getCookie())
-    const invitedMembers: HouseholdInvitedMember[] = await getInvitedMembers(getCookie())
+    const cookie = await getCookie()
+    const members = await getMembers(cookie)
+    const invitedMembers: HouseholdInvitedMember[] = await getInvitedMembers(cookie)
 
     return (
         <HouseholdDashboardWrapper

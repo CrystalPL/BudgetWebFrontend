@@ -56,6 +56,7 @@ export default function ReceiptProductsManager(props: Props) {
 
             fetchDetails();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.addItemController.openDialogStatus])
 
     const handleBack = () => {

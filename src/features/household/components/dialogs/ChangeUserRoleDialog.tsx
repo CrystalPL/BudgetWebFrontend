@@ -13,11 +13,11 @@ interface EditUserRoleDialogProps extends DialogShowingController, HouseholdRelo
 }
 
 export default function ChangeUserRoleDialog({
-                                               openDialogStatus: open,
-                                               closeDialog,
-                                               reloadTable,
-                                               editedMember
-                                           }: EditUserRoleDialogProps) {
+                                                 openDialogStatus: open,
+                                                 closeDialog,
+                                                 reloadTable,
+                                                 editedMember
+                                             }: EditUserRoleDialogProps) {
     const [roles, setRoles] = useState<ChangeUserRole[]>([])
     const [choosenRole, setChoosenRole] = useState<string | String>()
     const [error, setError] = useState<string>("")

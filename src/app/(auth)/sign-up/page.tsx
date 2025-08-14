@@ -279,7 +279,7 @@ export default function SignUp() {
                         Zarejestruj
                     </Button>
                     <Grid container justifyContent="flex-end">
-                        <Grid item>
+                        <Grid>
                             <Link href="sign-in" variant="body2" underline="none">
                                 Posiadasz już konto? Zaloguj się
                             </Link>
