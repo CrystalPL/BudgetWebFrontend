@@ -74,7 +74,17 @@ export default function AIProductRecognitionDialog(props: Props) {
     };
 
     const mapAiItemsToReceiptItems = (aiItems: AIReceiptItem[]) => {
-
+        const receiptItems: ReceiptItem[] = aiItems.map(item => ({
+            id: 0,
+            productName: item.productName || "",
+            quantity: item.quantity || 0,
+            price: item.price || 0,
+            category: item.category,
+            moneyDividing: 0,
+            userToReturnMoney: null
+        }));
+        props.setItems(receiptItems);
+        props.getProductsByAIController.closeDialog();
     }
 
     return (

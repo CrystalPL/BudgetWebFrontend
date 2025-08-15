@@ -100,7 +100,7 @@ export default function ReceiptProductsTable(props: Props) {
                                                 <TableCell sx={{px: 1, py: 1}}
                                                            align="right">{(item.price * item.quantity).toFixed(2)}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}}
-                                                           align="right">{item.category.name}</TableCell>
+                                                           align="right">{item.category?.name}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}}
                                                            align="right">{item.moneyDividing == null || item.moneyDividing == 0 ? "" : item.moneyDividing + "%"}</TableCell>
                                                 <TableCell sx={{px: 1, py: 1}}

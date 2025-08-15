@@ -39,10 +39,7 @@ export default function AITransactionDetailsDialog(props: Props) {
 
     useEffect(() => {
         let aiReceipt = props.aiLoader.aiReceipt;
-        console.log("kurwa")
         if (aiReceipt != null) {
-            console.log("i co")
-            console.log(aiReceipt)
             setShopName(aiReceipt?.shop || '')
             setTempShopName(aiReceipt?.shop || '')
             setDate(aiReceipt.shoppingTime || undefined)

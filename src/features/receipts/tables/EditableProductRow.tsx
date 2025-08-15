@@ -57,9 +57,10 @@ export default function EditableProductRow(props: Props) {
     };
 
     const handleChangeNumberField = (field: keyof ReceiptItem, value: string) => {
+        value = value.replace(",", ".")
         const numberValue = Number(value);
         if (!isNaN(numberValue)) {
-            handleFieldChange(field, numberValue);
+            handleFieldChange(field, value);
         } else {
             showSnackbar("Niepoprawna wartość pola liczbowego")
         }
@@ -93,7 +94,7 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <TextField
-                    value={props.editedItem?.quantity || 0}
+                    value={props.editedItem?.quantity || ''}
                     type="text"
                     onChange={(e) => handleChangeNumberField('quantity', e.target.value)}
                     variant="standard"
@@ -111,7 +112,7 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <TextField
-                    value={props.editedItem?.price || 0}
+                    value={props.editedItem?.price || ''}
                     type="text"
                     onChange={(e) => handleChangeNumberField('price', e.target.value)}
                     variant="standard"
@@ -132,8 +133,7 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <Autocomplete
-                    disableClearable={true}
-                    value={props.editedItem?.category || undefined}
+                    value={props.editedItem?.category ?? null}
                     options={props.categoryList}
                     getOptionLabel={(option) => option.name}
                     onChange={(_, newValue) => handleFieldChange('category', newValue)}
@@ -159,7 +159,7 @@ export default function EditableProductRow(props: Props) {
                     freeSolo
                     forcePopupIcon
                     disableClearable={true}
-                    value={String(props.editedItem?.moneyDividing + "%" || 0)}
+                    value={props.editedItem?.moneyDividing != null ? `${props.editedItem.moneyDividing}%` : ''}
                     options={['10%', '30%', '50%', '70%', '100%']}
                     onInputChange={(_, newValue) => handleFieldChange('moneyDividing', newValue.replace("%", ""))}
                     renderInput={(params) => (

@@ -17,8 +17,8 @@ export interface ReceiptItem {
     productName: string;
     quantity: number;
     price: number;
-    category: Category
-    moneyDividing: number;
+    category: Category | null
+    moneyDividing: number | null;
     userToReturnMoney: UserWhoPaid | null
 }
 
