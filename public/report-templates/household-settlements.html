@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Rozliczenia między Domownikami</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M100,50 L200,30 L300,60 L400,40 L500,70 L600,35 L700,55 L800,25 L900,65"/></svg>') no-repeat center;
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .report-title {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .report-period {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .summary-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .balance-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .balance-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .balance-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .balance-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .balance-positive {
+            color: #28a745;
+        }
+
+        .balance-negative {
+            color: #dc3545;
+        }
+
+        .balance-neutral {
+            color: #6c757d;
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .member-status {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .member-balance {
+            text-align: right;
+        }
+
+        .balance-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .balance-description {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #495057;
+            border-bottom: 3px solid #ffc107;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .transactions-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-settled {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-icon {
+            background: #0c5460;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .recommendation-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #0c5460;
+        }
+
+        .settlement-matrix {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .matrix-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .matrix-diagonal {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .matrix-positive {
+            background: #d4edda;
+            color: #155724;
+            font-weight: 600;
+        }
+
+        .matrix-negative {
+            background: #f8d7da;
+            color: #721c24;
+            font-weight: 600;
+        }
+
+        .shared-expenses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .expense-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #ffc107;
+            transition: transform 0.3s ease;
+        }
+
+        .expense-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .expense-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .expense-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .expense-amount {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffc107;
+        }
+
+        .expense-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .expense-split {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .split-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .split-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .split-amount {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .payment-history {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .history-description {
+            font-size: 0.9rem;
+            flex: 1;
+            margin: 0 15px;
+        }
+
+        .history-amount {
+            font-weight: 600;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .generated-at {
+            font-size: 0.8rem;
+            color: #adb5bd;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👥 BudgetApp</div>
+            <h1 class="report-title">Rozliczenia między Domownikami</h1>
+            <p class="report-period">Styczeń 2024 | Saldo rozliczeń i wspólne wydatki</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Podsumowanie sald -->
+        <div class="summary-section">
+            <h3 style="margin-bottom: 20px; color: #856404;">💰 Aktualne Saldo Rozliczeń</h3>
+
+            <div class="balance-overview">
+                <div class="balance-card">
+                    <div class="balance-value balance-positive">+425,50 zł</div>
+                    <div class="balance-label">Anna - Ma otrzymać</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-value balance-negative">-280,25 zł</div>
+                    <div class="balance-label">Piotr - Ma zapłacić</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-value balance-negative">-145,25 zł</div>
+                    <div class="balance-label">Kasia - Ma zapłacić</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-value balance-neutral">2 850,00 zł</div>
+                    <div class="balance-label">Wspólne wydatki</div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.7); border-radius: 8px; padding: 15px; margin-top: 20px;">
+                <strong>ℹ️ Informacja:</strong> Saldo dodatnie oznacza kwotę do otrzymania, saldo ujemne - kwotę do
+                zapłacenia innym domownikom.
+            </div>
+        </div>
+
+        <!-- Szczegóły członków gospodarstwa -->
+        <div class="section">
+            <h2 class="section-title">
+                👤 Szczegóły Członków Gospodarstwa
+            </h2>
+
+            <div class="member-card">
+                <div class="member-header">
+                    <div class="member-avatar">A</div>
+                    <div class="member-info">
+                        <div class="member-name">Anna Kowalska</div>
+                        <div class="member-status">Administrator gospodarstwa • Aktywna</div>
+                    </div>
+                    <div class="member-balance">
+                        <div class="balance-amount balance-positive">+425,50 zł</div>
+                        <div class="balance-description">Ma otrzymać od innych</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">1 890,50 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki własne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #ffc107;">1 245,80 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki wspólne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #007bff;">68</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Transakcji</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #6f42c1;">45%</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Udział w wydatkach</div>
+                    </div>
+                </div>
+
+                <div class="payment-history">
+                    <h4 style="margin-bottom: 15px; color: #495057;">📋 Ostatnie rozliczenia</h4>
+                    <div class="history-item">
+                        <div class="history-date">15 Jan</div>
+                        <div class="history-description">Zwrot za zakupy spożywcze</div>
+                        <div class="history-amount balance-positive">+125,40 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">22 Jan</div>
+                        <div class="history-description">Płatność rachunku za prąd</div>
+                        <div class="history-amount balance-positive">+285,60 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">28 Jan</div>
+                        <div class="history-description">Wspólne zakupy domowe</div>
+                        <div class="history-amount balance-positive">+78,90 zł</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="member-card">
+                <div class="member-header">
+                    <div class="member-avatar">P</div>
+                    <div class="member-info">
+                        <div class="member-name">Piotr Kowalski</div>
+                        <div class="member-status">Członek gospodarstwa • Aktywny</div>
+                    </div>
+                    <div class="member-balance">
+                        <div class="balance-amount balance-negative">-280,25 zł</div>
+                        <div class="balance-description">Ma zapłacić</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">1 420,75 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki własne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #ffc107;">685,30 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki wspólne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #007bff;">42</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Transakcji</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #6f42c1;">30%</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Udział w wydatkach</div>
+                    </div>
+                </div>
+
+                <div class="payment-history">
+                    <h4 style="margin-bottom: 15px; color: #495057;">📋 Ostatnie rozliczenia</h4>
+                    <div class="history-item">
+                        <div class="history-date">10 Jan</div>
+                        <div class="history-description">Udział w rachunku za internet</div>
+                        <div class="history-amount balance-negative">-75,00 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">18 Jan</div>
+                        <div class="history-description">Wspólna kolacja - restauracja</div>
+                        <div class="history-amount balance-negative">-120,50 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">25 Jan</div>
+                        <div class="history-description">Zakupy spożywcze</div>
+                        <div class="history-amount balance-negative">-84,75 zł</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="member-card">
+                <div class="member-header">
+                    <div class="member-avatar">K</div>
+                    <div class="member-info">
+                        <div class="member-name">Kasia Kowalska</div>
+                        <div class="member-status">Członek gospodarstwa • Aktywna</div>
+                    </div>
+                    <div class="member-balance">
+                        <div class="balance-amount balance-negative">-145,25 zł</div>
+                        <div class="balance-description">Ma zapłacić</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">890,40 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki własne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #ffc107;">918,90 zł</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Wydatki wspólne</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #007bff;">35</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Transakcji</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #6f42c1;">25%</div>
+                        <div style="font-size: 0.8rem; color: #6c757d;">Udział w wydatkach</div>
+                    </div>
+                </div>
+
+                <div class="payment-history">
+                    <h4 style="margin-bottom: 15px; color: #495057;">📋 Ostatnie rozliczenia</h4>
+                    <div class="history-item">
+                        <div class="history-date">12 Jan</div>
+                        <div class="history-description">Zakupy w Carrefour</div>
+                        <div class="history-amount balance-negative">-65,80 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">20 Jan</div>
+                        <div class="history-description">Wspólne wyjście do kina</div>
+                        <div class="history-amount balance-negative">-45,20 zł</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-date">30 Jan</div>
+                        <div class="history-description">Udział w kosztach mediów</div>
+                        <div class="history-amount balance-negative">-34,25 zł</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matryca rozliczeń -->
+        <div class="section">
+            <h2 class="section-title">
+                📊 Matryca Rozliczeń
+            </h2>
+
+            <div class="settlement-matrix">
+                <p style="margin-bottom: 20px; color: #6c757d; font-size: 0.9rem;">
+                    Tabela pokazuje kto komu ile jest winien. Wartości dodatnie oznaczają kwoty do otrzymania, ujemne -
+                    do zapłacenia.
+                </p>
+
+                <table class="matrix-table">
+                    <thead>
+                    <tr>
+                        <th>Od \ Do</th>
+                        <th>Anna</th>
+                        <th>Piotr</th>
+                        <th>Kasia</th>
+                        <th>Suma</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>Anna</th>
+                        <td class="matrix-diagonal">—</td>
+                        <td class="matrix-positive">+185,50 zł</td>
+                        <td class="matrix-positive">+240,00 zł</td>
+                        <td class="matrix-positive">+425,50 zł</td>
+                    </tr>
+                    <tr>
+                        <th>Piotr</th>
+                        <td class="matrix-negative">-185,50 zł</td>
+                        <td class="matrix-diagonal">—</td>
+                        <td class="matrix-negative">-94,75 zł</td>
+                        <td class="matrix-negative">-280,25 zł</td>
+                    </tr>
+                    <tr>
+                        <th>Kasia</th>
+                        <td class="matrix-negative">-240,00 zł</td>
+                        <td class="matrix-positive">+94,75 zł</td>
+                        <td class="matrix-diagonal">—</td>
+                        <td class="matrix-negative">-145,25 zł</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Wspólne wydatki -->
+        <div class="section">
+            <h2 class="section-title">
+                🏠 Wspólne Wydatki w Styczniu
+            </h2>
+
+            <div class="shared-expenses">
+                <div class="expense-card">
+                    <div class="expense-header">
+                        <div class="expense-title">💡 Rachunki za Media</div>
+                        <div class="expense-amount">1 245,80 zł</div>
+                    </div>
+                    <div class="expense-details">
+                        Prąd, gaz, woda, internet • Opłacone przez: Anna
+                    </div>
+                    <div class="expense-split">
+                        <div class="split-item">
+                            <span class="split-name">Anna (40%)</span>
+                            <span class="split-amount">498,32 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Piotr (35%)</span>
+                            <span class="split-amount">436,03 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Kasia (25%)</span>
+                            <span class="split-amount">311,45 zł</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expense-card">
+                    <div class="expense-header">
+                        <div class="expense-title">🛒 Zakupy Spożywcze</div>
+                        <div class="expense-amount">890,50 zł</div>
+                    </div>
+                    <div class="expense-details">
+                        Carrefour, Biedronka, Żabka • Różni płacący
+                    </div>
+                    <div class="expense-split">
+                        <div class="split-item">
+                            <span class="split-name">Anna (45%)</span>
+                            <span class="split-amount">400,73 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Piotr (30%)</span>
+                            <span class="split-amount">267,15 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Kasia (25%)</span>
+                            <span class="split-amount">222,63 zł</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expense-card">
+                    <div class="expense-header">
+                        <div class="expense-title">🍽️ Wspólne Posiłki</div>
+                        <div class="expense-amount">485,20 zł</div>
+                    </div>
+                    <div class="expense-details">
+                        Restauracje, zamówienia • Opłacone przez: Kasia
+                    </div>
+                    <div class="expense-split">
+                        <div class="split-item">
+                            <span class="split-name">Anna (33%)</span>
+                            <span class="split-amount">160,12 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Piotr (33%)</span>
+                            <span class="split-amount">160,12 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Kasia (33%)</span>
+                            <span class="split-amount">160,12 zł</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expense-card">
+                    <div class="expense-header">
+                        <div class="expense-title">🧽 Artykuły Domowe</div>
+                        <div class="expense-amount">228,50 zł</div>
+                    </div>
+                    <div class="expense-details">
+                        Środki czystości, kosmetyki • Opłacone przez: Piotr
+                    </div>
+                    <div class="expense-split">
+                        <div class="split-item">
+                            <span class="split-name">Anna (40%)</span>
+                            <span class="split-amount">91,40 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Piotr (30%)</span>
+                            <span class="split-amount">68,55 zł</span>
+                        </div>
+                        <div class="split-item">
+                            <span class="split-name">Kasia (30%)</span>
+                            <span class="split-amount">68,55 zł</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historia rozliczeń -->
+        <div class="section">
+            <h2 class="section-title">
+                📋 Historia Rozliczeń
+            </h2>
+
+            <div class="transactions-table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Opis</th>
+                        <th>Od</th>
+                        <th>Do</th>
+                        <th>Kwota</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>30 Jan 2024</td>
+                        <td>Rozliczenie mediów za styczeń</td>
+                        <td>Piotr, Kasia</td>
+                        <td>Anna</td>
+                        <td>285,60 zł</td>
+                        <td><span class="status-badge status-settled">Rozliczone</span></td>
+                    </tr>
+                    <tr>
+                        <td>28 Jan 2024</td>
+                        <td>Wspólne zakupy spożywcze</td>
+                        <td>Anna</td>
+                        <td>Piotr, Kasia</td>
+                        <td>165,80 zł</td>
+                        <td><span class="status-badge status-settled">Rozliczone</span></td>
+                    </tr>
+                    <tr>
+                        <td>25 Jan 2024</td>
+                        <td>Kolacja w restauracji</td>
+                        <td>Kasia</td>
+                        <td>Anna, Piotr</td>
+                        <td>120,50 zł</td>
+                        <td><span class="status-badge status-pending">Oczekuje</span></td>
+                    </tr>
+                    <tr>
+                        <td>22 Jan 2024</td>
+                        <td>Artykuły domowe - Rossmann</td>
+                        <td>Piotr</td>
+                        <td>Anna, Kasia</td>
+                        <td>85,40 zł</td>
+                        <td><span class="status-badge status-settled">Rozliczone</span></td>
+                    </tr>
+                    <tr>
+                        <td>18 Jan 2024</td>
+                        <td>Prąd za grudzień</td>
+                        <td>Piotr, Kasia</td>
+                        <td>Anna</td>
+                        <td>245,30 zł</td>
+                        <td><span class="status-badge status-overdue">Przeterminowane</span></td>
+                    </tr>
+                    <tr>
+                        <td>15 Jan 2024</td>
+                        <td>Zakupy w Carrefour</td>
+                        <td>Anna</td>
+                        <td>Piotr, Kasia</td>
+                        <td>198,75 zł</td>
+                        <td><span class="status-badge status-settled">Rozliczone</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rekomendacje -->
+        <div class="section">
+            <h2 class="section-title">
+                💡 Rekomendacje Rozliczeniowe
+            </h2>
+
+            <div class="recommendations">
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">1</div>
+                    <div class="recommendation-text">
+                        <strong>Optymalne rozliczenie:</strong> Piotr powinien zapłacić Annie 185,50 zł, a Kasia 240,00
+                        zł. To wyrówna wszystkie salda.
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">2</div>
+                    <div class="recommendation-text">
+                        <strong>Harmonogram płatności:</strong> Zalecamy miesięczne rozliczenia do 5. dnia kolejnego
+                        miesiąca, aby unikać zaległości.
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">3</div>
+                    <div class="recommendation-text">
+                        <strong>Przeterminowane płatności:</strong> Rozliczenie z 18 stycznia (245,30 zł) wymaga pilnej
+                        uwagi - upłynął termin płatności.
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">4</div>
+                    <div class="recommendation-text">
+                        <strong>Automatyzacja:</strong> Rozważcie ustawienie automatycznych przelewów na stałe wydatki
+                        (media, czynsz) według ustalonych proporcji.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-info">
+            <strong>Rozliczenia między Domownikami</strong> - Gospodarstwo: Rodzina Kowalskich
+        </div>
+        <div class="generated-at">
+            Raport wygenerowany: 1 lutego 2024, 10:15 | Dane za okres: 1-31 stycznia 2024
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Realizacja Budżetu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><rect x="50" y="20" width="80" height="60"/><rect x="200" y="10" width="60" height="80"/><rect x="350" y="30" width="70" height="40"/><rect x="500" y="15" width="90" height="70"/><rect x="650" y="25" width="75" height="50"/><rect x="800" y="5" width="85" height="90"/></svg>') no-repeat center;
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .report-title {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .report-period {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .budget-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border-left: 5px solid #007bff;
+            transition: transform 0.3s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .overview-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0056b3;
+        }
+
+        .overview-label {
+            font-size: 0.9rem;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .overview-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .warning {
+            color: #ffc107;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #495057;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-budget {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .category-budget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .category-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .category-icon {
+            font-size: 2rem;
+        }
+
+        .category-details {
+            flex: 1;
+        }
+
+        .category-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .category-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .category-status {
+            text-align: right;
+        }
+
+        .budget-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .budget-status {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .budget-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .progress-good {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .progress-warning {
+            background: linear-gradient(90deg, #ffc107, #fd7e14);
+        }
+
+        .progress-danger {
+            background: linear-gradient(90deg, #dc3545, #c82333);
+        }
+
+        .budget-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alerts-section {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #dc3545;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .alert-icon {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #721c24;
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-icon {
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .recommendation-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #155724;
+        }
+
+        .forecast-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .forecast-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .forecast-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #856404;
+        }
+
+        .forecast-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th,
+        .table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .generated-at {
+            font-size: 0.8rem;
+            color: #adb5bd;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🎯 BudgetApp</div>
+            <h1 class="report-title">Realizacja Budżetu</h1>
+            <p class="report-period">Styczeń 2024 | Analiza wykonania budżetu z alertami</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Przegląd ogólny -->
+        <div class="budget-overview">
+            <div class="overview-card">
+                <div class="overview-value">84,2%</div>
+                <div class="overview-label">Realizacja Budżetu</div>
+                <div class="overview-change positive">
+                    ↗ +2,1% vs plan
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-value">8 000 zł</div>
+                <div class="overview-label">Budżet Miesięczny</div>
+                <div class="overview-change">
+                    Zaplanowana kwota
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-value">6 736 zł</div>
+                <div class="overview-label">Wydano</div>
+                <div class="overview-change negative">
+                    ↗ +8,3% vs poprzedni miesiąc
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-value">1 264 zł</div>
+                <div class="overview-label">Pozostało</div>
+                <div class="overview-change positive">
+                    15,8% budżetu
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-value">3</div>
+                <div class="overview-label">Przekroczenia</div>
+                <div class="overview-change warning">
+                    ⚠ Wymaga uwagi
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-value">7 250 zł</div>
+                <div class="overview-label">Prognoza na Koniec</div>
+                <div class="overview-change positive">
+                    90,6% budżetu
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerty -->
+        <div class="alerts-section">
+            <h3 style="margin-bottom: 20px; color: #721c24;">🚨 Alerty Budżetowe</h3>
+
+            <div class="alert-item">
+                <div class="alert-icon">!</div>
+                <div class="alert-text">
+                    <strong>Transport:</strong> Przekroczono budżet o 208,13 zł (123%). Główne wydatki: paliwo i serwis
+                    samochodu.
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon">!</div>
+                <div class="alert-text">
+                    <strong>Rozrywka:</strong> Wykorzystano 95% budżetu. Pozostało tylko 40 zł na resztę miesiąca.
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon">!</div>
+                <div class="alert-text">
+                    <strong>Żywność:</strong> Zbliżasz się do limitu - wykorzystano 89% budżetu miesięcznego.
+                </div>
+            </div>
+        </div>
+
+        <!-- Kategorie budżetowe -->
+        <div class="section">
+            <h2 class="section-title">
+                📊 Realizacja według Kategorii
+            </h2>
+
+            <!-- Kategoria: Żywność -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">🍕</span>
+                        <div class="category-details">
+                            <div class="category-name">Żywność i Napoje</div>
+                            <div class="category-description">Produkty spożywcze, napoje, jedzenie na wynos</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage warning">89,2%</div>
+                        <div class="budget-status status-warning">Uwaga</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 2 676,00 zł</span>
+                        <span>Budżet: 3 000,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-warning" style="width: 89.2%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value">324,00 zł</div>
+                        <div class="detail-label">Pozostało</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">147</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">18,20 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">86,32 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">10,8 dni</div>
+                        <div class="detail-label">Starczy na</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategoria: Mieszkanie -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">🏠</span>
+                        <div class="category-details">
+                            <div class="category-name">Mieszkanie i Media</div>
+                            <div class="category-description">Czynsz, prąd, gaz, internet, woda</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage positive">75,6%</div>
+                        <div class="budget-status status-good">OK</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 1 512,00 zł</span>
+                        <span>Budżet: 2 000,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-good" style="width: 75.6%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value">488,00 zł</div>
+                        <div class="detail-label">Pozostało</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">23</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">65,74 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">48,77 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">Do końca miesiąca</div>
+                        <div class="detail-label">Wystarczy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategoria: Transport -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">🚗</span>
+                        <div class="category-details">
+                            <div class="category-name">Transport</div>
+                            <div class="category-description">Paliwo, transport publiczny, serwis, parking</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage negative">123,1%</div>
+                        <div class="budget-status status-danger">Przekroczenie</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 1 108,13 zł</span>
+                        <span>Budżet: 900,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-danger" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value negative">-208,13 zł</div>
+                        <div class="detail-label">Przekroczenie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">34</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">32,59 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">35,75 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">⚠️ Limit</div>
+                        <div class="detail-label">Przekroczony</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategoria: Rozrywka -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">🎬</span>
+                        <div class="category-details">
+                            <div class="category-name">Rozrywka</div>
+                            <div class="category-description">Restauracje, kino, gry, subskrypcje</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage warning">95,0%</div>
+                        <div class="budget-status status-warning">Krytyczne</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 760,00 zł</span>
+                        <span>Budżet: 800,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-warning" style="width: 95%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value warning">40,00 zł</div>
+                        <div class="detail-label">Pozostało</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">28</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">27,14 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">24,52 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">1,6 dni</div>
+                        <div class="detail-label">Starczy na</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategoria: Zdrowie -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">💊</span>
+                        <div class="category-details">
+                            <div class="category-name">Zdrowie</div>
+                            <div class="category-description">Leki, wizyty lekarskie, suplementy</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage positive">68,0%</div>
+                        <div class="budget-status status-good">Oszczędność</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 340,00 zł</span>
+                        <span>Budżet: 500,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-good" style="width: 68%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value positive">160,00 zł</div>
+                        <div class="detail-label">Oszczędność</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">12</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">28,33 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">10,97 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">14,6 dni</div>
+                        <div class="detail-label">Starczy na</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategoria: Inne -->
+            <div class="category-budget">
+                <div class="category-header">
+                    <div class="category-info">
+                        <span class="category-icon">🛍️</span>
+                        <div class="category-details">
+                            <div class="category-name">Inne</div>
+                            <div class="category-description">Pozostałe wydatki, prezenty, nieprzewidziane</div>
+                        </div>
+                    </div>
+                    <div class="category-status">
+                        <div class="budget-percentage positive">22,0%</div>
+                        <div class="budget-status status-good">Niedoużycie</div>
+                    </div>
+                </div>
+
+                <div class="budget-progress">
+                    <div class="progress-header">
+                        <span>Wydano: 330,00 zł</span>
+                        <span>Budżet: 800,00 zł</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-good" style="width: 22%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="detail-item">
+                        <div class="detail-value positive">470,00 zł</div>
+                        <div class="detail-label">Pozostało</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">18</div>
+                        <div class="detail-label">Transakcji</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">18,33 zł</div>
+                        <div class="detail-label">Średnia/transakcja</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">10,65 zł</div>
+                        <div class="detail-label">Dziennie</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">44,1 dni</div>
+                        <div class="detail-label">Starczy na</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prognozy -->
+        <div class="forecast-section">
+            <h3 style="margin-bottom: 15px; color: #856404;">🔮 Prognozy na Koniec Miesiąca</h3>
+            <p style="color: #6c757d; margin-bottom: 20px;">
+                Na podstawie aktualnych trendów wydatkowych i historycznych danych
+            </p>
+
+            <div class="forecast-grid">
+                <div class="forecast-card">
+                    <div class="forecast-value">7 250,00 zł</div>
+                    <div class="forecast-label">Przewidywane wydatki</div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-value">90,6%</div>
+                    <div class="forecast-label">Realizacja budżetu</div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-value">750,00 zł</div>
+                    <div class="forecast-label">Przewidywana oszczędność</div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-value">2</div>
+                    <div class="forecast-label">Dodatkowe przekroczenia</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rekomendacje -->
+        <div class="recommendations">
+            <h3 style="margin-bottom: 20px; color: #155724;">💡 Rekomendacje Oszczędnościowe</h3>
+
+            <div class="recommendation-item">
+                <div class="recommendation-icon">1</div>
+                <div class="recommendation-text">
+                    <strong>Transport:</strong> Rozważ korzystanie z komunikacji publicznej 2-3 dni w tygodniu.
+                    Potencjalna oszczędność: 200-300 zł miesięcznie.
+                </div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-icon">2</div>
+                <div class="recommendation-text">
+                    <strong>Rozrywka:</strong> Wykorzystaj już tylko 40 zł z tego budżetu. Rozważ domowe formy rozrywki
+                    na resztę miesiąca.
+                </div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-icon">3</div>
+                <div class="recommendation-text">
+                    <strong>Żywność:</strong> Planuj cotygodniowe menu i rób listę zakupów. Może to zmniejszyć
+                    spontaniczne wydatki o 10-15%.
+                </div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-icon">4</div>
+                <div class="recommendation-text">
+                    <strong>Budżet na luty:</strong> Zwiększ budżet na Transport do 1100 zł i zmniejsz Inne do 600 zł na
+                    podstawie rzeczywistych potrzeb.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela szczegółowa -->
+        <div class="section">
+            <h2 class="section-title">
+                📋 Podsumowanie Budżetowe
+            </h2>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Kategoria</th>
+                    <th>Budżet</th>
+                    <th>Wydano</th>
+                    <th>Pozostało</th>
+                    <th>Realizacja</th>
+                    <th>Prognoza</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>🍕 Żywność</td>
+                    <td>3 000,00 zł</td>
+                    <td>2 676,00 zł</td>
+                    <td>324,00 zł</td>
+                    <td>89,2%</td>
+                    <td>2 950,00 zł</td>
+                    <td><span class="budget-status status-warning">Uwaga</span></td>
+                </tr>
+                <tr>
+                    <td>🏠 Mieszkanie</td>
+                    <td>2 000,00 zł</td>
+                    <td>1 512,00 zł</td>
+                    <td>488,00 zł</td>
+                    <td>75,6%</td>
+                    <td>1 650,00 zł</td>
+                    <td><span class="budget-status status-good">OK</span></td>
+                </tr>
+                <tr>
+                    <td>🚗 Transport</td>
+                    <td>900,00 zł</td>
+                    <td>1 108,13 zł</td>
+                    <td>-208,13 zł</td>
+                    <td>123,1%</td>
+                    <td>1 200,00 zł</td>
+                    <td><span class="budget-status status-danger">Przekroczenie</span></td>
+                </tr>
+                <tr>
+                    <td>🎬 Rozrywka</td>
+                    <td>800,00 zł</td>
+                    <td>760,00 zł</td>
+                    <td>40,00 zł</td>
+                    <td>95,0%</td>
+                    <td>800,00 zł</td>
+                    <td><span class="budget-status status-warning">Krytyczne</span></td>
+                </tr>
+                <tr>
+                    <td>💊 Zdrowie</td>
+                    <td>500,00 zł</td>
+                    <td>340,00 zł</td>
+                    <td>160,00 zł</td>
+                    <td>68,0%</td>
+                    <td>400,00 zł</td>
+                    <td><span class="budget-status status-good">Oszczędność</span></td>
+                </tr>
+                <tr>
+                    <td>🛍️ Inne</td>
+                    <td>800,00 zł</td>
+                    <td>330,00 zł</td>
+                    <td>470,00 zł</td>
+                    <td>22,0%</td>
+                    <td>500,00 zł</td>
+                    <td><span class="budget-status status-good">Niedoużycie</span></td>
+                </tr>
+                <tr style="font-weight: 600; background: #f8f9fa;">
+                    <td><strong>RAZEM</strong></td>
+                    <td><strong>8 000,00 zł</strong></td>
+                    <td><strong>6 726,13 zł</strong></td>
+                    <td><strong>1 273,87 zł</strong></td>
+                    <td><strong>84,1%</strong></td>
+                    <td><strong>7 500,00 zł</strong></td>
+                    <td><span class="budget-status status-good">W normie</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-info">
+            <strong>Raport Realizacji Budżetu</strong> - Gospodarstwo: Rodzina Kowalskich
+        </div>
+        <div class="generated-at">
+            Raport wygenerowany: 25 stycznia 2024, 18:20 | Dane za okres: 1-25 stycznia 2024
+        </div>
+    </div>
+</div>
+</body>
+</html>

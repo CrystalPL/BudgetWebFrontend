@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Roczne Podsumowanie Finansowe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M0,0 L1000,0 L1000,60 Q500,100 0,60 Z"/></svg>') no-repeat center bottom;
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .report-title {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .report-period {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .executive-summary {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 40px;
+            border-left: 6px solid #6f42c1;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #6f42c1;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .summary-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #495057;
+            border-bottom: 4px solid #6f42c1;
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .achievements-section {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-icon {
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .achievement-content {
+            flex: 1;
+        }
+
+        .achievement-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #155724;
+        }
+
+        .achievement-description {
+            font-size: 0.95rem;
+            color: #155724;
+            opacity: 0.8;
+        }
+
+        .monthly-chart {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .chart-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .chart-bars {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 8px;
+            height: 200px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, #6f42c1, #e83e8c);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .chart-labels {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .chart-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .category-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .category-total {
+            font-size: 1.2rem;
+            color: #6f42c1;
+            font-weight: 600;
+        }
+
+        .category-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .comparison-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .comparison-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .goals-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .goal-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .goal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .goal-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-achieved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-missed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .goal-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .progress-achieved {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .progress-partial {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+        }
+
+        .progress-missed {
+            background: linear-gradient(90deg, #dc3545, #c82333);
+        }
+
+        .goal-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .future-plans {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+
+        .plan-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-icon {
+            background: #0c5460;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .plan-content {
+            flex: 1;
+        }
+
+        .plan-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0c5460;
+        }
+
+        .plan-description {
+            font-size: 0.95rem;
+            color: #0c5460;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .plan-target {
+            font-size: 0.85rem;
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-info {
+            color: #6c757d;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .generated-at {
+            font-size: 0.9rem;
+            color: #adb5bd;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">📊 BudgetApp</div>
+            <h1 class="report-title">Roczne Podsumowanie Finansowe</h1>
+            <p class="report-period">Rok 2023 | Kompleksowa analiza z trendami i prognozami</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Podsumowanie wykonawcze -->
+        <div class="executive-summary">
+            <h3 style="margin-bottom: 25px; color: #6f42c1; font-size: 1.8rem;">💼 Podsumowanie Wykonawcze</h3>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-value">84 250,00 zł</div>
+                    <div class="summary-label">Całkowite Przychody</div>
+                    <div class="summary-change positive">
+                        ↗ +8,5% vs 2022
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="summary-value">68 430,25 zł</div>
+                    <div class="summary-label">Całkowite Wydatki</div>
+                    <div class="summary-change negative">
+                        ↗ +12,3% vs 2022
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="summary-value positive">15 819,75 zł</div>
+                    <div class="summary-label">Oszczędności Roczne</div>
+                    <div class="summary-change positive">
+                        18,8% przychodów
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <div class="summary-value">5 702,52 zł</div>
+                    <div class="summary-label">Średnie Wydatki Miesięczne</div>
+                    <div class="summary-change">
+                        476,88 zł dziennie
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.8); border-radius: 12px; padding: 20px; margin-top: 25px;">
+                <strong>🎯 Kluczowy Wniosek:</strong> Rok 2023 był finansowo udany! Udało się zaoszczędzić prawie 19%
+                przychodów,
+                co znacznie przekracza zalecane 10-15%. Największy wzrost wydatków odnotowano w kategorii Transport
+                (+25%),
+                jednak został skompensowany przez oszczędności w kategorii Rozrywka (-15%).
+            </div>
+        </div>
+
+        <!-- Osiągnięcia roku -->
+        <div class="section">
+            <h2 class="section-title">
+                🏆 Osiągnięcia Finansowe 2023
+            </h2>
+
+            <div class="achievements-section">
+                <div class="achievement-item">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Cel Oszczędnościowy - Osiągnięty</div>
+                        <div class="achievement-description">
+                            Zaplanowane 12 000 zł oszczędności → Osiągnięto 15 819,75 zł (131,8% celu)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-icon">📉</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Redukcja Kosztów Rozrywki</div>
+                        <div class="achievement-description">
+                            Zmniejszenie wydatków na rozrywkę o 15% (oszczędność 1 245 zł rocznie)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-icon">🔄</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Automatyzacja Płatności</div>
+                        <div class="achievement-description">
+                            100% rachunków za media na automatycznych płatnościach - zero opóźnień
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-icon">📊</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Kontrola Budżetu</div>
+                        <div class="achievement-description">
+                            Tylko 2 przekroczenia budżetu w całym roku (Transport w maju i listopadzie)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="achievement-icon">💡</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Optymalizacja Mediów</div>
+                        <div class="achievement-description">
+                            Zmiana dostawcy energii - oszczędność 680 zł rocznie przy zachowaniu jakości
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Miesięczne trendy -->
+        <div class="section">
+            <h2 class="section-title">
+                📈 Miesięczne Trendy Wydatków
+            </h2>
+
+            <div class="monthly-chart">
+                <div class="chart-header">
+                    <div class="chart-title">Wydatki miesięczne w 2023 roku</div>
+                    <div style="color: #6c757d; font-size: 0.9rem;">Kwoty w tysiącach złotych</div>
+                </div>
+
+                <div class="chart-bars">
+                    <div class="chart-bar" data-value="5.2k" style="height: 85%;"></div>
+                    <div class="chart-bar" data-value="4.8k" style="height: 75%;"></div>
+                    <div class="chart-bar" data-value="5.5k" style="height: 90%;"></div>
+                    <div class="chart-bar" data-value="5.0k" style="height: 80%;"></div>
+                    <div class="chart-bar" data-value="6.1k" style="height: 95%;"></div>
+                    <div class="chart-bar" data-value="5.4k" style="height: 88%;"></div>
+                    <div class="chart-bar" data-value="4.5k" style="height: 70%;"></div>
+                    <div class="chart-bar" data-value="4.2k" style="height: 65%;"></div>
+                    <div class="chart-bar" data-value="5.1k" style="height: 82%;"></div>
+                    <div class="chart-bar" data-value="5.8k" style="height: 92%;"></div>
+                    <div class="chart-bar" data-value="6.4k" style="height: 100%;"></div>
+                    <div class="chart-bar" data-value="4.9k" style="height: 78%;"></div>
+                </div>
+
+                <div class="chart-labels">
+                    <div class="chart-label">Sty</div>
+                    <div class="chart-label">Lut</div>
+                    <div class="chart-label">Mar</div>
+                    <div class="chart-label">Kwi</div>
+                    <div class="chart-label">Maj</div>
+                    <div class="chart-label">Cze</div>
+                    <div class="chart-label">Lip</div>
+                    <div class="chart-label">Sie</div>
+                    <div class="chart-label">Wrz</div>
+                    <div class="chart-label">Paź</div>
+                    <div class="chart-label">Lis</div>
+                    <div class="chart-label">Gru</div>
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin-top: 20px;">
+                <strong>📊 Analiza trendów:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px; color: #495057;">
+                    <li><strong>Sezonowość:</strong> Najwyższe wydatki w listopadzie (6 400 zł) - okres świąteczny</li>
+                    <li><strong>Oszczędności letnie:</strong> Lipiec i sierpień - najniższe wydatki (4 200-4 500 zł)
+                    </li>
+                    <li><strong>Stabilność:</strong> Większość miesięcy w przedziale 5 000-5 500 zł</li>
+                    <li><strong>Wzrost roczny:</strong> Trend wzrostowy +12,3% w porównaniu do 2022 roku</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Analiza kategorii -->
+        <div class="section">
+            <h2 class="section-title">
+                🔍 Szczegółowa Analiza Kategorii
+            </h2>
+
+            <div class="category-analysis">
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-icon">🍕</span>
+                        <div class="category-info">
+                            <div class="category-name">Żywność i Napoje</div>
+                            <div class="category-total">24 580,50 zł (35,9%)</div>
+                        </div>
+                    </div>
+
+                    <div class="category-comparison">
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">2023</div>
+                            <div class="comparison-label">24 580 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">2022</div>
+                            <div class="comparison-label">23 120 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">+6,3%</div>
+                            <div class="comparison-label">Zmiana r/r</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">2 048 zł</div>
+                            <div class="comparison-label">Średnio/miesiąc</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 0.9rem;">
+                        <strong>💡 Spostrzeżenia:</strong> Wzrost spowodowany inflacją żywności.
+                        Udało się utrzymać wydatki poniżej 36% budżetu dzięki lepszemu planowaniu zakupów.
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-icon">🏠</span>
+                        <div class="category-info">
+                            <div class="category-name">Mieszkanie i Media</div>
+                            <div class="category-total">18 920,75 zł (27,7%)</div>
+                        </div>
+                    </div>
+
+                    <div class="category-comparison">
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">2023</div>
+                            <div class="comparison-label">18 921 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">2022</div>
+                            <div class="comparison-label">17 840 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">+6,1%</div>
+                            <div class="comparison-label">Zmiana r/r</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">1 577 zł</div>
+                            <div class="comparison-label">Średnio/miesiąc</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 0.9rem;">
+                        <strong>💡 Spostrzeżenia:</strong> Wzrost kosztów mediów skompensowany zmianą dostawcy energii.
+                        Stabilna kategoria bez większych niespodzianek.
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-icon">🚗</span>
+                        <div class="category-info">
+                            <div class="category-name">Transport</div>
+                            <div class="category-total">12 845,30 zł (18,8%)</div>
+                        </div>
+                    </div>
+
+                    <div class="category-comparison">
+                        <div class="comparison-item">
+                            <div class="comparison-value negative">2023</div>
+                            <div class="comparison-label">12 845 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">2022</div>
+                            <div class="comparison-label">10 276 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value negative">+25,0%</div>
+                            <div class="comparison-label">Zmiana r/r</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">1 070 zł</div>
+                            <div class="comparison-label">Średnio/miesiąc</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 0.9rem;">
+                        <strong>⚠️ Uwaga:</strong> Znaczący wzrost spowodowany podwyżkami cen paliw i większą
+                        aktywnością podróżniczą. Rozważ optymalizację tras i transport publiczny.
+                    </div>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-header">
+                        <span class="category-icon">🎬</span>
+                        <div class="category-info">
+                            <div class="category-name">Rozrywka</div>
+                            <div class="category-total">7 045,20 zł (10,3%)</div>
+                        </div>
+                    </div>
+
+                    <div class="category-comparison">
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">2023</div>
+                            <div class="comparison-label">7 045 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">2022</div>
+                            <div class="comparison-label">8 290 zł</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value positive">-15,0%</div>
+                            <div class="comparison-label">Zmiana r/r</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-value">587 zł</div>
+                            <div class="comparison-label">Średnio/miesiąc</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 0.9rem;">
+                        <strong>✅ Sukces:</strong> Znacząca redukcja wydatków na rozrywkę dzięki lepszemu
+                        planowaniu i korzystaniu z domowych form wypoczynku.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Osiągnięte cele -->
+        <div class="section">
+            <h2 class="section-title">
+                🎯 Realizacja Celów Finansowych 2023
+            </h2>
+
+            <div class="goals-section">
+                <h4 style="margin-bottom: 20px; color: #856404;">Podsumowanie osiągniętych i nieosiągniętych celów</h4>
+
+                <div class="goals-grid">
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🏦 Fundusz Awaryjny</div>
+                            <div class="goal-status status-achieved">Osiągnięty</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 15 000 zł • Osiągnięto: 18 500 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-achieved" style="width: 100%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #155724; font-weight: 600;">123,3%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Przekroczono cel o 3 500 zł. Fundusz pokrywa 6 miesięcy wydatków.
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🏖️ Wakacje 2024</div>
+                            <div class="goal-status status-achieved">Osiągnięty</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 8 000 zł • Osiągnięto: 8 200 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-achieved" style="width: 100%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #155724; font-weight: 600;">102,5%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Odłożone środki na wymarzone wakacje. Cel osiągnięty w październiku.
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🚗 Nowy Samochód</div>
+                            <div class="goal-status status-progress">W trakcie</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 25 000 zł • Osiągnięto: 16 800 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-partial" style="width: 67%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #0c5460; font-weight: 600;">67,2%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Brakuje 8 200 zł. Przy obecnym tempie oszczędzania cel osiągniemy w sierpniu 2024.
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🏡 Wkład Własny</div>
+                            <div class="goal-status status-progress">W trakcie</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 50 000 zł • Osiągnięto: 12 400 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-partial" style="width: 25%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #0c5460; font-weight: 600;">24,8%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Długoterminowy cel na mieszkanie. Potrzeba jeszcze 3-4 lata systematycznych oszczędności.
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">📚 Edukacja/Kursy</div>
+                            <div class="goal-status status-missed">Nieosiągnięty</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 3 000 zł • Osiągnięto: 1 200 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-missed" style="width: 40%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #721c24; font-weight: 600;">40,0%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Środki przekierowane na inne priorytety. Cel do ponownego rozważenia w 2024.
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">💰 Inwestycje</div>
+                            <div class="goal-status status-achieved">Osiągnięty</div>
+                        </div>
+                        <div class="goal-progress">
+                            <div>Cel: 5 000 zł • Osiągnięto: 6 500 zł</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-achieved" style="width: 100%;"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.9rem; color: #155724; font-weight: 600;">130,0%
+                                celu
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            Rozpoczęte inwestowanie w fundusze indeksowe. Portfel już przynosi pierwsze zyski.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plany na 2024 -->
+        <div class="section">
+            <h2 class="section-title">
+                🚀 Plany Finansowe na 2024
+            </h2>
+
+            <div class="future-plans">
+                <h4 style="margin-bottom: 20px; color: #0c5460;">Strategiczne cele i inicjatywy na nadchodzący rok</h4>
+
+                <div class="plan-item">
+                    <div class="plan-icon">🎯</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Zwiększenie Oszczędności do 20%</div>
+                        <div class="plan-description">
+                            Podniesienie stopy oszczędności z obecnych 18,8% do 20% poprzez optymalizację wydatków na
+                            transport i dalszą redukcję kosztów rozrywki.
+                        </div>
+                        <div class="plan-target">Cel: 20 000 zł oszczędności rocznych</div>
+                    </div>
+                </div>
+
+                <div class="plan-item">
+                    <div class="plan-icon">🚗</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Zakup Nowego Samochodu</div>
+                        <div class="plan-description">
+                            Dokończenie oszczędzania na wymianę samochodu (brakuje 8 200 zł) oraz sprzedaż obecnego
+                            pojazdu jako dopłata.
+                        </div>
+                        <div class="plan-target">Termin: Sierpień 2024</div>
+                    </div>
+                </div>
+
+                <div class="plan-item">
+                    <div class="plan-icon">💡</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Optymalizacja Kosztów Transportu</div>
+                        <div class="plan-description">
+                            Wprowadzenie dni home office, korzystanie z komunikacji publicznej 2-3 dni w tygodniu,
+                            optymalizacja tras.
+                        </div>
+                        <div class="plan-target">Cel: Redukcja o 15% (1 900 zł rocznie)</div>
+                    </div>
+                </div>
+
+                <div class="plan-item">
+                    <div class="plan-icon">📈</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Rozszerzenie Portfela Inwestycyjnego</div>
+                        <div class="plan-description">
+                            Zwiększenie miesięcznych wpłat na inwestycje, diversyfikacja portfela o obligacje i ETF-y
+                            zagraniczne.
+                        </div>
+                        <div class="plan-target">Cel: 10 000 zł nowych inwestycji</div>
+                    </div>
+                </div>
+
+                <div class="plan-item">
+                    <div class="plan-icon">🏠</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Modernizacja Mieszkania</div>
+                        <div class="plan-description">
+                            Termomodernizacja i wymiana okien dla długoterminowych oszczędności na ogrzewaniu.
+                            Inwestycja zwróci się w 3-4 lata.
+                        </div>
+                        <div class="plan-target">Budżet: 15 000 zł</div>
+                    </div>
+                </div>
+
+                <div class="plan-item">
+                    <div class="plan-icon">📚</div>
+                    <div class="plan-content">
+                        <div class="plan-title">Rozwój Zawodowy</div>
+                        <div class="plan-description">
+                            Ukończenie kursu projektowania UX/UI oraz certyfikacji w zarządzaniu projektami. Inwestycja
+                            w przyszłe zarobki.
+                        </div>
+                        <div class="plan-target">Budżet: 4 000 zł</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Porównanie rok do roku -->
+        <div class="section">
+            <h2 class="section-title">
+                📊 Porównanie 2022 vs 2023
+            </h2>
+
+            <div class="comparison-table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Kategoria</th>
+                        <th>2022</th>
+                        <th>2023</th>
+                        <th>Zmiana</th>
+                        <th>Zmiana %</th>
+                        <th>Trend</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>🍕 Żywność i Napoje</td>
+                        <td>23 120,00 zł</td>
+                        <td>24 580,50 zł</td>
+                        <td class="positive">+1 460,50 zł</td>
+                        <td class="positive">+6,3%</td>
+                        <td>📈 Wzrost inflacyjny</td>
+                    </tr>
+                    <tr>
+                        <td>🏠 Mieszkanie i Media</td>
+                        <td>17 840,00 zł</td>
+                        <td>18 920,75 zł</td>
+                        <td class="positive">+1 080,75 zł</td>
+                        <td class="positive">+6,1%</td>
+                        <td>📈 Podwyżki mediów</td>
+                    </tr>
+                    <tr>
+                        <td>🚗 Transport</td>
+                        <td>10 276,00 zł</td>
+                        <td>12 845,30 zł</td>
+                        <td class="negative">+2 569,30 zł</td>
+                        <td class="negative">+25,0%</td>
+                        <td>⚠️ Znaczący wzrost</td>
+                    </tr>
+                    <tr>
+                        <td>🎬 Rozrywka</td>
+                        <td>8 290,00 zł</td>
+                        <td>7 045,20 zł</td>
+                        <td class="positive">-1 244,80 zł</td>
+                        <td class="positive">-15,0%</td>
+                        <td>📉 Świadoma redukcja</td>
+                    </tr>
+                    <tr>
+                        <td>💊 Zdrowie</td>
+                        <td>2 840,00 zł</td>
+                        <td>3 120,50 zł</td>
+                        <td class="positive">+280,50 zł</td>
+                        <td class="positive">+9,9%</td>
+                        <td>📈 Większa dbałość</td>
+                    </tr>
+                    <tr>
+                        <td>🛍️ Inne</td>
+                        <td>1 890,00 zł</td>
+                        <td>1 918,00 zł</td>
+                        <td class="positive">+28,00 zł</td>
+                        <td class="positive">+1,5%</td>
+                        <td>➡️ Stabilne</td>
+                    </tr>
+                    <tr style="font-weight: 600; background: #f8f9fa;">
+                        <td><strong>RAZEM WYDATKI</strong></td>
+                        <td><strong>64 256,00 zł</strong></td>
+                        <td><strong>68 430,25 zł</strong></td>
+                        <td class="positive"><strong>+4 174,25 zł</strong></td>
+                        <td class="positive"><strong>+6,5%</strong></td>
+                        <td><strong>📈 Kontrolowany wzrost</strong></td>
+                    </tr>
+                    <tr style="font-weight: 600; background: #e8f5e8;">
+                        <td><strong>OSZCZĘDNOŚCI</strong></td>
+                        <td><strong>13 244,00 zł</strong></td>
+                        <td><strong>15 819,75 zł</strong></td>
+                        <td class="positive"><strong>+2 575,75 zł</strong></td>
+                        <td class="positive"><strong>+19,4%</strong></td>
+                        <td><strong>🎯 Znaczący wzrost</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-info">
+            <strong>Roczne Podsumowanie Finansowe 2023</strong> - Gospodarstwo: Rodzina Kowalskich
+        </div>
+        <div class="generated-at">
+            Raport wygenerowany: 15 stycznia 2024, 14:00 | Dane za okres: 1 stycznia - 31 grudnia 2023
+        </div>
+    </div>
+</div>
+</body>
+</html>
