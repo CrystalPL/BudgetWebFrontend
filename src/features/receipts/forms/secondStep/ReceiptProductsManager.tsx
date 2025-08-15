@@ -22,6 +22,7 @@ import {ResponseAPI} from "../../../../service/ResponseAPI";
 import {SaveReceiptAdditionalMessage, SaveReceiptMessage} from "../../api/ReceiptMessages";
 import AIProductRecognitionDialog from "../../ai/AIProductRecognitionDialog";
 import {AILoaderProps} from "../../ai/AILoader";
+import CostSharingDialog from "../../components/CostSharingDialog";
 
 interface Props extends HouseholdReloadKeyProps {
     addItemController: DialogShowingController,
@@ -38,6 +39,7 @@ export default function ReceiptProductsManager(props: Props) {
     const [productList, setProductList] = useState<GetProductListResponse[]>([])
     const getProductsByAIController: DialogShowingController = GetShowingController()
     const [aiProcessing, setAiProcessing] = useState(false);
+    const [costSharingDialogOpen, setCostSharingDialogOpen] = useState(false);
     const snackbarController = useSnackbarContext();
 
     const addItem = (item: ReceiptItem) => {
@@ -164,8 +166,22 @@ export default function ReceiptProductsManager(props: Props) {
                             backgroundColor: "rgba(75,187,71,0.2)",
                         }
                     }} onClick={handleBack}>Wstecz</Button>
-                    <Button
-                        variant="contained" onClick={saveReceipt}>Zakończ</Button>
+                    <Box sx={{display: "flex", gap: 2}}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setCostSharingDialogOpen(true)}
+                            disabled={items.length === 0}
+                        >
+                            Podział kosztów
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={saveReceipt}
+                        >
+                            Zakończ
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
             <AIProductRecognitionDialog setAiProcessing={setAiProcessing}
@@ -173,6 +189,13 @@ export default function ReceiptProductsManager(props: Props) {
                                         categoryList={categoryList}
                                         userWhoPaid={props.userWhoPaid}
                                         setItems={setItems} aiLoader={props.aiLoader}/>
+            <CostSharingDialog
+                open={costSharingDialogOpen}
+                onClose={() => setCostSharingDialogOpen(false)}
+                items={items}
+                whoPaid={props.firstStepFormState.whoPaid || null}
+                users={props.userWhoPaid}
+            />
         </Dialog>
     )
 }
