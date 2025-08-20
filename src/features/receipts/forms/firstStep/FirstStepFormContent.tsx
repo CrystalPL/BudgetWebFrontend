@@ -10,7 +10,7 @@ import {
     Typography
 } from "@mui/material";
 import {ErrorOutline} from "@mui/icons-material";
-import DateChooserComponent from "../DateChooserComponent";
+import DateChooserComponent from "../../components/DateChooserComponent";
 import {CreateReceiptDetails, Receipt, ShopOccurrence} from "../../api/ReceiptModel";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import {FirstStepFormState} from "./FirstStepFormState";

@@ -16,7 +16,7 @@ import {useEffect, useState} from "react";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 import EditIcon from "@mui/icons-material/Edit";
 import {ErrorOutline} from "@mui/icons-material";
-import DateChooserComponent from "../forms/DateChooserComponent";
+import DateChooserComponent from "../components/DateChooserComponent";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 import {AILoaderProps} from "./AILoader";
