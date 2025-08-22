@@ -1,12 +1,12 @@
 import React from 'react';
 import {Dialog} from '@mui/material';
-import {CostSharingHeader} from "./CostSharingHeader";
-import CostSharingFooter from "./CostSharingFooter";
+import {CostSharingHeader} from "./components/main/CostSharingHeader";
+import CostSharingFooter from "./components/main/CostSharingFooter";
 import {ReceiptItem, UserWhoPaid} from "../api/ReceiptModel";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
-import CostSharingMainContent from "./CostSharingMainContent";
+import CostSharingMainContent from "./components/main/CostSharingMainContent";
 
-export interface CostSharingDialogProps {
+interface CostSharingDialogProps {
     productList: ReceiptItem[];
     whoPaid: UserWhoPaid;
     users: UserWhoPaid[];

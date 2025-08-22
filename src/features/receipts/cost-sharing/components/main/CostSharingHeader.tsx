@@ -10,13 +10,7 @@ export function CostSharingHeader() {
             color: "white",
         }}>
             <Stack direction="row" alignItems="center" spacing={2}>
-                <Box sx={{
-                    p: 1,
-                    borderRadius: 2,
-                    bgcolor: "rgba(255,255,255,0.2)",
-                    display: "flex",
-                    alignItems: "center"
-                }}>
+                <Box p={1} borderRadius={2} bgcolor="rgba(255,255,255,0.2)" display='flex' alignItems='center'>
                     <AccountBalanceWalletIcon sx={{fontSize: 28}}/>
                 </Box>
                 <Box>

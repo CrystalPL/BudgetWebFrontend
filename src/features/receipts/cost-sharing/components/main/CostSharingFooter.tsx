@@ -1,8 +1,8 @@
 import {Button, DialogActions} from "@mui/material";
 import React from "react";
-import {DialogShowingController} from "../../../controllers/DialogShowingController";
+import {DialogShowingController} from "../../../../../controllers/DialogShowingController";
 
-export interface CostSharingFooterProps {
+interface CostSharingFooterProps {
     costSharingDialogController: DialogShowingController
 }
 

@@ -1,9 +1,9 @@
 import {Avatar, Box, Typography} from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import {UserDebt} from "../CostSharingModel";
+import {UserDebt} from "../../CostSharingModel";
 
-export interface CostSharingSettlementsHeader {
+interface CostSharingSettlementsHeader {
     userDebts: UserDebt[]
 }
 
