@@ -10,6 +10,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
+    TablePagination,
     TableRow,
     Tooltip,
     Typography
@@ -36,6 +37,8 @@ export default function BillsOverviewTable(props: Props) {
         name: string,
         type: string
     } | null>(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const handleEdit = (bill: Bill) => {
         props.setEditedBill(bill);
@@ -88,6 +91,16 @@ export default function BillsOverviewTable(props: Props) {
         return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
     });
 
+    const paginatedBills = sortedBills.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+    );
+
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
     return (
         <Box>
             <TableContainer component={Paper} elevation={1}>
@@ -106,7 +119,7 @@ export default function BillsOverviewTable(props: Props) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {sortedBills.length === 0 ? (
+                        {paginatedBills.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={9} align="center">
                                     <Typography variant="body2" color="text.secondary">
@@ -115,7 +128,7 @@ export default function BillsOverviewTable(props: Props) {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            sortedBills.map((bill) => (
+                            paginatedBills.map((bill) => (
                                 <TableRow key={bill.id} hover>
                                     <TableCell>
                                         <Box display="flex" alignItems="center" gap={1}>
@@ -193,6 +206,19 @@ export default function BillsOverviewTable(props: Props) {
                         )}
                     </TableBody>
                 </Table>
+                <TablePagination
+                    component="div"
+                    count={sortedBills.length}
+                    page={page}
+                    onPageChange={(_event, page) => setPage(page)}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    labelRowsPerPage="Wierszy na stronę:"
+                    labelDisplayedRows={({from, to, count}) =>
+                        `${from}–${to} z ${count !== -1 ? count : `ponad ${to}`}`
+                    }
+                />
             </TableContainer>
 
             <AttachmentViewer

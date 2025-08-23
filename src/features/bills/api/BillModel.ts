@@ -8,6 +8,7 @@ export interface BillType {
     name: string;
     icon?: string;
     unit?: string; // jednostka zużycia np. "kWh", "m³", "GB"
+    description?: string; // opis typu rachunku
 }
 
 export interface BillAttachment {
