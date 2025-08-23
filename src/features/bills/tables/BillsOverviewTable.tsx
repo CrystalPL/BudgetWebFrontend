@@ -2,6 +2,7 @@
 import {
     Avatar,
     Box,
+    Button,
     Chip,
     IconButton,
     Paper,
@@ -15,7 +16,7 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import {AttachFile, Delete, Edit, Visibility} from "@mui/icons-material";
+import {Add as AddIcon, AttachFile, Delete, Edit, Visibility} from "@mui/icons-material";
 import {Bill} from "../api/BillModel";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 import {deleteBill} from "../api/BillService";
@@ -104,6 +105,26 @@ export default function BillsOverviewTable(props: Props) {
     return (
         <Box>
             <TableContainer component={Paper} elevation={1}>
+                {/* Nagłówek z przyciskiem */}
+                <Box sx={{p: 3, pb: 0}}>
+                    <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+                        <Typography variant="h6" sx={{fontWeight: 600}}>
+                            Lista rachunków ({sortedBills.length})
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon/>}
+                            onClick={props.createBillController.openDialog}
+                            sx={{
+                                backgroundColor: '#007bff',
+                                '&:hover': {backgroundColor: '#0056b3'}
+                            }}
+                        >
+                            Dodaj rachunek
+                        </Button>
+                    </Box>
+                </Box>
+
                 <Table>
                     <TableHead>
                         <TableRow>

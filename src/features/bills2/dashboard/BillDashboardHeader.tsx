@@ -2,19 +2,15 @@ import React from 'react';
 import {Box, Card, Tab, Tabs, Typography} from '@mui/material';
 import {Receipt, Settings, TableChart} from '@mui/icons-material';
 
-interface BillPageHeaderProps {
+interface BillDashboardHeaderProps {
     activeTab: number;
-    onTabChange: (event: React.SyntheticEvent, newValue: number) => void;
+    setActiveTab: (newValue: number) => void;
 }
 
-export const BillPageHeader: React.FC<BillPageHeaderProps> = ({
-                                                                  activeTab,
-                                                                  onTabChange
-                                                              }) => {
+export default function BillDashboardHeader(props: BillDashboardHeaderProps) {
     return (
         <>
-            {/* Nagłówek strony */}
-            <Box sx={{mb: 4}}>
+            <Box mb={4}>
                 <Typography variant="h4" sx={{fontWeight: 700, color: '#212529', mb: 1}}>
                     <Receipt sx={{fontSize: '2rem', mr: 1, verticalAlign: 'middle', color: '#007bff'}}/>
                     System Rachunków
@@ -24,11 +20,10 @@ export const BillPageHeader: React.FC<BillPageHeaderProps> = ({
                 </Typography>
             </Box>
 
-            {/* Zakładki */}
             <Card sx={{mb: 3}}>
                 <Tabs
-                    value={activeTab}
-                    onChange={onTabChange}
+                    value={props.activeTab}
+                    onChange={(_event, value) => props.setActiveTab(value)}
                     sx={{
                         borderBottom: '1px solid #e9ecef',
                         '& .MuiTab-root': {

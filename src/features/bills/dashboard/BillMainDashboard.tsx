@@ -1,13 +1,13 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {Alert, Container, Snackbar} from '@mui/material';
-import {BillPageHeader} from '../components/BillPageHeader';
-import BillDashboard from './BillDashboard';
 import {BillTypeTable} from '../components/BillTypeTable';
-import {BillTypeForm} from '../components/BillTypeForm';
+import {BillTypeModal} from '../components/BillTypeModal';
 import {Bill, BillType} from '../api/BillModel';
 import {createBillType, deleteBillType, getBillTypes, updateBillType} from '../api/BillTypeService';
 import {HouseholdReloadKeyProps} from '../../household/api/HouseholdModel';
+import Container from "@mui/material/Container";
+import BillDashboardHeader from "../../bills2/dashboard/BillDashboardHeader";
+import BillDashboard from "./BillDashboard";
 
 interface BillMainDashboardProps extends HouseholdReloadKeyProps {
     bills: Bill[];
@@ -18,7 +18,7 @@ export default function BillMainDashboard(props: BillMainDashboardProps) {
     const [billTypes, setBillTypes] = useState<BillType[]>([]);
     const [editingType, setEditingType] = useState<BillType | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [managementView, setManagementView] = useState<'list' | 'form'>('list');
+    const [modalOpen, setModalOpen] = useState(false);
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
         message: string;
@@ -60,22 +60,26 @@ export default function BillMainDashboard(props: BillMainDashboardProps) {
         }
     }, [activeTab]);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (newValue === 0) {
             setEditingType(null);
-            setManagementView('list');
         }
     };
 
     const handleEdit = (billType: BillType) => {
         setEditingType(billType);
-        setManagementView('form');
+        setModalOpen(true);
     };
 
     const handleAdd = () => {
         setEditingType(null);
-        setManagementView('form');
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setEditingType(null);
+        setModalOpen(false);
     };
 
     const handleDelete = async (id: number) => {
@@ -124,7 +128,7 @@ export default function BillMainDashboard(props: BillMainDashboardProps) {
                 showSnackbar(`Typ rachunku został ${action} pomyślnie`);
                 await loadBillTypes();
                 setEditingType(null);
-                setManagementView('list');
+                setModalOpen(false);
             } else {
                 showSnackbar('Błąd podczas zapisywania typu rachunku', 'error');
             }
@@ -136,24 +140,19 @@ export default function BillMainDashboard(props: BillMainDashboardProps) {
         }
     };
 
-    const handleCancel = () => {
-        setEditingType(null);
-        setManagementView('list');
-    };
-
     return (
         <Container sx={{
             pt: 4,
             maxWidth: {
                 xs: '100%',
-                md: '90%',
-                lg: '80%',
-                xl: '88%',
+                md: '95%',
+                lg: '95%',
+                xl: '95%',
             },
         }}>
-            <BillPageHeader
+            <BillDashboardHeader
                 activeTab={activeTab}
-                onTabChange={handleTabChange}
+                setActiveTab={handleTabChange}
             />
 
             {activeTab === 0 && (
@@ -164,38 +163,46 @@ export default function BillMainDashboard(props: BillMainDashboardProps) {
             )}
 
             {activeTab === 1 && (
-                <>
-                    {managementView === 'list' ? (
-                        <BillTypeTable
-                            billTypes={billTypes}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                            onAdd={handleAdd}
-                        />
-                    ) : (
-                        <BillTypeForm
-                            editingType={editingType}
-                            onSave={handleSave}
-                            onCancel={handleCancel}
-                            isLoading={isLoading}
-                        />
-                    )}
-                </>
+                <BillTypeTable
+                    billTypes={billTypes}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onAdd={handleAdd}
+                />
             )}
 
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-            >
-                <Alert
-                    onClose={handleCloseSnackbar}
-                    severity={snackbar.severity}
-                    sx={{width: '100%'}}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+            <BillTypeModal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                editingType={editingType}
+                onSave={handleSave}
+                isLoading={isLoading}
+            />
         </Container>
     );
+}
+
+interface ActiveTabProps {
+    activeTab: number
+    dashboardProps: BillMainDashboardProps
+}
+
+function ActiveTab(props: ActiveTabProps) {
+    if (props.activeTab == 0) {
+        return (
+            <BillDashboard
+                bills={props.dashboardProps.bills}
+                reloadTable={props.dashboardProps.reloadTable}
+            />
+        )
+    }
+
+    return (
+        <BillTypeTable
+            billTypes={billTypes}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onAdd={handleAdd}
+        />
+    )
 }

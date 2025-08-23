@@ -2,7 +2,6 @@
 import Container from "@mui/material/Container";
 import * as React from "react";
 import {useMemo, useState} from "react";
-import BillDashboardHeader from "./BillDashboardHeader";
 import BillsOverviewTable from "../tables/BillsOverviewTable";
 import {BillFilters} from "../components/BillFilters";
 import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
@@ -212,16 +211,16 @@ export default function BillDashboard(props: BillDashboardData) {
     }, [props.bills, billFilter, dateFilter, sortConfig]);
 
     return (
-        <Container sx={{
-            pt: 4,
+        <Container disableGutters={true} sx={{
+            pt: 3,
+            pb: 3,
             maxWidth: {
                 xs: '100%',
-                md: '90%',
-                lg: '80%',
-                xl: '88%',
+                md: '100%',
+                lg: '100%',
+                xl: '100%',
             },
         }}>
-            <BillDashboardHeader creatingController={createBillDialogController}/>
 
             <BillFilters
                 dateFilter={dateFilter}

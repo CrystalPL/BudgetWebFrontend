@@ -1,14 +1,14 @@
 'use client'
 import {useEffect, useState} from "react";
-import BillMainDashboard from "./BillMainDashboard";
-import {Bill} from "../api/BillModel";
-import {getBills} from "../api/BillService";
+import {Bill} from "../../bills/api/BillModel";
+import {getBills} from "../../bills/api/BillService";
+import BillDashboard from "./BillDashboard";
 
 interface BillMainDashboardLoaderProps {
     bills: Bill[]
 }
 
-export default function BillMainDashboardLoader(props: BillMainDashboardLoaderProps) {
+export default function BillDashboardLoader(props: BillMainDashboardLoaderProps) {
     const [reloadKey, setReloadKey] = useState(0)
     const [bills, setBills] = useState(props.bills)
 
@@ -27,5 +27,5 @@ export default function BillMainDashboardLoader(props: BillMainDashboardLoaderPr
 
     }, [reloadKey])
 
-    return <BillMainDashboard bills={bills} reloadTable={reloadTable}/>
+    return <BillDashboard/>
 }

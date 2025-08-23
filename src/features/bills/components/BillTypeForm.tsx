@@ -27,6 +27,8 @@ interface BillTypeFormProps {
     }) => void;
     onCancel: () => void;
     isLoading?: boolean;
+    isModal?: boolean;
+    formRef?: (ref: HTMLFormElement | null) => void;
 }
 
 const AVAILABLE_ICONS = [
@@ -62,7 +64,9 @@ export const BillTypeForm: React.FC<BillTypeFormProps> = ({
                                                               editingType,
                                                               onSave,
                                                               onCancel,
-                                                              isLoading = false
+                                                              isLoading = false,
+                                                              isModal = false,
+                                                              formRef
                                                           }) => {
     const [name, setName] = useState('');
     const [icon, setIcon] = useState('📄');
@@ -115,6 +119,107 @@ export const BillTypeForm: React.FC<BillTypeFormProps> = ({
         });
     };
 
+    if (isModal) {
+        // Tryb modalny - tylko formularz bez Card
+        return (
+            <form
+                onSubmit={handleSubmit}
+                ref={formRef}
+            >
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
+                            label="Nazwa typu rachunku"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            placeholder="np. Prąd, Gaz, Internet"
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <FormControl fullWidth error={!!errors.icon}>
+                            <InputLabel>Ikona</InputLabel>
+                            <Select
+                                value={icon}
+                                label="Ikona"
+                                onChange={(e) => setIcon(e.target.value)}
+                            >
+                                {AVAILABLE_ICONS.map((iconOption) => (
+                                    <MenuItem key={iconOption.value} value={iconOption.value}>
+                                        <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                                            <Avatar sx={{width: 24, height: 24, fontSize: '1rem'}}>
+                                                {iconOption.value}
+                                            </Avatar>
+                                            {iconOption.label}
+                                        </Box>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>Jednostka (opcjonalnie)</InputLabel>
+                            <Select
+                                value={unit}
+                                label="Jednostka (opcjonalnie)"
+                                onChange={(e) => setUnit(e.target.value)}
+                            >
+                                <MenuItem value="">
+                                    <em>Brak jednostki</em>
+                                </MenuItem>
+                                {AVAILABLE_UNITS.map((unitOption) => (
+                                    <MenuItem key={unitOption.value} value={unitOption.value}>
+                                        {unitOption.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
+                            label="Opis (opcjonalnie)"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Krótki opis typu rachunku"
+                            multiline
+                            maxRows={2}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper sx={{p: 2, backgroundColor: '#f8f9fa'}}>
+                            <Typography variant="subtitle2" sx={{mb: 1, fontWeight: 600}}>
+                                Podgląd:
+                            </Typography>
+                            <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
+                                <Avatar sx={{width: 40, height: 40, fontSize: '1.2rem'}}>
+                                    {icon}
+                                </Avatar>
+                                <Box>
+                                    <Typography variant="body1" fontWeight="medium">
+                                        {name || 'Nazwa typu rachunku'}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {unit && `Jednostka: ${unit}`}
+                                        {description && ` • ${description}`}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </form>
+        );
+    }
+
+    // Tryb zwykły - z Card i przyciskami
     return (
         <Card>
             <Box sx={{p: 3}}>
@@ -122,7 +227,10 @@ export const BillTypeForm: React.FC<BillTypeFormProps> = ({
                     {editingType ? 'Edytuj typ rachunku' : 'Dodaj nowy typ rachunku'}
                 </Typography>
 
-                <form onSubmit={handleSubmit}>
+                <form
+                    onSubmit={handleSubmit}
+                    ref={formRef}
+                >
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
                             <TextField
