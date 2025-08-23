@@ -15,7 +15,7 @@ import {CustomFormControl} from "../../../../components/CustomFormControl";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {Category, GetProductListResponse, ReceiptItem, UserWhoPaid} from "../../api/ReceiptModel";
-import {CreateFormField} from "../../api/CustomFormControlProps";
+import {CreateFormField} from "./CustomFormControlProps";
 import {suggestCategory} from "../../api/ReceiptService";
 import {CreateReceiptItemMessage} from "../../api/ReceiptMessages";
 import {DialogShowingController} from "../../../../controllers/DialogShowingController";

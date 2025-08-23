@@ -4,19 +4,13 @@ import AddIcon from "@mui/icons-material/Add";
 import * as React from "react";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 
-interface Props {
+interface BillDashboardHeaderProps {
     creatingController: DialogShowingController
 }
 
-export default function BillDashboardHeader(props: Props) {
+export default function BillDashboardHeader(props: BillDashboardHeaderProps) {
     return (
-        <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 4,
-            flexDirection: 'column'
-        }}>
+        <Box display='flex' justifyContent='space-between' alignItems='center' mb={4} flexDirection='column'>
             <Typography variant="h4" sx={{fontWeight: 'medium'}}>
                 Zarządzanie rachunkami mediów
             </Typography>

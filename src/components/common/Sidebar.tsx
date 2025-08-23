@@ -89,6 +89,11 @@ function GetSidebarItems(): React.JSX.Element {
                 icon={<RequestQuote/>}
             ></CreateSidebarButton>
             <CreateSidebarButton
+                buttonName="Rachunki2"
+                href="/household/bills2"
+                icon={<RequestQuote/>}
+            ></CreateSidebarButton>
+            <CreateSidebarButton
                 buttonName="Raporty"
                 href="/household/reports"
                 icon={<Report/>}

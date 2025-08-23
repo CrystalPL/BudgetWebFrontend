@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import * as React from "react";
 import {useState} from "react";
 import ReceiptDashboardHeader from "./ReceiptDashboardHeader";
-import ReceiptsOverviewTable from "../tables/ReceiptsOverviewTable";
+import ReceiptsOverviewTable from "../tables/overview/ReceiptsOverviewTable";
 import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
 import FirstStepDialog from "../forms/firstStep/FirstStepDialog";

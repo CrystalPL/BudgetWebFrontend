@@ -162,7 +162,6 @@ export default function AITransactionDetailsDialog(props: Props) {
 
                 </Box>
 
-                {/* Data transakcji */}
                 <Box sx={{mb: 3, display: "flex", alignItems: "center"}}>
                     <DateChooserComponent disabled={editingField !== "transactionDate"}
                                           date={tempDate}
@@ -190,7 +189,6 @@ export default function AITransactionDetailsDialog(props: Props) {
                     )}
                 </Box>
 
-                {/* Przycisk anuluj i zapisz */}
                 <Box sx={{mt: 3, display: "flex", justifyContent: "flex-end"}}>
                     {editingField !== "none" ? (
                             <Button variant="contained" disabled>Zapisz wszystkie zmiany</Button>
