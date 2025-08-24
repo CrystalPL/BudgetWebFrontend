@@ -1,4 +1,4 @@
-export type FilterType = 'text' | 'number' | 'date' | 'boolean';
+export type ColumnDataType = 'text' | 'number' | 'date' | 'boolean' | 'autocomplete';
 
 export type FilterOperator =
     | 'contains'
@@ -19,7 +19,7 @@ export type LogicalOperator = 'AND' | 'OR';
 
 export interface FilterConfig {
     columnName: string;
-    columnType: FilterType;
+    columnType: ColumnDataType;
     operator: FilterOperator;
     value: string | number | boolean;
     value2?: string | number | boolean;
@@ -28,7 +28,7 @@ export interface FilterConfig {
 
 export interface ColumnFilter {
     fieldName: string;
-    fieldType: FilterType;
+    fieldType: ColumnDataType;
     filter?: FilterConfig;
 }
 
@@ -36,7 +36,7 @@ export interface ColumnFilter {
 export interface FilterCondition {
     id: string;
     columnName: string;
-    columnType: FilterType;
+    columnType: ColumnDataType;
     operator: FilterOperator;
     value: string | number | boolean;
     value2?: string | number | boolean;

@@ -5,7 +5,7 @@ import {
     FilterCondition,
     FilterBuilderState,
     LogicalOperator,
-    FilterType,
+    ColumnDataType,
     FilterOperator
 } from '../types/FilterTypes';
 

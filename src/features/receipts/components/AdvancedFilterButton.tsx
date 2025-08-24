@@ -12,12 +12,12 @@ import {
 } from '@mui/icons-material';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
 import AdvancedFilterManager from './AdvancedFilterManager';
-import { FilterType } from '../types/FilterTypes';
+import { ColumnDataType } from '../types/FilterTypes';
 
 interface AdvancedFilterButtonProps {
     availableColumns: Array<{
         name: string;
-        type: FilterType;
+        type: ColumnDataType;
         label: string;
         fieldOptions?: {
             isUserField?: boolean;

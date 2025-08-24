@@ -15,14 +15,16 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import {FilterConfig, FilterOperator, FilterType} from '../types/FilterTypes';
+import {FilterConfig, FilterOperator, ColumnDataType} from '../types/FilterTypes';
 import {UserWhoPaid} from '../api/ReceiptModel';
 import {getCreateReceiptDetails} from '../api/ReceiptService';
+import {DialogShowingController} from "../../../controllers/DialogShowingController";
+import {users} from "../../settlements/utils/mockData";
 
 interface FilterDialogProps {
     open: boolean;
     onClose: () => void;
-    columnType: FilterType;
+    columnType: ColumnDataType;
     columnName: string;
     onApplyFilter: (config: FilterConfig) => void;
     currentFilter?: FilterConfig;
@@ -30,6 +32,22 @@ interface FilterDialogProps {
     fieldOptions?: {
         isUserField?: boolean;
     };
+}
+
+interface FilterDialogProps2 {
+    controller: DialogShowingController
+    columnType: ColumnDataType;
+    allowedOperators?: FilterOperator
+    columnName: string
+    anchorEl: HTMLElement | null;
+}
+
+interface Filter<T> {
+    fieldName: string;
+    operator: FilterOperator
+    isActive: boolean
+    valueFrom: T | null
+    valueTo: T | null
 }
 
 export default function FilterDialog({
@@ -53,27 +71,6 @@ export default function FilterDialog({
     const [value, setValue] = useState<string | number | boolean>(currentFilter?.value || '');
     const [value2, setValue2] = useState<string | number | boolean>(currentFilter?.value2 || '');
     const [active, setActive] = useState<boolean>(currentFilter?.active || false);
-
-    // Lista użytkowników dla pola "Kto zapłacił"
-    const [users, setUsers] = useState<UserWhoPaid[]>([]);
-    const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
-
-    // Pobieranie listy użytkowników, jeśli pole jest polem użytkownika
-    useEffect(() => {
-        if (open && fieldOptions?.isUserField) {
-            setLoadingUsers(true);
-            getCreateReceiptDetails()
-                .then((data) => {
-                    setUsers(data.whoPaidLists);
-                })
-                .catch((error) => {
-                    console.error('Błąd podczas pobierania listy użytkowników:', error);
-                })
-                .finally(() => {
-                    setLoadingUsers(false);
-                });
-        }
-    }, [open, fieldOptions?.isUserField]);
 
     // Aktualizuj stany przy zmianie currentFilter lub otwarciu popovera
     useEffect(() => {

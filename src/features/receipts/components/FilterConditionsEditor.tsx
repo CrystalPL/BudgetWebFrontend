@@ -28,7 +28,7 @@ import {
     SavedFilter,
     FilterCondition,
     LogicalOperator,
-    FilterType
+    ColumnDataType
 } from '../types/FilterTypes';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
 import ConditionBuilder from './ConditionBuilder';
@@ -40,7 +40,7 @@ interface FilterConditionsEditorProps {
     onCancel: () => void;
     availableColumns: Array<{
         name: string;
-        type: FilterType;
+        type: ColumnDataType;
         label: string;
         fieldOptions?: {
             isUserField?: boolean;

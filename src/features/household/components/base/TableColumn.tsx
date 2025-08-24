@@ -1,58 +1,42 @@
 import {Box, TableCell, TableSortLabel, Tooltip, Typography} from "@mui/material";
 import * as React from "react";
-import {useRef, useState} from "react";
-import FilterListIcon from '@mui/icons-material/FilterList';
-import {FilterConfig, FilterType} from "../../../../receipts/types/FilterTypes";
-import FilterDialog from "../../../receipts/components/FilterDialog";
+import {useRef} from "react";
+import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
+import {FilterList} from "@mui/icons-material";
+import {StateProp} from "../../../../filter/StateProp";
+import {ColumnDataType} from "../../../receipts/types/FilterTypes";
+import {FilterValue} from "../../../../filter/basic/FilterModel";
+import {FilterMenuItemConfig} from "../../../../filter/basic/FilterInputRendering";
+import FilterDialog from "../../../../filter/basic/FilterDialog";
 
-interface TableColumnProps {
-    columnName: String
-    orderType: 'asc' | 'desc'
-    setOrderType: (orderType: 'asc' | 'desc') => void
+export type OrderType = 'asc' | 'desc';
+
+interface TableColumnProps<T> {
+    columnName: string
+    orderProps: StateProp<OrderType>
     setOrderBy: () => void
-    columnType?: FilterType
-    filterConfig?: FilterConfig
-    onFilterChange?: (config: FilterConfig) => void
-    fieldOptions?: {
-        isUserField?: boolean;
-    }
+    tableFilterProps: TableFilterProps<T>
 }
 
-export default function TableColumn({
-                                        columnName,
-                                        orderType,
-                                        setOrderType,
-                                        setOrderBy,
-                                        columnType = 'text',
-                                        filterConfig,
-                                        onFilterChange,
-                                        fieldOptions
-                                    }: TableColumnProps) {
-    const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+interface TableFilterProps<T> {
+    columnType: ColumnDataType;
+    filterValue: FilterValue<T>
+    functionToGetSelectItems?: () => Promise<T[]>
+    functionToMapItem?: (item: T) => FilterMenuItemConfig
+}
+
+export default function TableColumn<T>(props: TableColumnProps<T>) {
+    const filterShowingController: DialogShowingController = GetShowingController();
     const filterIconRef = useRef<HTMLDivElement | null>(null);
-
-    const handleOpenFilterDialog = () => {
-        setFilterDialogOpen(true);
-    };
-
-    const handleCloseFilterDialog = () => {
-        setFilterDialogOpen(false);
-    };
-
-    const handleApplyFilter = (config: FilterConfig) => {
-        if (onFilterChange) {
-            onFilterChange(config);
-        }
-    };
 
     return (
         <TableCell sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>
             <Box sx={{display: 'flex', alignItems: 'center'}}>
                 <Typography variant="body1" sx={{fontWeight: 'bold', fontSize: '0.875rem'}}>
-                    {columnName}
+                    {props.columnName}
                 </Typography>
 
-                <Tooltip title={orderType === 'asc' ? 'Sortuj malejąco' : 'Sortuj rosnąco'} arrow>
+                <Tooltip title={props.orderProps.value === 'asc' ? 'Sortuj malejąco' : 'Sortuj rosnąco'} arrow>
                     <Box
                         sx={{
                             display: 'flex',
@@ -68,60 +52,53 @@ export default function TableColumn({
                             },
                         }}
                         onClick={() => {
-                            setOrderType(orderType === 'asc' ? 'desc' : 'asc')
-                            setOrderBy()
+                            props.orderProps.setValue(props.orderProps.value === 'asc' ? 'desc' : 'asc')
+                            props.setOrderBy()
                         }}
                     >
                         <TableSortLabel
                             active={true}
-                            direction={orderType}
+                            direction={props.orderProps.value}
                             sx={{padding: 0}}
                         >
                         </TableSortLabel>
                     </Box>
                 </Tooltip>
 
-                {onFilterChange && (
-                    <Tooltip title="Filtruj" arrow>
-                        <Box
-                            ref={filterIconRef}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: '50%',
-                                width: '30px',
-                                height: '30px',
-                                marginLeft: '4px',
-                                bgcolor: filterConfig?.active ? 'primary.light' : 'transparent',
-                                '&:hover': {
-                                    backgroundColor: '#e0e0e0',
-                                    cursor: 'pointer',
-                                },
-                            }}
-                            onClick={handleOpenFilterDialog}
-                        >
-                            <FilterListIcon sx={{
-                                fontSize: '1.2rem',
-                                color: filterConfig?.active ? 'white' : 'inherit'
-                            }}/>
-                        </Box>
-                    </Tooltip>
-                )}
+                <Tooltip title="Filtruj" arrow>
+                    <Box
+                        ref={filterIconRef}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '50%',
+                            width: '30px',
+                            height: '30px',
+                            marginLeft: '4px',
+                            bgcolor: props.tableFilterProps.filterValue.activeProp.value ? 'primary.light' : 'transparent',
+                            '&:hover': {
+                                backgroundColor: '#e0e0e0',
+                                cursor: 'pointer',
+                            },
+                        }}
+                        onClick={filterShowingController.openDialog}
+                    >
+                        <FilterList sx={{
+                            fontSize: '1.2rem',
+                            color: props.tableFilterProps.filterValue.activeProp.value ? 'white' : 'inherit'
+                        }}/>
+                    </Box>
+                </Tooltip>
             </Box>
 
-            {onFilterChange && (
-                <FilterDialog
-                    open={filterDialogOpen}
-                    onClose={handleCloseFilterDialog}
-                    columnType={columnType}
-                    columnName={columnName.toString()}
-                    onApplyFilter={handleApplyFilter}
-                    currentFilter={filterConfig}
-                    anchorEl={filterIconRef.current}
-                    fieldOptions={fieldOptions}
-                />
-            )}
+            <FilterDialog
+                controller={filterShowingController}
+                columnType={props.tableFilterProps.columnType}
+                columnName={props.columnName}
+                anchorEl={filterIconRef.current}
+                filterValue={props.tableFilterProps.filterValue}
+            />
         </TableCell>
     )
 }

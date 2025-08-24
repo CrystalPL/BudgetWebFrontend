@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 import {
     FilterCondition,
-    FilterType,
+    ColumnDataType,
     FilterOperator,
     LogicalOperator
 } from '../types/FilterTypes';
@@ -31,7 +31,7 @@ interface ConditionBuilderProps {
     condition: FilterCondition;
     availableColumns: Array<{
         name: string;
-        type: FilterType;
+        type: ColumnDataType;
         label: string;
         fieldOptions?: {
             isUserField?: boolean;
@@ -101,7 +101,7 @@ export default function ConditionBuilder({
         });
     };
 
-    const getDefaultOperator = (type: FilterType): FilterOperator => {
+    const getDefaultOperator = (type: ColumnDataType): FilterOperator => {
         switch (type) {
             case 'text':
                 return 'contains';
@@ -116,7 +116,7 @@ export default function ConditionBuilder({
         }
     };
 
-    const getOperatorOptions = (type: FilterType) => {
+    const getOperatorOptions = (type: ColumnDataType) => {
         switch (type) {
             case 'text':
                 return [
