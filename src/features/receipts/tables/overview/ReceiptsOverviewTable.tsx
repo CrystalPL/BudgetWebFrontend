@@ -1,4 +1,4 @@
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Box} from "@mui/material";
 import TableColumn from "../../../household/components/base/TableColumn";
 import * as React from "react";
 import {useEffect, useState} from "react";
@@ -9,7 +9,9 @@ import ConfirmationDialog from "../../../household/components/base/ConfirmationD
 import {deleteReceipt} from "../../api/ReceiptService";
 import {Receipt} from "../../api/ReceiptModel";
 import TableItem from "./TableItem";
-import {applyFilter, FilterConfig} from "../../types/FilterTypes";
+import {applyFilter, applyAdvancedFilter, FilterConfig} from "../../types/FilterTypes";
+import AdvancedFilterButton from "../../components/AdvancedFilterButton";
+import {useAdvancedFilters} from "../../hooks/useAdvancedFilters";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -28,6 +30,9 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const deleteReceiptDialogController = GetShowingController();
+
+    // Hook dla zaawansowanych filtrów
+    const { getActiveFilter } = useAdvancedFilters();
 
     // Filtry dla każdej kolumny
     const [shopFilter, setShopFilter] = useState<FilterConfig>({
@@ -70,18 +75,38 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         active: false
     });
 
-    // Resetuj stronę przy zmianie filtrów
+    // Definicja dostępnych kolumn dla zaawansowanych filtrów
+    const availableColumns = [
+        { name: 'shop', type: 'text' as const, label: 'Sklep' },
+        { name: 'shoppingTime', type: 'date' as const, label: 'Data zakupów' },
+        { name: 'receiptAmount', type: 'number' as const, label: 'Kwota' },
+        { name: 'whoPaid.userName', type: 'text' as const, label: 'Kto zapłacił', fieldOptions: { isUserField: true } },
+        { name: 'settled', type: 'boolean' as const, label: 'Paragon rozliczony' }
+    ];
+
+    // Resetuj stronę przy zmianie filtrów lub zaawansowanych filtrów
     useEffect(() => {
         setPage(0);
-    }, [shopFilter, shoppingDateFilter, receiptAmountFilter, whoPaidFilter, settledFilter]);
+    }, [shopFilter, shoppingDateFilter, receiptAmountFilter, whoPaidFilter, settledFilter, getActiveFilter()]);
 
-    const filteredReceipts = applyFilter(props.receipts, [
-        shopFilter,
-        shoppingDateFilter,
-        receiptAmountFilter,
-        whoPaidFilter,
-        settledFilter
-    ]);
+    // Zastosuj filtry - najpierw podstawowe, potem zaawansowane
+    const filteredReceipts = (() => {
+        const activeAdvancedFilter = getActiveFilter();
+
+        if (activeAdvancedFilter) {
+            // Jeśli jest aktywny zaawansowany filtr, ignoruj podstawowe filtry kolumnowe
+            return applyAdvancedFilter(props.receipts, activeAdvancedFilter);
+        } else {
+            // Jeśli nie ma zaawansowanego filtru, stosuj podstawowe filtry kolumnowe
+            return applyFilter(props.receipts, [
+                shopFilter,
+                shoppingDateFilter,
+                receiptAmountFilter,
+                whoPaidFilter,
+                settledFilter
+            ]);
+        }
+    })();
 
     const sortedReceipts: Receipt[] = (() => {
         switch (orderBy) {
@@ -108,6 +133,8 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         setPage(0);
     };
 
+    const activeAdvancedFilter = getActiveFilter();
+
     return (
         <TableContainer
             component={Paper}
@@ -117,6 +144,25 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                 mb: 4,
             }}
         >
+            {/* Pasek z zaawansowanymi filtrami */}
+            <Box sx={{
+                p: 2,
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            }}>
+                <Box>
+                    <AdvancedFilterButton availableColumns={availableColumns} />
+                </Box>
+                <Box sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+                    {activeAdvancedFilter
+                        ? `Filtrowanie: ${filteredReceipts.length} z ${props.receipts.length} paragonów (zaawansowany filtr aktywny)`
+                        : `Pokazano: ${filteredReceipts.length} z ${props.receipts.length} paragonów`
+                    }
+                </Box>
+            </Box>
+
             <Table>
                 <TableHead sx={{backgroundColor: '#f5f5f5'}}>
                     <TableRow>
@@ -127,7 +173,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             setOrderBy={() => setOrderBy('shop')}
                             columnType="text"
                             filterConfig={shopFilter}
-                            onFilterChange={setShopFilter}
+                            onFilterChange={activeAdvancedFilter ? undefined : setShopFilter}
                         />
                         <TableColumn
                             columnName="Data zakupów"
@@ -136,7 +182,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             setOrderBy={() => setOrderBy('shoppingDate')}
                             columnType="date"
                             filterConfig={shoppingDateFilter}
-                            onFilterChange={setShoppingDateFilter}
+                            onFilterChange={activeAdvancedFilter ? undefined : setShoppingDateFilter}
                         />
                         <TableColumn
                             columnName="Kwota"
@@ -145,7 +191,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             setOrderBy={() => setOrderBy('receiptAmount')}
                             columnType="number"
                             filterConfig={receiptAmountFilter}
-                            onFilterChange={setReceiptAmountFilter}
+                            onFilterChange={activeAdvancedFilter ? undefined : setReceiptAmountFilter}
                         />
                         <TableColumn
                             columnName="Kto zapłacil"
@@ -154,7 +200,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             setOrderBy={() => setOrderBy('whoPaid')}
                             columnType="text"
                             filterConfig={whoPaidFilter}
-                            onFilterChange={setWhoPaidFilter}
+                            onFilterChange={activeAdvancedFilter ? undefined : setWhoPaidFilter}
                             fieldOptions={{isUserField: true}}
                         />
                         <TableColumn
@@ -164,19 +210,18 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             setOrderBy={() => setOrderBy('settled')}
                             columnType="boolean"
                             filterConfig={settledFilter}
-                            onFilterChange={setSettledFilter}
+                            onFilterChange={activeAdvancedFilter ? undefined : setSettledFilter}
                         />
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {paginatedReceipts
-                        .map((receipt) => (
-                            <TableItem key={receipt.id} receipt={receipt} setEditedReceipt={props.setEditedReceipt}
-                                       createReceiptController={props.createReceiptController}
-                                       deleteReceiptDialogController={deleteReceiptDialogController}/>
-                        ))}
+                    {paginatedReceipts.map((receipt) => (
+                        <TableItem key={receipt.id} receipt={receipt} setEditedReceipt={props.setEditedReceipt}
+                                   createReceiptController={props.createReceiptController}
+                                   deleteReceiptDialogController={deleteReceiptDialogController}/>
+                    ))}
                 </TableBody>
             </Table>
             <TablePagination
