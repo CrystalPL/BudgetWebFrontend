@@ -163,7 +163,10 @@ export const useAdvancedFilters = () => {
             columnName: '',
             columnType: 'text',
             operator: 'contains',
-            value: ''
+            value: '',
+            logicalOperatorBefore: 'AND', // Domyślnie AND
+            openParenthesis: 0,
+            closeParenthesis: 0
         };
 
         return {

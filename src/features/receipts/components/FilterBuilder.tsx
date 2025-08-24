@@ -33,6 +33,7 @@ import {
 } from '../types/FilterTypes';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
 import ConditionBuilder from './ConditionBuilder';
+import AddConditionButton from './AddConditionButton';
 
 interface FilterBuilderProps {
     filter: SavedFilter;
@@ -242,14 +243,12 @@ export default function FilterBuilder({
                                             Grupa {groupIndex + 1} ({group.conditions.length} warunków)
                                         </Typography>
                                         <Box sx={{ display: 'flex', gap: 1 }}>
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                startIcon={<AddIcon />}
-                                                onClick={() => handleAddCondition(group.id)}
-                                            >
-                                                Warunek
-                                            </Button>
+                                            <AddConditionButton
+                                                onAddCondition={() => handleAddCondition(group.id)}
+                                                onChangeOperator={(operator) => handleUpdateGroupOperator(group.id, operator)}
+                                                currentOperator={group.logicalOperator}
+                                                disabled={false}
+                                            />
                                             {currentFilter.groups.length > 1 && (
                                                 <Tooltip title="Usuń grupę">
                                                     <IconButton
@@ -288,31 +287,19 @@ export default function FilterBuilder({
                                         </Alert>
                                     )}
 
-                                    {group.conditions.map((condition, conditionIndex) => (
-                                        <Box key={condition.id}>
-                                            {/* Separator między warunkami */}
-                                            {conditionIndex > 0 && (
-                                                <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
-                                                    <Divider sx={{ flex: 1 }} />
-                                                    <Chip
-                                                        label={group.logicalOperator}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        sx={{ mx: 2 }}
-                                                    />
-                                                    <Divider sx={{ flex: 1 }} />
-                                                </Box>
-                                            )}
-
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                        {group.conditions.map((condition, conditionIndex) => (
                                             <ConditionBuilder
+                                                key={condition.id}
                                                 condition={condition}
                                                 availableColumns={availableColumns}
                                                 onChange={(updates) => handleUpdateCondition(group.id, condition.id, updates)}
                                                 onRemove={() => handleRemoveCondition(group.id, condition.id)}
                                                 canRemove={group.conditions.length > 1 || currentFilter.groups.length > 1}
+                                                isFirstCondition={conditionIndex === 0}
                                             />
-                                        </Box>
-                                    ))}
+                                        ))}
+                                    </Box>
                                 </Paper>
                             </Box>
                         ))}
@@ -355,18 +342,23 @@ const generateFilterLogicPreview = (filter: SavedFilter): string => {
 
     const groupPreviews = filter.groups.map((group, groupIndex) => {
         const conditionPreviews = group.conditions.map((condition, conditionIndex) => {
+            const openParenthesis = '('.repeat(condition.openParenthesis || 0);
+            const closeParenthesis = ')'.repeat(condition.closeParenthesis || 0);
+
             const column = condition.columnName || '[pole]';
             const operator = getOperatorSymbol(condition.operator);
             const value = condition.value || '[wartość]';
             const value2 = condition.value2 ? ` i ${condition.value2}` : '';
 
-            const conditionText = `${column} ${operator} ${value}${value2}`;
+            const conditionText = `${openParenthesis}${column} ${operator} ${value}${value2}${closeParenthesis}`;
 
             if (conditionIndex === 0) return conditionText;
-            return ` ${group.logicalOperator} ${conditionText}`;
+
+            const logicalOp = condition.logicalOperatorBefore || 'AND';
+            return ` ${logicalOp} ${conditionText}`;
         }).join('');
 
-        const groupText = group.conditions.length > 1 ? `(${conditionPreviews})` : conditionPreviews;
+        const groupText = conditionPreviews;
 
         if (groupIndex === 0) return groupText;
         return ` ${filter.groupLogicalOperator} ${groupText}`;

@@ -43,6 +43,10 @@ export interface FilterCondition {
     fieldOptions?: {
         isUserField?: boolean;
     };
+    // Nowe właściwości dla nawiasów i spojników
+    logicalOperatorBefore?: LogicalOperator; // Operator przed tym warunkiem
+    openParenthesis?: number; // Liczba nawiasów otwierających przed warunkiem
+    closeParenthesis?: number; // Liczba nawiasów zamykających po warunku
 }
 
 export interface FilterGroup {
@@ -127,17 +131,10 @@ export const applyAdvancedFilter = <T>(items: T[], savedFilter: SavedFilter): T[
     return items.filter(item => {
         // Sprawdź każdą grupę
         const groupResults = savedFilter.groups.map(group => {
-            // W ramach grupy sprawdź każdy warunek
-            const conditionResults = group.conditions.map(condition => {
-                return evaluateCondition(item, condition);
-            });
+            if (group.conditions.length === 0) return true;
 
-            // Połącz wyniki warunków w grupie operatorem logicznym grupy
-            if (group.logicalOperator === 'AND') {
-                return conditionResults.every(result => result);
-            } else {
-                return conditionResults.some(result => result);
-            }
+            // Buduj wyrażenie logiczne dla całej grupy z uwzględnieniem nawiasów i operatorów
+            return evaluateGroupWithParentheses(item, group);
         });
 
         // Połącz wyniki grup operatorem logicznym między grupami
@@ -147,6 +144,71 @@ export const applyAdvancedFilter = <T>(items: T[], savedFilter: SavedFilter): T[
             return groupResults.some(result => result);
         }
     });
+};
+
+// Funkcja do ewaluacji grupy z uwzględnieniem nawiasów i operatorów logicznych
+const evaluateGroupWithParentheses = <T>(item: T, group: FilterGroup): boolean => {
+    if (group.conditions.length === 0) return true;
+    if (group.conditions.length === 1) {
+        return evaluateCondition(item, group.conditions[0]);
+    }
+
+    // Dla wielu warunków, używamy operatorów logicznych przed każdym warunkiem
+    const results: boolean[] = [];
+    const operators: LogicalOperator[] = [];
+
+    group.conditions.forEach((condition, index) => {
+        const conditionResult = evaluateCondition(item, condition);
+        results.push(conditionResult);
+
+        if (index > 0) {
+            operators.push(condition.logicalOperatorBefore || 'AND');
+        }
+    });
+
+    // Ewaluuj wyrażenie z uwzględnieniem nawiasów i operatorów
+    return evaluateLogicalExpression(results, operators, group.conditions);
+};
+
+// Funkcja do ewaluacji wyrażenia logicznego z nawiasami
+const evaluateLogicalExpression = (results: boolean[], operators: LogicalOperator[], conditions: FilterCondition[]): boolean => {
+    if (results.length === 1) return results[0];
+
+    // Prosty algorytm - najpierw procesuj AND, potem OR
+    let currentResults = [...results];
+    let currentOperators = [...operators];
+
+    // Przetwórz AND operations pierwszo (wyższy priorytet)
+    let i = 0;
+    while (i < currentOperators.length) {
+        if (currentOperators[i] === 'AND') {
+            const leftResult = currentResults[i];
+            const rightResult = currentResults[i + 1];
+            const combinedResult = leftResult && rightResult;
+
+            currentResults.splice(i, 2, combinedResult);
+            currentOperators.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+
+    // Potem przetwórz OR operations
+    i = 0;
+    while (i < currentOperators.length) {
+        if (currentOperators[i] === 'OR') {
+            const leftResult = currentResults[i];
+            const rightResult = currentResults[i + 1];
+            const combinedResult = leftResult || rightResult;
+
+            currentResults.splice(i, 2, combinedResult);
+            currentOperators.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+
+    return currentResults[0] || false;
 };
 
 const evaluateCondition = <T>(item: T, condition: FilterCondition): boolean => {
