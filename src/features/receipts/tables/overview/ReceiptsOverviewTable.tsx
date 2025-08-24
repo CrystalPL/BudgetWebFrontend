@@ -135,7 +135,8 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
 
     const activeAdvancedFilter = getActiveFilter();
 
-    return (
+    return (<>
+        <AdvancedFilterButton availableColumns={availableColumns} />
         <TableContainer
             component={Paper}
             sx={{
@@ -144,25 +145,6 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                 mb: 4,
             }}
         >
-            {/* Pasek z zaawansowanymi filtrami */}
-            <Box sx={{
-                p: 2,
-                borderBottom: '1px solid #e0e0e0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <Box>
-                    <AdvancedFilterButton availableColumns={availableColumns} />
-                </Box>
-                <Box sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
-                    {activeAdvancedFilter
-                        ? `Filtrowanie: ${filteredReceipts.length} z ${props.receipts.length} paragonów (zaawansowany filtr aktywny)`
-                        : `Pokazano: ${filteredReceipts.length} z ${props.receipts.length} paragonów`
-                    }
-                </Box>
-            </Box>
-
             <Table>
                 <TableHead sx={{backgroundColor: '#f5f5f5'}}>
                     <TableRow>
@@ -248,5 +230,5 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                 reloadTable={props.reloadTable}
             />
         </TableContainer>
-    )
+    </>)
 }

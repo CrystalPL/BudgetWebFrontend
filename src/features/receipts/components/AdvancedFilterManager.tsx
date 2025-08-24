@@ -19,7 +19,9 @@ import {
     MenuItem,
     Divider,
     Chip,
-    Tooltip
+    Tooltip,
+    Tabs,
+    Tab
 } from '@mui/material';
 import {
     Edit as EditIcon,
@@ -29,11 +31,14 @@ import {
     MoreVert as MoreVertIcon,
     FilterList as FilterListIcon,
     Save as SaveIcon,
-    Cancel as CancelIcon
+    Cancel as CancelIcon,
+    Info as InfoIcon,
+    Settings as SettingsIcon
 } from '@mui/icons-material';
 import { SavedFilter } from '../types/FilterTypes';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
-import FilterBuilder from './FilterBuilder';
+import FilterInfoEditor from './FilterInfoEditor';
+import FilterConditionsEditor from './FilterConditionsEditor';
 
 interface AdvancedFilterManagerProps {
     open: boolean;
@@ -60,10 +65,12 @@ export default function AdvancedFilterManager({
         deleteFilter,
         setActiveFilter,
         setCurrentFilter,
-        duplicateFilter
+        duplicateFilter,
+        updateFilterInfo
     } = useAdvancedFilters();
 
-    const [view, setView] = useState<'list' | 'create' | 'edit'>('list');
+    const [view, setView] = useState<'list' | 'create' | 'edit-info' | 'edit-conditions'>('list');
+    const [editTab, setEditTab] = useState(0); // 0 = info, 1 = conditions
     const [newFilterName, setNewFilterName] = useState('');
     const [newFilterDescription, setNewFilterDescription] = useState('');
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -76,6 +83,7 @@ export default function AdvancedFilterManager({
         setCurrentFilter(undefined);
         setNewFilterName('');
         setNewFilterDescription('');
+        setEditTab(0);
         onClose();
     };
 
@@ -84,14 +92,20 @@ export default function AdvancedFilterManager({
 
         const newFilter = createFilter(newFilterName.trim(), newFilterDescription.trim() || undefined);
         setCurrentFilter(newFilter);
-        setView('edit');
+        setView('edit-conditions'); // Po utworzeniu przejdź od razu do edycji warunków
         setNewFilterName('');
         setNewFilterDescription('');
     };
 
     const handleEditFilter = (filter: SavedFilter) => {
         setCurrentFilter(filter);
-        setView('edit');
+        setView('edit-info'); // Zacznij od edycji informacji
+        setEditTab(0);
+    };
+
+    const handleEditConditions = (filter: SavedFilter) => {
+        setCurrentFilter(filter);
+        setView('edit-conditions');
     };
 
     const handleDeleteFilter = (filterId: string) => {
@@ -203,7 +217,7 @@ export default function AdvancedFilterManager({
                                         }
                                     />
                                     <ListItemSecondaryAction>
-                                        <Box sx={{ display: 'flex', gap: 1 }}>
+                                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                                             <FormControlLabel
                                                 control={
                                                     <Switch
@@ -215,12 +229,22 @@ export default function AdvancedFilterManager({
                                                 label="Aktywny"
                                                 labelPlacement="start"
                                             />
-                                            <Tooltip title="Edytuj">
+                                            <Tooltip title="Edytuj informacje">
                                                 <IconButton
                                                     onClick={() => handleEditFilter(filter)}
                                                     size="small"
+                                                    color="primary"
                                                 >
-                                                    <EditIcon />
+                                                    <InfoIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Edytuj warunki">
+                                                <IconButton
+                                                    onClick={() => handleEditConditions(filter)}
+                                                    size="small"
+                                                    color="secondary"
+                                                >
+                                                    <SettingsIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Więcej opcji">
@@ -256,6 +280,7 @@ export default function AdvancedFilterManager({
                         onChange={(e) => setNewFilterName(e.target.value)}
                         fullWidth
                         required
+                        autoFocus
                     />
                     <TextField
                         label="Opis (opcjonalny)"
@@ -264,6 +289,7 @@ export default function AdvancedFilterManager({
                         fullWidth
                         multiline
                         rows={2}
+                        placeholder="Dodaj opis filtru, aby łatwiej go rozpoznać..."
                     />
                 </Box>
             </DialogContent>
@@ -277,15 +303,28 @@ export default function AdvancedFilterManager({
                     disabled={!newFilterName.trim()}
                     startIcon={<SaveIcon />}
                 >
-                    Utwórz i edytuj
+                    Utwórz i dodaj warunki
                 </Button>
             </DialogActions>
         </>
     );
 
-    const renderEditForm = () => (
+    const renderEditInfo = () => (
         state.currentFilter && (
-            <FilterBuilder
+            <FilterInfoEditor
+                filter={state.currentFilter}
+                onSave={(name: string, description?: string) => {
+                    updateFilterInfo(state.currentFilter!.id, name, description);
+                    setView('list');
+                }}
+                onCancel={() => setView('list')}
+            />
+        )
+    );
+
+    const renderEditConditions = () => (
+        state.currentFilter && (
+            <FilterConditionsEditor
                 filter={state.currentFilter}
                 onSave={(updatedFilter) => {
                     saveFilter(updatedFilter);
@@ -308,15 +347,17 @@ export default function AdvancedFilterManager({
                     sx: { minHeight: 500 }
                 }}
             >
-                {view === 'list' && renderFiltersList()}
-                {view === 'create' && renderCreateForm()}
-                {view === 'edit' && renderEditForm()}
-
                 {view === 'list' && (
-                    <DialogActions>
-                        <Button onClick={handleClose}>Zamknij</Button>
-                    </DialogActions>
+                    <>
+                        {renderFiltersList()}
+                        <DialogActions>
+                            <Button onClick={handleClose}>Zamknij</Button>
+                        </DialogActions>
+                    </>
                 )}
+                {view === 'create' && renderCreateForm()}
+                {view === 'edit-info' && renderEditInfo()}
+                {view === 'edit-conditions' && renderEditConditions()}
             </Dialog>
 
             {/* Menu kontekstowe dla filtrów */}
@@ -326,8 +367,12 @@ export default function AdvancedFilterManager({
                 onClose={handleMenuClose}
             >
                 <MenuItem onClick={() => selectedFilter && handleEditFilter(selectedFilter)}>
-                    <EditIcon sx={{ mr: 1 }} />
-                    Edytuj
+                    <InfoIcon sx={{ mr: 1 }} />
+                    Edytuj informacje
+                </MenuItem>
+                <MenuItem onClick={() => selectedFilter && handleEditConditions(selectedFilter)}>
+                    <SettingsIcon sx={{ mr: 1 }} />
+                    Edytuj warunki
                 </MenuItem>
                 <MenuItem onClick={openDuplicateDialog}>
                     <CopyIcon sx={{ mr: 1 }} />
@@ -353,6 +398,7 @@ export default function AdvancedFilterManager({
                         onChange={(e) => setDuplicateName(e.target.value)}
                         fullWidth
                         margin="dense"
+                        autoFocus
                     />
                 </DialogContent>
                 <DialogActions>

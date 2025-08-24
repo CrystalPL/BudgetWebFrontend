@@ -11,7 +11,6 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    TextField,
     IconButton,
     Chip,
     Divider,
@@ -22,20 +21,20 @@ import {
     Add as AddIcon,
     Delete as DeleteIcon,
     Save as SaveIcon,
-    Cancel as CancelIcon
+    Cancel as CancelIcon,
+    Settings as SettingsIcon
 } from '@mui/icons-material';
 import {
     SavedFilter,
     FilterCondition,
     LogicalOperator,
-    FilterType,
-    FilterOperator
+    FilterType
 } from '../types/FilterTypes';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
 import ConditionBuilder from './ConditionBuilder';
 import AddConditionButton from './AddConditionButton';
 
-interface FilterBuilderProps {
+interface FilterConditionsEditorProps {
     filter: SavedFilter;
     onSave: (filter: SavedFilter) => void;
     onCancel: () => void;
@@ -49,12 +48,12 @@ interface FilterBuilderProps {
     }>;
 }
 
-export default function FilterBuilder({
+export default function FilterConditionsEditor({
     filter,
     onSave,
     onCancel,
     availableColumns
-}: FilterBuilderProps) {
+}: FilterConditionsEditorProps) {
     const {
         addGroup,
         removeGroup,
@@ -67,16 +66,9 @@ export default function FilterBuilder({
     } = useAdvancedFilters();
 
     const [currentFilter, setCurrentFilter] = useState<SavedFilter>(filter);
-    const [filterName, setFilterName] = useState(filter.name);
-    const [filterDescription, setFilterDescription] = useState(filter.description || '');
 
     const handleSave = () => {
-        const updatedFilter = {
-            ...currentFilter,
-            name: filterName,
-            description: filterDescription || undefined
-        };
-        onSave(updatedFilter);
+        onSave(currentFilter);
     };
 
     const handleAddGroup = () => {
@@ -120,7 +112,6 @@ export default function FilterBuilder({
     };
 
     const isFilterValid = () => {
-        if (!filterName.trim()) return false;
         if (currentFilter.groups.length === 0) return false;
 
         return currentFilter.groups.every(group =>
@@ -137,11 +128,65 @@ export default function FilterBuilder({
         return currentFilter.groups.reduce((sum, group) => sum + group.conditions.length, 0);
     };
 
+    const generateFilterLogicPreview = (filter: SavedFilter): string => {
+        if (filter.groups.length === 0) return 'Brak warunków';
+
+        const groupPreviews = filter.groups.map((group, groupIndex) => {
+            const conditionPreviews = group.conditions.map((condition, conditionIndex) => {
+                const openParenthesis = '('.repeat(condition.openParenthesis || 0);
+                const closeParenthesis = ')'.repeat(condition.closeParenthesis || 0);
+
+                const column = condition.columnName || '[pole]';
+                const operator = getOperatorSymbol(condition.operator);
+                const value = condition.value || '[wartość]';
+                const value2 = condition.value2 ? ` i ${condition.value2}` : '';
+
+                const conditionText = `${openParenthesis}${column} ${operator} ${value}${value2}${closeParenthesis}`;
+
+                if (conditionIndex === 0) return conditionText;
+
+                const logicalOp = condition.logicalOperatorBefore || 'AND';
+                return ` ${logicalOp} ${conditionText}`;
+            }).join('');
+
+            const groupText = conditionPreviews;
+
+            if (groupIndex === 0) return groupText;
+
+            const groupOperator = group.logicalOperatorBefore || 'AND';
+            return ` ${groupOperator} (${groupText})`;
+        }).join('');
+
+        return groupPreviews;
+    };
+
+    const getOperatorSymbol = (operator: string): string => {
+        const symbols: Record<string, string> = {
+            'contains': 'zawiera',
+            'notContains': 'nie zawiera',
+            'equals': '=',
+            'notEquals': '≠',
+            'startsWith': 'zaczyna się od',
+            'endsWith': 'kończy się na',
+            'greaterThan': '>',
+            'lessThan': '<',
+            'greaterThanOrEqual': '≥',
+            'lessThanOrEqual': '≤',
+            'between': 'między',
+            'before': 'przed',
+            'after': 'po'
+        };
+        return symbols[operator] || operator;
+    };
+
     return (
         <>
             <DialogTitle>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant="h6">Edytor filtru</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <SettingsIcon />
+                        <Typography variant="h6">Edytuj warunki filtru</Typography>
+                    </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Chip
                             label={`${currentFilter.groups.length} grup`}
@@ -159,33 +204,19 @@ export default function FilterBuilder({
 
             <DialogContent sx={{ minHeight: 600, maxHeight: '80vh', overflow: 'auto' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    {/* Podstawowe informacje o filtrze */}
-                    <Paper sx={{ p: 2 }} variant="outlined">
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
-                            Informacje o filtrze
+                    {/* Informacje o filtrze */}
+                    <Paper sx={{ p: 2, bgcolor: 'primary.light', color: 'primary.contrastText' }} variant="outlined">
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                            Edytujesz warunki dla filtru: "{filter.name}"
                         </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <TextField
-                                label="Nazwa filtru"
-                                value={filterName}
-                                onChange={(e) => setFilterName(e.target.value)}
-                                fullWidth
-                                required
-                                error={!filterName.trim()}
-                                helperText={!filterName.trim() ? 'Nazwa jest wymagana' : ''}
-                            />
-                            <TextField
-                                label="Opis"
-                                value={filterDescription}
-                                onChange={(e) => setFilterDescription(e.target.value)}
-                                fullWidth
-                                multiline
-                                rows={2}
-                            />
-                        </Box>
+                        {filter.description && (
+                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                                {filter.description}
+                            </Typography>
+                        )}
                     </Paper>
 
-                    {/* Operator logiczny między grupami */}
+                    {/* Operator logiczny między grupami - tylko gdy jest więcej grup */}
                     {currentFilter.groups.length > 1 && (
                         <Paper sx={{ p: 2 }} variant="outlined">
                             <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -350,62 +381,9 @@ export default function FilterBuilder({
                     disabled={!isFilterValid()}
                     startIcon={<SaveIcon />}
                 >
-                    Zapisz filtr
+                    Zapisz warunki
                 </Button>
             </DialogActions>
         </>
     );
 }
-
-// Helper function to generate preview of filter logic
-const generateFilterLogicPreview = (filter: SavedFilter): string => {
-    if (filter.groups.length === 0) return 'Brak warunków';
-
-    const groupPreviews = filter.groups.map((group, groupIndex) => {
-        const conditionPreviews = group.conditions.map((condition, conditionIndex) => {
-            const openParenthesis = '('.repeat(condition.openParenthesis || 0);
-            const closeParenthesis = ')'.repeat(condition.closeParenthesis || 0);
-
-            const column = condition.columnName || '[pole]';
-            const operator = getOperatorSymbol(condition.operator);
-            const value = condition.value || '[wartość]';
-            const value2 = condition.value2 ? ` i ${condition.value2}` : '';
-
-            const conditionText = `${openParenthesis}${column} ${operator} ${value}${value2}${closeParenthesis}`;
-
-            if (conditionIndex === 0) return conditionText;
-
-            const logicalOp = condition.logicalOperatorBefore || 'AND';
-            return ` ${logicalOp} ${conditionText}`;
-        }).join('');
-
-        const groupText = conditionPreviews;
-
-        if (groupIndex === 0) return groupText;
-
-        // Użyj operatora przed grupą zamiast globalnego operatora
-        const groupOperator = group.logicalOperatorBefore || 'AND';
-        return ` ${groupOperator} (${groupText})`;
-    }).join('');
-
-    return groupPreviews;
-};
-
-const getOperatorSymbol = (operator: FilterOperator): string => {
-    const symbols: Record<FilterOperator, string> = {
-        'contains': 'zawiera',
-        'notContains': 'nie zawiera',
-        'equals': '=',
-        'notEquals': '≠',
-        'startsWith': 'zaczyna się od',
-        'endsWith': 'kończy się na',
-        'greaterThan': '>',
-        'lessThan': '<',
-        'greaterThanOrEqual': '≥',
-        'lessThanOrEqual': '≤',
-        'between': 'między',
-        'before': 'przed',
-        'after': 'po'
-    };
-    return symbols[operator] || operator;
-};

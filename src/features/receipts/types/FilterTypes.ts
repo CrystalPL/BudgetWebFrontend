@@ -53,6 +53,8 @@ export interface FilterGroup {
     id: string;
     conditions: FilterCondition[];
     logicalOperator: LogicalOperator; // AND/OR między warunkami w tej grupie
+    // Nowa właściwość - operator przed tą grupą
+    logicalOperatorBefore?: LogicalOperator; // Operator przed tą grupą (dla drugiej i kolejnych grup)
 }
 
 export interface SavedFilter {
@@ -129,20 +131,25 @@ export const applyAdvancedFilter = <T>(items: T[], savedFilter: SavedFilter): T[
     }
 
     return items.filter(item => {
-        // Sprawdź każdą grupę
-        const groupResults = savedFilter.groups.map(group => {
-            if (group.conditions.length === 0) return true;
+        if (savedFilter.groups.length === 1) {
+            return evaluateGroupWithParentheses(item, savedFilter.groups[0]);
+        }
 
-            // Buduj wyrażenie logiczne dla całej grupy z uwzględnieniem nawiasów i operatorów
-            return evaluateGroupWithParentheses(item, group);
+        // Dla wielu grup, używamy operatorów logicznych przed każdą grupą
+        const results: boolean[] = [];
+        const operators: LogicalOperator[] = [];
+
+        savedFilter.groups.forEach((group, index) => {
+            const groupResult = evaluateGroupWithParentheses(item, group);
+            results.push(groupResult);
+
+            if (index > 0) {
+                operators.push(group.logicalOperatorBefore || 'AND');
+            }
         });
 
-        // Połącz wyniki grup operatorem logicznym między grupami
-        if (savedFilter.groupLogicalOperator === 'AND') {
-            return groupResults.every(result => result);
-        } else {
-            return groupResults.some(result => result);
-        }
+        // Ewaluuj wyrażenie z uwzględnieniem operatorów między grupami
+        return evaluateLogicalExpressionForGroups(results, operators);
     });
 };
 
@@ -172,6 +179,47 @@ const evaluateGroupWithParentheses = <T>(item: T, group: FilterGroup): boolean =
 
 // Funkcja do ewaluacji wyrażenia logicznego z nawiasami
 const evaluateLogicalExpression = (results: boolean[], operators: LogicalOperator[], conditions: FilterCondition[]): boolean => {
+    if (results.length === 1) return results[0];
+
+    // Prosty algorytm - najpierw procesuj AND, potem OR
+    let currentResults = [...results];
+    let currentOperators = [...operators];
+
+    // Przetwórz AND operations pierwszo (wyższy priorytet)
+    let i = 0;
+    while (i < currentOperators.length) {
+        if (currentOperators[i] === 'AND') {
+            const leftResult = currentResults[i];
+            const rightResult = currentResults[i + 1];
+            const combinedResult = leftResult && rightResult;
+
+            currentResults.splice(i, 2, combinedResult);
+            currentOperators.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+
+    // Potem przetwórz OR operations
+    i = 0;
+    while (i < currentOperators.length) {
+        if (currentOperators[i] === 'OR') {
+            const leftResult = currentResults[i];
+            const rightResult = currentResults[i + 1];
+            const combinedResult = leftResult || rightResult;
+
+            currentResults.splice(i, 2, combinedResult);
+            currentOperators.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+
+    return currentResults[0] || false;
+};
+
+// Funkcja do ewaluacji wyrażenia logicznego między grupami
+const evaluateLogicalExpressionForGroups = (results: boolean[], operators: LogicalOperator[]): boolean => {
     if (results.length === 1) return results[0];
 
     // Prosty algorytm - najpierw procesuj AND, potem OR

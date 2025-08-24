@@ -126,7 +126,8 @@ export const useAdvancedFilters = () => {
         const newGroup: FilterGroup = {
             id: generateId(),
             conditions: [],
-            logicalOperator: 'AND'
+            logicalOperator: 'AND',
+            logicalOperatorBefore: 'AND' // Domyślny operator przed nową grupą
         };
 
         return {
@@ -220,6 +221,30 @@ export const useAdvancedFilters = () => {
         };
     };
 
+    // Nowa funkcja - aktualizacja tylko informacji podstawowych filtru
+    const updateFilterInfo = (filterId: string, name: string, description?: string) => {
+        setState(prev => ({
+            ...prev,
+            savedFilters: prev.savedFilters.map(f =>
+                f.id === filterId ? { ...f, name, description, updatedAt: new Date() } : f
+            ),
+            currentFilter: prev.currentFilter?.id === filterId
+                ? { ...prev.currentFilter, name, description, updatedAt: new Date() }
+                : prev.currentFilter
+        }));
+    };
+
+    // Nowa funkcja - aktualizacja operatora logicznego przed konkretną grupą
+    const updateGroupLogicalOperatorBefore = (filter: SavedFilter, groupId: string, operator: LogicalOperator): SavedFilter => {
+        return {
+            ...filter,
+            groups: filter.groups.map(g =>
+                g.id === groupId ? { ...g, logicalOperatorBefore: operator } : g
+            ),
+            updatedAt: new Date()
+        };
+    };
+
     // Pobieranie aktywnego filtru
     const getActiveFilter = (): SavedFilter | undefined => {
         return state.savedFilters.find(f => f.active);
@@ -269,6 +294,8 @@ export const useAdvancedFilters = () => {
         removeCondition,
         updateCondition,
         updateGroupLogicalOperator,
+        updateGroupLogicalOperatorBefore,
+        updateFilterInfo,
         getActiveFilter,
         duplicateFilter
     };
