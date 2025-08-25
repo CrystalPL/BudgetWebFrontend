@@ -26,17 +26,31 @@ function GetOperatorMenuItems(columnType: ColumnDataType) {
 
 export default function FilterDialog<T>(props: FilterDialogProps<T>) {
     const temporaryValues: FilterValue<T> = GetFilter<T>();
+    useEffect(() => {
+        if (props.controller.openDialogStatus) {
+            temporaryValues.operatorProp.setValue(props.filterValue.operatorProp.value);
+            temporaryValues.activeProp.setValue(props.filterValue.activeProp.value);
+            temporaryValues.valueTo.setValue(props.filterValue.valueTo.value);
+            temporaryValues.valueFrom.setValue(props.filterValue.valueFrom.value);
+        }
+    }, [props.controller.openDialogStatus]);
 
-    const clearValues = () => {
-        props.filterValue.operatorProp.setValue(null)
-        props.filterValue.activeProp.setValue(false)
-        props.filterValue.valueTo.setValue(null)
-        props.filterValue.valueFrom.setValue(null)
+    const clearValues = (filterValue: FilterValue<any>) => {
+        filterValue.operatorProp.setValue(null)
+        filterValue.activeProp.setValue(false)
+        filterValue.valueTo.setValue(null)
+        filterValue.valueFrom.setValue(null)
     }
 
     const closeDialogAndClearTempValues = () => {
         props.controller.closeDialog()
-        clearValues()
+        clearValues(temporaryValues)
+    }
+
+    const closeDialogAndClearAllValues = () => {
+        props.controller.closeDialog()
+        clearValues(temporaryValues)
+        clearValues(props.filterValue)
     }
 
     const applyTemporaryValues = () => {
@@ -44,8 +58,7 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
         props.filterValue.activeProp.setValue(temporaryValues.activeProp.value);
         props.filterValue.valueTo.setValue(temporaryValues.valueTo.value);
         props.filterValue.valueFrom.setValue(temporaryValues.valueFrom.value);
-        console.log(props.filterValue)
-        // closeDialogAndClearTempValues()
+        props.controller.closeDialog()
     }
 
     const [selectItems, setSelectItems] = useState<FilterMenuItemConfig[]>([])
@@ -87,8 +100,8 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                 <Box sx={{mt: 2}}>
                     <FormControlLabel label="Filtr aktywny" control={
                         <Switch
-                            checked={props.filterValue.activeProp.value}
-                            onChange={(e) => props.filterValue.activeProp.setValue(e.target.checked)}
+                            checked={temporaryValues.activeProp.value}
+                            onChange={(e) => temporaryValues.activeProp.setValue(e.target.checked)}
                             color="primary"
                             size="small"
                         />
@@ -97,9 +110,9 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                     <FormControl fullWidth margin="dense" size="small">
                         <InputLabel>Operator</InputLabel>
                         <Select
-                            value={props.filterValue.operatorProp.value || ''}
+                            value={temporaryValues.operatorProp.value || ''}
                             label="Operator"
-                            onChange={(e) => props.filterValue.operatorProp.setValue(e.target.value as FilterOperator)}
+                            onChange={(e) => temporaryValues.operatorProp.setValue(e.target.value as FilterOperator)}
                             size="small"
                             MenuProps={{
                                 anchorOrigin: {
@@ -122,17 +135,17 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                     </FormControl>
 
                     <Box sx={{mt: 1}}>
-                        <RenderInput fieldProps={props.filterValue.valueFrom} items={selectItems} loading={loading}
+                        <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}
                                      columnType={props.columnType}/>
-                        {props.filterValue.operatorProp.value === 'between' && (
-                            <RenderInput fieldProps={props.filterValue.valueTo} items={selectItems} loading={loading}
+                        {temporaryValues.operatorProp.value === 'between' && (
+                            <RenderInput fieldProps={temporaryValues.valueTo} items={selectItems} loading={loading}
                                          columnType={props.columnType}/>
                         )}
                     </Box>
                 </Box>
 
                 <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 1}}>
-                    <Button onClick={clearValues} color="error" size="small">
+                    <Button onClick={closeDialogAndClearAllValues} color="error" size="small">
                         Wyczyść
                     </Button>
                     <Button onClick={closeDialogAndClearTempValues} size="small">

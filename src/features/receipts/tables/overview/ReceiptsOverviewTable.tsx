@@ -65,7 +65,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const whoPaidFilter: FilterValue<UserWhoPaid> = GetFilter();
     const settledFilter: FilterValue<boolean> = GetFilter();
 
-    console.log(shopFilter)
+    console.log(shopFilter.valueFrom.value)
 
     return (<>
         <AdvancedFilterButton availableColumns={availableColumns}/>
