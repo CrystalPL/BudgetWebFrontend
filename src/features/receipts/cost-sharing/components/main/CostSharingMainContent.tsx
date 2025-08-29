@@ -61,7 +61,7 @@ function calculateCostSharing(whoPaid: UserWhoPaid, productList: ReceiptItem[], 
         if (item.userToReturnMoney && item.moneyDividing && typeof item.moneyDividing === 'number') {
             const userDebt = userDebts.get(item.userToReturnMoney.userId);
             if (userDebt) {
-                userDebt.totalDebt = (userDebt.totalDebt || 0) + item.moneyDividing;
+                userDebt.totalDebt = (userDebt.totalDebt || 0) + item.price * item.quantity * item.moneyDividing / 100;
                 userDebt.items.push(item);
             }
         }
