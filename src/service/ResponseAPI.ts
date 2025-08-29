@@ -1,7 +1,7 @@
 import axios, {HttpStatusCode} from "axios";
 
 // export const API_URL: string = "https://budgetapp.pl/api"
-export const API_URL: string = "http://192.168.1.26:8092"
+export const API_URL: string = "http://budgetapp:8092"
 
 // export const WEBSOCKET_URL: string = "wss://budgetapp.pl/ws"
 export const WEBSOCKET_URL: string = "ws://localhost:8092/ws"
