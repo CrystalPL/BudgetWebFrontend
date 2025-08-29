@@ -7,7 +7,7 @@ interface AvatarImageProps {
     onClick: () => void;
     popoverController: {
         handleOpen: () => void;
-        anchorElement: React.RefObject<HTMLDivElement>;
+        anchorElement: React.MutableRefObject<HTMLDivElement | null>;
     };
 }
 
