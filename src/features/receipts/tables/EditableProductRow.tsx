@@ -156,11 +156,11 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <Autocomplete
-                    freeSolo
+                    // freeSolo
                     forcePopupIcon
                     disableClearable={true}
                     value={props.editedItem?.moneyDividing != null ? `${props.editedItem.moneyDividing}%` : ''}
-                    options={['10%', '30%', '50%', '70%', '100%']}
+                    options={['10%', '30%', '33%', '66%', '50%', '70%', '100%']}
                     onInputChange={(_, newValue) => handleFieldChange('moneyDividing', newValue.replace("%", ""))}
                     renderInput={(params) => (
                         <TextField
