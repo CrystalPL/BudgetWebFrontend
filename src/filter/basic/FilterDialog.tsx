@@ -26,14 +26,6 @@ function GetOperatorMenuItems(columnType: ColumnDataType) {
 
 export default function FilterDialog<T>(props: FilterDialogProps<T>) {
     const temporaryValues: FilterValue<T> = GetFilter<T>();
-    useEffect(() => {
-        if (props.controller.openDialogStatus) {
-            temporaryValues.operatorProp.setValue(props.filterValue.operatorProp.value);
-            temporaryValues.activeProp.setValue(props.filterValue.activeProp.value);
-            temporaryValues.valueTo.setValue(props.filterValue.valueTo.value);
-            temporaryValues.valueFrom.setValue(props.filterValue.valueFrom.value);
-        }
-    }, [props.controller.openDialogStatus]);
 
     const clearValues = (filterValue: FilterValue<any>) => {
         filterValue.operatorProp.setValue(null)
@@ -54,16 +46,23 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
     }
 
     const applyTemporaryValues = () => {
+        props.controller.closeDialog()
         props.filterValue.operatorProp.setValue(temporaryValues.operatorProp.value);
         props.filterValue.activeProp.setValue(temporaryValues.activeProp.value);
         props.filterValue.valueTo.setValue(temporaryValues.valueTo.value);
         props.filterValue.valueFrom.setValue(temporaryValues.valueFrom.value);
-        props.controller.closeDialog()
     }
 
     const [selectItems, setSelectItems] = useState<FilterMenuItemConfig[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     useEffect(() => {
+        if (props.controller.openDialogStatus) {
+            temporaryValues.operatorProp.setValue(props.filterValue.operatorProp.value);
+            temporaryValues.activeProp.setValue(props.filterValue.activeProp.value);
+            temporaryValues.valueTo.setValue(props.filterValue.valueTo.value);
+            temporaryValues.valueFrom.setValue(props.filterValue.valueFrom.value);
+        }
+
         if (props.controller.openDialogStatus || !props.functionToGetSelectItems || !props.functionToMapItem) {
             return;
         }

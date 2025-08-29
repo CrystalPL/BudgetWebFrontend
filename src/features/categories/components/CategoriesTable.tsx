@@ -11,11 +11,10 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import TableColumn from "../../household/components/base/TableColumn";
+import TableColumn, {OrderType} from "../../household/components/base/TableColumn";
 import EditIcon from "@mui/icons-material/Edit";
 import * as React from "react";
 import {useState} from "react";
-import {sort} from "../../../util/SortUtil";
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
 import EditCategoryDialog from "./EditCategoryDialog";
 import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
@@ -23,14 +22,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationDialog from "../../household/components/base/ConfirmationDialog";
 import {Category} from "../api/CategoryModel";
 import {deleteCategory} from "../api/CategoryService";
+import {StateProp, useStateProp} from "../../../filter/StateProp";
+import {FilterValue, GetFilter} from "../../../filter/basic/FilterModel";
 
 interface CategoriesTableProps extends HouseholdReloadKeyProps {
     categories: Category[]
 }
 
 export default function CategoriesTable(props: CategoriesTableProps) {
-    const [orderCategoryName, setOrderCategoryName] = useState<'asc' | 'desc'>('asc');
-    const sortedCategories: Category[] = sort(orderCategoryName, props.categories, value => value.name)
+    const categoryNameOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
+    const categoryFilter: FilterValue<string> = GetFilter();
     const [editedCategory, setEditedCategory] = useState<Category | null>(null)
     const editCategoryDialogController: DialogShowingController = GetShowingController()
     const deleteCategoryDialogController: DialogShowingController = GetShowingController()
@@ -52,17 +53,23 @@ export default function CategoriesTable(props: CategoriesTableProps) {
             <Table>
                 <TableHead sx={{backgroundColor: '#f5f5f5'}}>
                     <TableRow>
-                        <TableColumn columnName="Nazwa kategorii" orderType={orderCategoryName}
-                                     setOrderType={setOrderCategoryName}
-                                     setOrderBy={() => {
-                                     }}></TableColumn>
+                        <TableColumn
+                            columnName="Nazwa kategorii"
+                            orderProps={categoryNameOrderState}
+                            setOrderBy={() => {
+                            }}
+                            tableFilterProps={{
+                                columnType: 'text',
+                                filterValue: categoryFilter
+                            }}
+                        ></TableColumn>
                         <TableCell sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Kolor</TableCell>
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedCategories
+                    {props.categories
                         .map((category) => (
                             <TableRow key={category.id} sx={{
                                 '&:hover': {

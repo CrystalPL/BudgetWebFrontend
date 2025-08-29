@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    Alert,
     Box,
     Button,
-    DialogTitle,
-    DialogContent,
     DialogActions,
-    Typography,
+    DialogContent,
+    DialogTitle,
     Paper,
     TextField,
-    Alert
+    Typography
 } from '@mui/material';
-import {
-    Save as SaveIcon,
-    Cancel as CancelIcon,
-    Edit as EditIcon
-} from '@mui/icons-material';
-import { SavedFilter } from '../types/FilterTypes';
+import {Cancel as CancelIcon, Edit as EditIcon, Save as SaveIcon} from '@mui/icons-material';
+import {SavedFilter} from '../types/FilterTypes';
 
 interface FilterInfoEditorProps {
     filter: SavedFilter;
@@ -24,10 +20,10 @@ interface FilterInfoEditorProps {
 }
 
 export default function FilterInfoEditor({
-    filter,
-    onSave,
-    onCancel
-}: FilterInfoEditorProps) {
+                                             filter,
+                                             onSave,
+                                             onCancel
+                                         }: FilterInfoEditorProps) {
     const [filterName, setFilterName] = useState(filter.name);
     const [filterDescription, setFilterDescription] = useState(filter.description || '');
     const [originalName] = useState(filter.name);
@@ -52,7 +48,7 @@ export default function FilterInfoEditor({
 
     const hasChanges = () => {
         return filterName.trim() !== originalName ||
-               (filterDescription.trim() || undefined) !== (originalDescription || undefined);
+            (filterDescription.trim() || undefined) !== (originalDescription || undefined);
     };
 
     const isValid = () => {
@@ -62,19 +58,19 @@ export default function FilterInfoEditor({
     return (
         <>
             <DialogTitle>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <EditIcon />
+                <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                    <EditIcon/>
                     <Typography variant="h6">Edytuj informacje o filtrze</Typography>
                 </Box>
             </DialogTitle>
 
-            <DialogContent sx={{ minWidth: 500 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
-                    <Paper sx={{ p: 2 }} variant="outlined">
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
+            <DialogContent sx={{minWidth: 500}}>
+                <Box sx={{display: 'flex', flexDirection: 'column', gap: 3, pt: 1}}>
+                    <Paper sx={{p: 2}} variant="outlined">
+                        <Typography variant="subtitle2" sx={{mb: 2, fontWeight: 'bold'}}>
                             Podstawowe informacje
                         </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}}>
                             <TextField
                                 label="Nazwa filtru"
                                 value={filterName}
@@ -97,16 +93,17 @@ export default function FilterInfoEditor({
                         </Box>
                     </Paper>
 
-                    <Paper sx={{ p: 2, bgcolor: 'grey.50' }} variant="outlined">
-                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                    <Paper sx={{p: 2, bgcolor: 'grey.50'}} variant="outlined">
+                        <Typography variant="subtitle2" sx={{mb: 1, fontWeight: 'bold'}}>
                             Informacje o filtrze:
                         </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                             <Typography variant="body2" color="text.secondary">
                                 <strong>Grup warunków:</strong> {filter.groups.length}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                <strong>Łączna liczba warunków:</strong> {filter.groups.reduce((sum, group) => sum + group.conditions.length, 0)}
+                                <strong>Łączna liczba
+                                    warunków:</strong> {filter.groups.reduce((sum, group) => sum + group.conditions.length, 0)}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 <strong>Status:</strong> {filter.active ? 'Aktywny' : 'Nieaktywny'}
@@ -131,14 +128,14 @@ export default function FilterInfoEditor({
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={handleCancel} startIcon={<CancelIcon />}>
+                <Button onClick={handleCancel} startIcon={<CancelIcon/>}>
                     Anuluj
                 </Button>
                 <Button
                     onClick={handleSave}
                     variant="contained"
                     disabled={!isValid() || !hasChanges()}
-                    startIcon={<SaveIcon />}
+                    startIcon={<SaveIcon/>}
                 >
                     Zapisz zmiany
                 </Button>

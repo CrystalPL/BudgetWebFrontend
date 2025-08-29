@@ -1,7 +1,7 @@
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
 import TableColumn, {OrderType} from "../../../household/components/base/TableColumn";
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {HouseholdReloadKeyProps} from "../../../household/api/HouseholdModel";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import ConfirmationDialog from "../../../household/components/base/ConfirmationDialog";
@@ -12,6 +12,8 @@ import AdvancedFilterButton from "../../components/AdvancedFilterButton";
 import {useAdvancedFilters} from "../../hooks/useAdvancedFilters";
 import {StateProp, useStateProp} from "../../../../filter/StateProp";
 import {FilterValue, GetFilter} from "../../../../filter/basic/FilterModel";
+import AdvancedFilterListDialog from "../../../../filter/advanced/AdvancedFilterListDialog";
+import Button from "@mui/material/Button";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -27,6 +29,13 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const whoPaidOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
     const settledOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
     const [orderBy, setOrderBy] = useState<'shop' | 'shoppingDate' | 'receiptAmount' | 'whoPaid' | 'settled'>('shop');
+
+    const shopFilter: FilterValue<string> = GetFilter();
+    const shoppingTimeFilter: FilterValue<Date> = GetFilter();
+    const amountFilter: FilterValue<number> = GetFilter();
+    const whoPaidFilter: FilterValue<UserWhoPaid> = GetFilter();
+    const settledFilter: FilterValue<boolean> = GetFilter();
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const deleteReceiptDialogController = GetShowingController();
@@ -42,10 +51,11 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         {name: 'settled', type: 'boolean' as const, label: 'Paragon rozliczony'}
     ];
 
-    // Resetuj stronę przy zmianie filtrów lub zaawansowanych filtrów
-    // useEffect(() => {
-    //     setPage(0);
-    // }, [shopFilter, shoppingDateFilter, receiptAmountFilter, whoPaidFilter, settledFilter, getActiveFilter()]);
+    useEffect(() => {
+        setPage(0);
+        //TODO pobieranie danych z backendu
+    }, [shopFilter, shoppingTimeFilter, amountFilter, whoPaidFilter, settledFilter, shopOrderState, shoppingDateOrderState,
+        receiptAmountOrderState, whoPaidOrderState, settledOrderState]);
 
     const paginatedReceipts = props.receipts.slice(
         page * rowsPerPage,
@@ -59,16 +69,12 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
 
     const activeAdvancedFilter = getActiveFilter();
 
-    const shopFilter: FilterValue<string> = GetFilter();
-    const shoppingTimeFilter: FilterValue<Date> = GetFilter();
-    const amountFilter: FilterValue<number> = GetFilter();
-    const whoPaidFilter: FilterValue<UserWhoPaid> = GetFilter();
-    const settledFilter: FilterValue<boolean> = GetFilter();
-
-    console.log(shopFilter.valueFrom.value)
+    const advancedFilterShowingController: DialogShowingController = GetShowingController();
 
     return (<>
         <AdvancedFilterButton availableColumns={availableColumns}/>
+        <Button sx={{bgcolor: 'green'}} onClick={advancedFilterShowingController.openDialog}></Button>
+        <AdvancedFilterListDialog dialogController={advancedFilterShowingController}/>
         <TableContainer
             component={Paper}
             sx={{

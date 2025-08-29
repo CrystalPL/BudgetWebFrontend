@@ -46,7 +46,7 @@ function RenderAutocomplete(props: StateProp<any>, items: FilterMenuItemConfig[]
         <FormControl fullWidth size="small" sx={{mt: 1}}>
             <InputLabel>Użytkownik</InputLabel>
             <Select
-                value={props.value}
+                value={props.value ?? ''}
                 label="Użytkownik"
                 onChange={(e) => props.setValue(e.target.value)}
                 size="small"
@@ -84,7 +84,7 @@ function RenderBoolean(props: StateProp<boolean>) {
         <FormControl fullWidth size="small" sx={{mt: 1}}>
             <InputLabel>Wartość</InputLabel>
             <Select
-                value={props.value}
+                value={props.value ?? false}
                 label="Wartość"
                 onChange={(e) => props.setValue(e.target.value as boolean)}
                 size="small"
