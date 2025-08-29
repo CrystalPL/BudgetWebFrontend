@@ -1,7 +1,7 @@
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Box} from "@mui/material";
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
 import TableColumn from "../../../household/components/base/TableColumn";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {HouseholdReloadKeyProps} from "../../../household/api/HouseholdModel";
 import {sort} from "../../../../util/SortUtil";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
@@ -9,9 +9,6 @@ import ConfirmationDialog from "../../../household/components/base/ConfirmationD
 import {deleteReceipt} from "../../api/ReceiptService";
 import {Receipt} from "../../api/ReceiptModel";
 import TableItem from "./TableItem";
-import {applyFilter, applyAdvancedFilter, FilterConfig} from "../../types/FilterTypes";
-import AdvancedFilterButton from "../../components/AdvancedFilterButton";
-import {useAdvancedFilters} from "../../hooks/useAdvancedFilters";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -31,95 +28,18 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const deleteReceiptDialogController = GetShowingController();
 
-    // Hook dla zaawansowanych filtrów
-    const { getActiveFilter } = useAdvancedFilters();
-
-    // Filtry dla każdej kolumny
-    const [shopFilter, setShopFilter] = useState<FilterConfig>({
-        columnName: 'shop',
-        columnType: 'text',
-        operator: 'contains',
-        value: '',
-        active: false
-    });
-
-    const [shoppingDateFilter, setShoppingDateFilter] = useState<FilterConfig>({
-        columnName: 'shoppingTime',
-        columnType: 'date',
-        operator: 'equals',
-        value: '',
-        active: false
-    });
-
-    const [receiptAmountFilter, setReceiptAmountFilter] = useState<FilterConfig>({
-        columnName: 'receiptAmount',
-        columnType: 'number',
-        operator: 'equals',
-        value: '',
-        active: false
-    });
-
-    const [whoPaidFilter, setWhoPaidFilter] = useState<FilterConfig>({
-        columnName: 'whoPaid.userName',
-        columnType: 'text',
-        operator: 'contains',
-        value: '',
-        active: false
-    });
-
-    const [settledFilter, setSettledFilter] = useState<FilterConfig>({
-        columnName: 'settled',
-        columnType: 'boolean',
-        operator: 'equals',
-        value: '',
-        active: false
-    });
-
-    // Definicja dostępnych kolumn dla zaawansowanych filtrów
-    const availableColumns = [
-        { name: 'shop', type: 'text' as const, label: 'Sklep' },
-        { name: 'shoppingTime', type: 'date' as const, label: 'Data zakupów' },
-        { name: 'receiptAmount', type: 'number' as const, label: 'Kwota' },
-        { name: 'whoPaid.userName', type: 'text' as const, label: 'Kto zapłacił', fieldOptions: { isUserField: true } },
-        { name: 'settled', type: 'boolean' as const, label: 'Paragon rozliczony' }
-    ];
-
-    // Resetuj stronę przy zmianie filtrów lub zaawansowanych filtrów
-    useEffect(() => {
-        setPage(0);
-    }, [shopFilter, shoppingDateFilter, receiptAmountFilter, whoPaidFilter, settledFilter, getActiveFilter()]);
-
-    // Zastosuj filtry - najpierw podstawowe, potem zaawansowane
-    const filteredReceipts = (() => {
-        const activeAdvancedFilter = getActiveFilter();
-
-        if (activeAdvancedFilter) {
-            // Jeśli jest aktywny zaawansowany filtr, ignoruj podstawowe filtry kolumnowe
-            return applyAdvancedFilter(props.receipts, activeAdvancedFilter);
-        } else {
-            // Jeśli nie ma zaawansowanego filtru, stosuj podstawowe filtry kolumnowe
-            return applyFilter(props.receipts, [
-                shopFilter,
-                shoppingDateFilter,
-                receiptAmountFilter,
-                whoPaidFilter,
-                settledFilter
-            ]);
-        }
-    })();
-
     const sortedReceipts: Receipt[] = (() => {
         switch (orderBy) {
             case "shop":
-                return sort(orderShop, filteredReceipts, value => value.shop)
+                return sort(orderShop, props.receipts, value => value.shop)
             case "shoppingDate":
-                return sort(orderShoppingDate, filteredReceipts, value => value.shoppingTime);
+                return sort(orderShoppingDate, props.receipts, value => value.shoppingTime);
             case "receiptAmount":
-                return sort(orderReceiptAmount, filteredReceipts, value => value.receiptAmount);
+                return sort(orderReceiptAmount, props.receipts, value => value.receiptAmount);
             case "whoPaid":
-                return sort(orderWhoPaid, filteredReceipts, value => value.whoPaid.userName);
+                return sort(orderWhoPaid, props.receipts, value => value.whoPaid.userName);
             case "settled":
-                return sort(orderSettled, filteredReceipts, value => value.settled);
+                return sort(orderSettled, props.receipts, value => value.settled);
         }
     })();
 
@@ -133,10 +53,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         setPage(0);
     };
 
-    const activeAdvancedFilter = getActiveFilter();
-
     return (<>
-        <AdvancedFilterButton availableColumns={availableColumns} />
         <TableContainer
             component={Paper}
             sx={{
@@ -153,46 +70,30 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                             orderType={orderShop}
                             setOrderType={setOrderShop}
                             setOrderBy={() => setOrderBy('shop')}
-                            columnType="text"
-                            filterConfig={shopFilter}
-                            onFilterChange={activeAdvancedFilter ? undefined : setShopFilter}
                         />
                         <TableColumn
                             columnName="Data zakupów"
                             orderType={orderShoppingDate}
                             setOrderType={setOrderShoppingDate}
                             setOrderBy={() => setOrderBy('shoppingDate')}
-                            columnType="date"
-                            filterConfig={shoppingDateFilter}
-                            onFilterChange={activeAdvancedFilter ? undefined : setShoppingDateFilter}
                         />
                         <TableColumn
                             columnName="Kwota"
                             orderType={orderReceiptAmount}
                             setOrderType={setOrderReceiptAmount}
                             setOrderBy={() => setOrderBy('receiptAmount')}
-                            columnType="number"
-                            filterConfig={receiptAmountFilter}
-                            onFilterChange={activeAdvancedFilter ? undefined : setReceiptAmountFilter}
                         />
                         <TableColumn
                             columnName="Kto zapłacil"
                             orderType={orderWhoPaid}
                             setOrderType={setOrderWhoPaid}
                             setOrderBy={() => setOrderBy('whoPaid')}
-                            columnType="text"
-                            filterConfig={whoPaidFilter}
-                            onFilterChange={activeAdvancedFilter ? undefined : setWhoPaidFilter}
-                            fieldOptions={{isUserField: true}}
                         />
                         <TableColumn
                             columnName="Paragon rozliczony"
                             orderType={orderSettled}
                             setOrderType={setOrderSettled}
                             setOrderBy={() => setOrderBy('settled')}
-                            columnType="boolean"
-                            filterConfig={settledFilter}
-                            onFilterChange={activeAdvancedFilter ? undefined : setSettledFilter}
                         />
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>
