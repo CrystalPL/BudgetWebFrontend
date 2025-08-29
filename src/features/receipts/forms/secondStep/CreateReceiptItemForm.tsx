@@ -284,11 +284,11 @@ export default function CreateReceiptItemForm(props: Props) {
                 </Grid>
                 <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
-                        freeSolo
+                        // freeSolo
                         forcePopupIcon
                         value={dividing}
                         onFocus={() => setDividingMoneyError('')}
-                        options={['10%', '30%', '50%', '70%', '100%']}
+                        options={['10%', '33%', '66%', '30%', '50%', '70%', '100%']}
                         onInputChange={(_, newValue) => setDividingMoney(newValue)}
                         renderInput={(params) => (
                             <FormControl fullWidth error={dividingMoneyError !== ''}>
