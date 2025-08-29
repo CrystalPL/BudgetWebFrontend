@@ -31,7 +31,7 @@ export async function VerifyAccess(authToken: string): Promise<number> {
             return HttpStatusCode.Unauthorized
         }
 
-        const response = await fetch(`http://192.168.1.26:8092/auth/verify`, {
+        const response = await fetch(`http://budgetapp:8092/auth/verify`, {
             method: 'POST',
             credentials: 'include',
             headers: {
