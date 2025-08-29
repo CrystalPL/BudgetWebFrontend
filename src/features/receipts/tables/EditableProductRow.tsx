@@ -168,6 +168,10 @@ export default function EditableProductRow(props: Props) {
                             variant="standard"
                             fullWidth
                             size="small"
+                            InputProps={{
+                                ...params.InputProps,
+                                readOnly: true
+                            }}
                             sx={{
                                 input: {
                                     fontSize: "0.875rem",
