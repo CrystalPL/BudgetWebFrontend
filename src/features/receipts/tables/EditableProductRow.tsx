@@ -156,7 +156,7 @@ export default function EditableProductRow(props: Props) {
             </TableCell>
             <TableCell align="left">
                 <Autocomplete
-                    // freeSolo
+                    freeSolo
                     forcePopupIcon
                     disableClearable={true}
                     value={props.editedItem?.moneyDividing != null ? `${props.editedItem.moneyDividing}%` : ''}
@@ -168,11 +168,6 @@ export default function EditableProductRow(props: Props) {
                             variant="standard"
                             fullWidth
                             size="small"
-                            InputProps={{
-                                ...params.InputProps,
-                                readOnly: true,
-                                onFocus: (e) => e.target.blur()
-                            }}
                             sx={{
                                 input: {
                                     fontSize: "0.875rem",

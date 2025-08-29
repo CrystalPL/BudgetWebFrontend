@@ -53,7 +53,7 @@ function CostSharingProductDetailsList(props: ProductInListProps) {
                 </Typography>
             </Box>
             <Chip
-                label={`${props.item.moneyDividing?.toFixed(2)} zł`}
+                label={`${(props.item.quantity * props.item.price)?.toFixed(2)} zł`}
                 size="small"
                 color="error"
                 variant="outlined"

@@ -284,7 +284,7 @@ export default function CreateReceiptItemForm(props: Props) {
                 </Grid>
                 <Grid size={{xs: 12, sm: 6}}>
                     <Autocomplete
-                        // freeSolo
+                        freeSolo
                         forcePopupIcon
                         value={dividing}
                         onFocus={() => setDividingMoneyError('')}
