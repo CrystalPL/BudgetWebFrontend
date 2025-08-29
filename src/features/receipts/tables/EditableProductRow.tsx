@@ -170,7 +170,8 @@ export default function EditableProductRow(props: Props) {
                             size="small"
                             InputProps={{
                                 ...params.InputProps,
-                                readOnly: true
+                                readOnly: true,
+                                onFocus: (e) => e.target.blur()
                             }}
                             sx={{
                                 input: {
