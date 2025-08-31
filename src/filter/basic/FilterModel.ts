@@ -46,6 +46,7 @@ export const filterForColumnType: Record<ColumnDataType, FilterOperator[]> = {
         'equals'
     ],
     autocomplete: [
+        'notEquals',
         'equals',
     ]
 };

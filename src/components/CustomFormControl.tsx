@@ -13,6 +13,10 @@ export interface CustomFormControlProps {
     validateFunction: () => string
     endAdornment?: React.ReactNode
     type?: string;
+    required?: boolean;
+    multiline?: boolean;
+    minRows?: number;
+    maxRows?: number;
 }
 
 export function CustomFormControl(props: CustomFormControlProps) {
@@ -28,7 +32,7 @@ export function CustomFormControl(props: CustomFormControlProps) {
         setError(validate)
     }
 
-    return <FormControl fullWidth required error={!!error}>
+    return <FormControl fullWidth required={props.required ?? true} error={!!error}>
         <InputLabel
             sx={{
                 fontSize: '16px',
@@ -41,7 +45,9 @@ export function CustomFormControl(props: CustomFormControlProps) {
             label={<Typography>{props.label} + {""}</Typography>}
             name={props.name}
             value={value}
-            type={props.type}
+            multiline={props.multiline ?? false}
+            minRows={props.minRows ?? 1}
+            maxRows={props.maxRows ?? 1}
             onChange={(e) => setValue(e.target.value)}
             onBlur={validate}
             onFocus={() => setError('')}

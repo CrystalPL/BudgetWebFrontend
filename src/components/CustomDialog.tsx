@@ -10,6 +10,7 @@ interface CustomDialogProps {
     confirmAction: () => void;
     confirmColor?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
     cancelText?: string;
+    onExited?: () => void;
 }
 
 export default function CustomDialog({
@@ -21,9 +22,14 @@ export default function CustomDialog({
                                          confirmAction,
                                          confirmColor = "primary",
                                          cancelText = "Anuluj",
+                                         onExited,
                                      }: CustomDialogProps) {
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth slotProps={{
+            transition: {
+                onExited: onExited
+            },
+        }}>
             <DialogTitle sx={{fontWeight: "medium"}}>{title}</DialogTitle>
             <DialogContent>
                 {typeof content === "string" ? <Typography>{content}</Typography> : content}

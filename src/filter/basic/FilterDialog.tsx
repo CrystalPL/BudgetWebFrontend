@@ -1,12 +1,13 @@
 import {DialogShowingController} from "../../controllers/DialogShowingController";
-import {ColumnDataType, FilterOperator} from "../../features/receipts/types/FilterTypes";
-import {Box, FormControl, InputLabel, MenuItem, Paper, Popover, Select, Switch, Typography} from "@mui/material";
+import {ColumnDataType} from "../../features/receipts/types/FilterTypes";
+import {Box, Paper, Popover, Switch, Typography} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
-import {filterForColumnType, FilterValue, GetFilter, operators} from "./FilterModel";
+import {FilterValue, GetFilter} from "./FilterModel";
 import {FilterMenuItemConfig, RenderInput} from "./FilterInputRendering";
+import {RenderOperatorField} from "../OperatorFieldRendering";
 
 export interface FilterDialogProps<T> {
     controller: DialogShowingController
@@ -16,12 +17,6 @@ export interface FilterDialogProps<T> {
     filterValue: FilterValue<T>
     functionToGetSelectItems?: () => Promise<T[]>
     functionToMapItem?: (item: T) => FilterMenuItemConfig
-}
-
-function GetOperatorMenuItems(columnType: ColumnDataType) {
-    return filterForColumnType[columnType].map(filter => {
-        return <MenuItem key={filter} value={filter}>{operators[filter]}</MenuItem>
-    })
 }
 
 export default function FilterDialog<T>(props: FilterDialogProps<T>) {
@@ -67,8 +62,8 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
             return;
         }
 
-        setLoading(true);
         const fetchItems = async () => {
+            setLoading(true);
             const items: T[] = await props.functionToGetSelectItems!();
             const mappedItems: FilterMenuItemConfig[] = items.map(item => props.functionToMapItem!(item))
             setSelectItems(mappedItems);
@@ -106,32 +101,9 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                         />
                     }/>
 
-                    <FormControl fullWidth margin="dense" size="small">
-                        <InputLabel>Operator</InputLabel>
-                        <Select
-                            value={temporaryValues.operatorProp.value || ''}
-                            label="Operator"
-                            onChange={(e) => temporaryValues.operatorProp.setValue(e.target.value as FilterOperator)}
-                            size="small"
-                            MenuProps={{
-                                anchorOrigin: {
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                },
-                                transformOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                },
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 200
-                                    },
-                                },
-                            }}
-                        >
-                            {GetOperatorMenuItems(props.columnType)}
-                        </Select>
-                    </FormControl>
+                    <RenderOperatorField operator={temporaryValues.operatorProp.value}
+                                         setOperator={temporaryValues.operatorProp.setValue}
+                                         columnType={props.columnType}/>
 
                     <Box sx={{mt: 1}}>
                         <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}

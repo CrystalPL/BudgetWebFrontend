@@ -12,8 +12,9 @@ import AdvancedFilterButton from "../../components/AdvancedFilterButton";
 import {useAdvancedFilters} from "../../hooks/useAdvancedFilters";
 import {StateProp, useStateProp} from "../../../../filter/StateProp";
 import {FilterValue, GetFilter} from "../../../../filter/basic/FilterModel";
-import AdvancedFilterListDialog from "../../../../filter/advanced/AdvancedFilterListDialog";
+import AdvancedFilterMainDialog from "../../../../filter/advanced/main/AdvancedFilterMainDialog";
 import Button from "@mui/material/Button";
+import {AdvancedField} from "../../../../filter/advanced/conditions/AdvancedConditionsEditorContent";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -71,10 +72,44 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
 
     const advancedFilterShowingController: DialogShowingController = GetShowingController();
 
+    const fields: AdvancedField<any>[] = [
+        {
+            columnDataType: 'text',
+            columnName: 'shop',
+            columnLabel: "Sklep"
+        },
+        {
+            columnDataType: 'date',
+            columnName: 'shoppingDate',
+            columnLabel: "Data zakupów"
+        },
+        {
+            columnDataType: 'number',
+            columnName: 'receiptAmount',
+            columnLabel: "Kwota"
+        },
+        {
+            columnDataType: 'autocomplete',
+            columnName: 'whoPaid',
+            columnLabel: "Kto zapłacił",
+            functionToGetSelectItems: async () => [],
+            functionToMapItem: (item: UserWhoPaid) => ({
+                key: item.userId,
+                value: item.userId,
+                renderAs: item.userName
+            })
+        },
+        {
+            columnDataType: 'boolean',
+            columnName: 'settled',
+            columnLabel: "Paragon rozliczony"
+        },
+    ]
+
     return (<>
         <AdvancedFilterButton availableColumns={availableColumns}/>
         <Button sx={{bgcolor: 'green'}} onClick={advancedFilterShowingController.openDialog}></Button>
-        <AdvancedFilterListDialog dialogController={advancedFilterShowingController}/>
+        <AdvancedFilterMainDialog fields={fields} dialogController={advancedFilterShowingController}/>
         <TableContainer
             component={Paper}
             sx={{
@@ -149,6 +184,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                     ))}
                 </TableBody>
             </Table>
+
             <TablePagination
                 component="div"
                 count={props.receipts.length}
