@@ -2,7 +2,7 @@ import {CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField} 
 import * as React from "react";
 import {StateProp} from "../StateProp";
 import DateChooserComponent from "../../features/receipts/components/DateChooserComponent";
-import {ColumnDataType} from "../../features/receipts/types/FilterTypes";
+import {ColumnDataType} from "@/features/receipts/types/FilterTypes";
 
 export interface FilterMenuItemConfig {
     key: any

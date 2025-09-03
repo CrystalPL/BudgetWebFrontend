@@ -9,7 +9,7 @@ import * as React from "react";
 
 interface AdvancedConditionsEditorDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
-    fields: AdvancedField[];
+    fields: AdvancedField<any>[];
 }
 
 export default function AdvancedConditionsEditorDialog(props: AdvancedConditionsEditorDialogProps) {

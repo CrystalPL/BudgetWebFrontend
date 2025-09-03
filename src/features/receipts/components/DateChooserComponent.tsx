@@ -13,11 +13,12 @@ type DateChooserComponentProps = {
     date: Date | null
     setDate: (date: Date | null) => void;
     disabled?: boolean;
+    errorHandling?: boolean
 };
 
 dayjs.locale('pl');
 
-export default function DateChooserComponent({disabled, date, setDate}: DateChooserComponentProps) {
+export default function DateChooserComponent({disabled, date, setDate, errorHandling}: DateChooserComponentProps) {
     const [dateError, setDateError] = useState<string>()
 
     return (
@@ -36,6 +37,9 @@ export default function DateChooserComponent({disabled, date, setDate}: DateChoo
                         }
                     }}
                     slotProps={{
+                        textField: {
+                            size: 'small'
+                        },
                         day: {
                             sx: {
                                 "&:hover": {
@@ -48,18 +52,33 @@ export default function DateChooserComponent({disabled, date, setDate}: DateChoo
                         }
                     }}
                 />
-                <FormHelperText
-                    sx={{
-                        color: 'red',
-                        display: 'flex',
-                        alignItems: 'center',
-                        visibility: dateError ? 'visible' : 'hidden',
-                    }}
-                >
-                    <ErrorOutline fontSize="small" sx={{mr: 0.5}}/>
-                    {dateError}
-                </FormHelperText>
+                <GetErrorLabel errorHandling={errorHandling} dateError={dateError}/>
             </FormControl>
         </LocalizationProvider>
+    )
+}
+
+interface GetErrorLabelProps {
+    errorHandling: boolean | undefined
+    dateError: string | undefined
+}
+
+function GetErrorLabel(props: GetErrorLabelProps) {
+    if (typeof props.errorHandling !== "undefined" && !props.errorHandling) {
+        return <></>
+    }
+
+    return (
+        <FormHelperText
+            sx={{
+                color: 'red',
+                display: 'flex',
+                alignItems: 'center',
+                visibility: props.dateError ? 'visible' : 'hidden',
+            }}
+        >
+            <ErrorOutline fontSize="small" sx={{mr: 0.5}}/>
+            {props.dateError}
+        </FormHelperText>
     )
 }

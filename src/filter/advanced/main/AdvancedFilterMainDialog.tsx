@@ -12,7 +12,7 @@ import {AdvancedField} from "../conditions/AdvancedConditionsEditorContent";
 
 interface AdvancedFilterListDialogProps {
     dialogController: DialogShowingController
-    fields: AdvancedField[];
+    fields: AdvancedField<any>[];
 }
 
 export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialogProps) {

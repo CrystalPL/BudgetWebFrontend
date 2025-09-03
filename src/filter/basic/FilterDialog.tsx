@@ -63,6 +63,7 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
         }
 
         const fetchItems = async () => {
+            console.log("siema")
             setLoading(true);
             const items: T[] = await props.functionToGetSelectItems!();
             const mappedItems: FilterMenuItemConfig[] = items.map(item => props.functionToMapItem!(item))

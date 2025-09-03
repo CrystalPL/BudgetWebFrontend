@@ -1,5 +1,4 @@
-import {RenderOperatorFieldProps} from "@/filter/OperatorFieldRendering";
-import {LogicalOperator} from "@/features/receipts/types/FilterTypes";
+import {FilterOperator, LogicalOperator} from "@/features/receipts/types/FilterTypes";
 import {AdvancedField} from "@/filter/advanced/conditions/AdvancedConditionsEditorContent";
 
 export interface AdvancedFilter {
@@ -76,12 +75,13 @@ export const exampleFilters: AdvancedFilter[] = [
     },
 ];
 
-export interface Condition extends RenderOperatorFieldProps {
+export interface Condition {
     id: number
     field: AdvancedField<any>
     value: string | number | boolean | null;
     value2?: string | number | boolean | null;
     logicalOperatorBefore?: LogicalOperator
+    operator: FilterOperator
 }
 
 export interface ConditionGroup {
