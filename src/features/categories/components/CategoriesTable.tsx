@@ -23,7 +23,7 @@ import ConfirmationDialog from "../../household/components/base/ConfirmationDial
 import {Category} from "../api/CategoryModel";
 import {deleteCategory} from "../api/CategoryService";
 import {StateProp, useStateProp} from "../../../filter/StateProp";
-import {FilterValue, GetFilter} from "../../../filter/basic/FilterModel";
+import {FilterValue, GetFilter} from "../../../filter/FilterModel";
 
 interface CategoriesTableProps extends HouseholdReloadKeyProps {
     categories: Category[]

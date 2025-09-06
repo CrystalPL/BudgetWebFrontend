@@ -8,13 +8,12 @@ import ConfirmationDialog from "../../../household/components/base/ConfirmationD
 import {deleteReceipt} from "../../api/ReceiptService";
 import {Receipt, UserWhoPaid} from "../../api/ReceiptModel";
 import TableItem from "./TableItem";
-import AdvancedFilterButton from "../../components/AdvancedFilterButton";
-import {useAdvancedFilters} from "../../hooks/useAdvancedFilters";
 import {StateProp, useStateProp} from "../../../../filter/StateProp";
-import {FilterValue, GetFilter} from "../../../../filter/basic/FilterModel";
+import {FilterValue, GetFilter} from "../../../../filter/FilterModel";
 import AdvancedFilterMainDialog from "../../../../filter/advanced/main/AdvancedFilterMainDialog";
 import Button from "@mui/material/Button";
-import {AdvancedField} from "../../../../filter/advanced/conditions/AdvancedConditionsEditorContent";
+
+import {AdvancedField} from "../../../../filter/advanced/api/AdvancedFilterModel";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -41,17 +40,6 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const deleteReceiptDialogController = GetShowingController();
 
-    const {getActiveFilter} = useAdvancedFilters();
-
-    // Definicja dostępnych kolumn dla zaawansowanych filtrów
-    const availableColumns = [
-        {name: 'shop', type: 'text' as const, label: 'Sklep'},
-        {name: 'shoppingTime', type: 'date' as const, label: 'Data zakupów'},
-        {name: 'receiptAmount', type: 'number' as const, label: 'Kwota'},
-        {name: 'whoPaid.userName', type: 'text' as const, label: 'Kto zapłacił', fieldOptions: {isUserField: true}},
-        {name: 'settled', type: 'boolean' as const, label: 'Paragon rozliczony'}
-    ];
-
     useEffect(() => {
         setPage(0);
         //TODO pobieranie danych z backendu
@@ -67,8 +55,6 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const activeAdvancedFilter = getActiveFilter();
 
     const advancedFilterShowingController: DialogShowingController = GetShowingController();
 
@@ -107,7 +93,6 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     ]
 
     return (<>
-        <AdvancedFilterButton availableColumns={availableColumns}/>
         <Button sx={{bgcolor: 'green'}} onClick={advancedFilterShowingController.openDialog}></Button>
         <AdvancedFilterMainDialog fields={fields} dialogController={advancedFilterShowingController}/>
         <TableContainer

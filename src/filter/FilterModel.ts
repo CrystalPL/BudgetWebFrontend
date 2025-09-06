@@ -1,6 +1,19 @@
-import {ColumnDataType, FilterOperator} from "@/features/receipts/types/FilterTypes";
 import {StateProp, useStateProp} from "@/filter/StateProp";
 
+export type FilterOperator =
+    | 'contains'
+    | 'notContains'
+    | 'equals'
+    | 'notEquals'
+    | 'startsWith'
+    | 'endsWith'
+    | 'greaterThan'
+    | 'lessThan'
+    | 'greaterThanOrEqual'
+    | 'lessThanOrEqual'
+    | 'between'
+    | 'before'
+    | 'after';
 export const operators: Record<FilterOperator, string> = {
     contains: "Zawiera",
     notContains: "Nie zawiera",
@@ -17,6 +30,7 @@ export const operators: Record<FilterOperator, string> = {
     after: "Po",
 };
 
+export type ColumnDataType = 'text' | 'number' | 'date' | 'boolean' | 'autocomplete';
 export const filterForColumnType: Record<ColumnDataType, FilterOperator[]> = {
     text: [
         'contains',

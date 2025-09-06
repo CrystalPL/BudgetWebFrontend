@@ -32,9 +32,6 @@ export default function DateChooserComponent({disabled, date, setDate, errorHand
                     onChange={event => setDate(event?.toDate() || null)}
                     sx={{
                         width: "100%",
-                        "& .MuiInputLabel-root.MuiInputLabel-shrink": {
-                            fontSize: "22px",
-                        }
                     }}
                     slotProps={{
                         textField: {

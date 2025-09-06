@@ -4,8 +4,7 @@ import {useRef} from "react";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import {FilterList} from "@mui/icons-material";
 import {StateProp} from "../../../../filter/StateProp";
-import {ColumnDataType} from "../../../receipts/types/FilterTypes";
-import {FilterValue} from "../../../../filter/basic/FilterModel";
+import {ColumnDataType, FilterValue} from "../../../../filter/FilterModel";
 import {FilterMenuItemConfig} from "../../../../filter/basic/FilterInputRendering";
 import FilterDialog from "../../../../filter/basic/FilterDialog";
 

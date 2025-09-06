@@ -1,14 +1,17 @@
-import {FilterOperator, LogicalOperator} from "@/features/receipts/types/FilterTypes";
-import {AdvancedField} from "@/filter/advanced/conditions/AdvancedConditionsEditorContent";
+import {AutocompleteItem} from "@/filter/advanced/filter-editor/condition-line/components/RenderInput";
+import {StateProp} from "@/filter/StateProp";
+import {ColumnDataType, FilterOperator} from "@/filter/FilterModel";
+
+export type LogicalOperator = 'AND' | 'OR';
 
 export interface AdvancedFilter {
-    //grupy warunków
     id: number
     name: string
     description: string
     active: boolean
     createdAt: Date
     updatedAt: Date
+    filter: ConditionGroup[]
 }
 
 export interface SaveFilterRequest {
@@ -22,68 +25,37 @@ export interface DuplicateFilterRequest {
     newName: string
 }
 
-export type ReceiptColumn = 'shop' | 'shoppingDate' | 'receiptAmount' | 'whoPaid' | 'settled'
-
-export const exampleFilters: AdvancedFilter[] = [
-    {
-        id: 1,
-        name: 'Oferty IT 10k+',
-        description: 'Oferty w IT z wynagrodzeniem powyżej 10k',
-        active: true,
-        createdAt: new Date('2025-08-15T09:00:00Z'),
-        updatedAt: new Date('2025-08-15T09:00:00Z'),
-    },
-    {
-        id: 2,
-        name: 'Tylko zdalne',
-        description: '',
-        active: false,
-        createdAt: new Date('2025-08-10T12:30:00Z'),
-        updatedAt: new Date('2025-08-18T14:45:00Z'),
-    },
-    {
-        id: 3,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-    },
-    {
-        id: 4,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-    },
-    {
-        id: 5,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-    },
-    {
-        id: 6,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-    },
-];
+export interface AdvancedField<T> {
+    columnDataType: ColumnDataType
+    columnName: string
+    columnLabel: string
+    functionToGetSelectItems?: () => Promise<T[]>
+    functionToMapItem?: (item: T) => AutocompleteItem<T>
+}
 
 export interface Condition {
     id: number
     field: AdvancedField<any>
     value: string | number | boolean | null;
     value2?: string | number | boolean | null;
+    openParenthesis?: number;
+    closeParenthesis?: number;
     logicalOperatorBefore?: LogicalOperator
     operator: FilterOperator
 }
 
 export interface ConditionGroup {
+    id: number
+    logicalOperatorBefore: LogicalOperator
     conditions: Condition[]
+}
+
+export interface RenderConditionLineProps {
+    condition: Condition
+    fields: AdvancedField<any>[]
+    conditionGroupIndex: number
+    conditionIndex: number
+    conditionGroupsState: StateProp<ConditionGroup[]>
+    loading: boolean
+    fetchItemsByColumnName: (column: AdvancedField<any>) => AutocompleteItem<any>[]
 }

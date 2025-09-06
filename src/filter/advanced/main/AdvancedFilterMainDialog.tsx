@@ -3,12 +3,11 @@ import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from '@mui/
 import {Add as AddIcon, FilterList as FilterListIcon} from '@mui/icons-material';
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
 import AdvancedFilterEditorDialog from "../AdvancedFilterEditorDialog";
-import {AdvancedFilter, exampleFilters} from "../api/AdvancedFilterModel";
+import {AdvancedField, AdvancedFilter} from "../api/AdvancedFilterModel";
 import {StateProp, useStateProp} from "../../StateProp";
 import {GetFilters} from "./AdvancedFilterListGetter";
 import AdvancedFilterDuplicateDialog from "../AdvancedFilterDuplicateDialog";
 import AdvancedConditionsEditorDialog from "../conditions/AdvancedConditionsEditorDialog";
-import {AdvancedField} from "../conditions/AdvancedConditionsEditorContent";
 
 interface AdvancedFilterListDialogProps {
     dialogController: DialogShowingController
@@ -21,7 +20,7 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
     const editConditionsFilterController: DialogShowingController = GetShowingController();
 
     const [reloadKey, setReloadKey] = useState(0)
-    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>(exampleFilters)
+    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>([])
     const editedFilterProps: StateProp<AdvancedFilter | null> = useStateProp<AdvancedFilter>();
     const reloadTable = () => {
         setReloadKey(reloadKey + 1);
@@ -86,7 +85,7 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
         />
         <AdvancedFilterDuplicateDialog
             editedFilterProps={editedFilterProps}
-            {...editConditionsFilterController}
+            {...duplicateFilterController}
             reloadTable={reloadTable}
         />
         <AdvancedConditionsEditorDialog

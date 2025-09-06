@@ -8,6 +8,14 @@ interface AdvancedConditionsEditorHeaderProps {
 }
 
 export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHeaderProps) {
+    if (!props.editedFilterProps.value) {
+        return <></>
+    }
+
+    const getTotalConditions = () => {
+        return props.editedFilterProps.value?.filter.reduce((sum: number, conditionGroup) => sum + conditionGroup.conditions.length, 0) || 0;
+    };
+
     return (
         <DialogTitle sx={{
             mb: 2,
@@ -15,7 +23,8 @@ export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHe
             background: "#a9be77",
             color: "white",
         }}>
-            <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+            <Box flexDirection={{xs: 'column', md: 'row'}}
+                 sx={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Settings/>
                     <Typography variant="h5">Edytuj warunki
@@ -23,16 +32,15 @@ export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHe
                 </Box>
                 <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Chip
-                        // label={`${currentFilter.groups.length} grup`} //TODO
-                        label={<Typography color="white">0 grup</Typography>}
+                        label={<Typography
+                            color="white">{`${props.editedFilterProps.value?.filter.length} grup` || 0}</Typography>}
                         sx={{borderColor: "white", borderWidth: "2px", padding: "13px"}}
                         size="small"
                         variant="outlined"
                     />
                     <Chip
-                        // label={`${getTotalConditions()} warunków`} //TODO
                         sx={{borderColor: "white", borderWidth: "2px", padding: "13px"}}
-                        label={<Typography color="white">0 warunków</Typography>}
+                        label={<Typography color="white">{`${getTotalConditions()} warunków`}</Typography>}
                         size="small"
                         variant="outlined"
                     />

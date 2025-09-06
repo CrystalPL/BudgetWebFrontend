@@ -4,6 +4,10 @@ export async function saveFilterRequest(request: SaveFilterRequest) {
 
 }
 
+export async function saveFilterConditionRequest() {
+
+}
+
 export function activateFilter() {
 
 }

@@ -1,11 +1,10 @@
 import {DialogShowingController} from "../../controllers/DialogShowingController";
-import {ColumnDataType} from "../../features/receipts/types/FilterTypes";
 import {Box, Paper, Popover, Switch, Typography} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
-import {FilterValue, GetFilter} from "./FilterModel";
+import {ColumnDataType, FilterValue, GetFilter} from "../FilterModel";
 import {FilterMenuItemConfig, RenderInput} from "./FilterInputRendering";
 import {RenderOperatorField} from "../OperatorFieldRendering";
 

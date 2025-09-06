@@ -1,7 +1,8 @@
-import DateChooserComponent from "../../../features/receipts/components/DateChooserComponent";
+import DateChooserComponent from "../../../../../features/receipts/components/DateChooserComponent";
 import * as React from "react";
 import {Autocomplete, CircularProgress, TextField} from "@mui/material";
-import {ColumnDataType} from "@/features/receipts/types/FilterTypes";
+
+import {ColumnDataType} from "@/filter/FilterModel";
 
 interface RenderInputProps<T> {
     columnType: ColumnDataType
@@ -72,7 +73,7 @@ function RenderBoolean(value: boolean, setValue: (newValue: boolean) => void) {
             value={value ? availableBooleanOptions[0] : availableBooleanOptions[1]}
             onChange={(_, newValue) => setValue(newValue.value)}
             renderInput={(params) => (
-                <TextField {...params} label="Wartość" size="small" sx={{mt: 1}}/>
+                <TextField {...params} sx={{width: '160px'}} label="Wartość" size="small"/>
             )}
             size="small"
             fullWidth
@@ -91,19 +92,19 @@ function RenderAutocomplete<T>(props: RenderInputProps<T>) {
 
     return (
         <Autocomplete
-            disableClearable={true}
+            clearIcon={false}
             options={props.items}
             getOptionLabel={(item) => item.renderAs}
-            value={selectedItem}
-            onChange={(_, newValue) => props.setValue(newValue.value)}
+            value={selectedItem ?? null}
+            onChange={(_, newValue) => props.setValue(newValue?.value || null)}
             loading={props.loading}
             isOptionEqualToValue={(option, value) => option.value === value.value}
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    sx={{width: '160px'}}
                     label="Wartość"
                     size="small"
-                    sx={{mt: 1}}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (

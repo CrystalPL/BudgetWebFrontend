@@ -1,5 +1,4 @@
-import {ColumnDataType, FilterOperator} from "@/features/receipts/types/FilterTypes";
-import {filterForColumnType, operators} from "./basic/FilterModel";
+import {ColumnDataType, filterForColumnType, FilterOperator, operators} from "./FilterModel";
 import {Autocomplete, TextField} from "@mui/material";
 
 export interface RenderOperatorFieldProps {
@@ -7,7 +6,6 @@ export interface RenderOperatorFieldProps {
     setOperator: (operator: FilterOperator) => void
     columnType: ColumnDataType
 }
-
 
 export function RenderOperatorField(props: RenderOperatorFieldProps) {
     const options = filterForColumnType[props.columnType];

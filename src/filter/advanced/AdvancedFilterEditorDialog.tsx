@@ -9,7 +9,7 @@ import {CreateAdvancedFilterMessage} from "./api/AdvancedFilterMessages";
 import {createCategory} from "../../features/categories/api/CategoryService";
 import {useSnackbarContext} from "../../context/SnackbarContext";
 import {AdvancedFilter, SaveFilterRequest} from "./api/AdvancedFilterModel";
-import {FieldProps, useFieldProps} from "./components/FieldPropsHook";
+import {FieldProps, useFieldProps} from "./hooks/FieldPropsHook";
 
 interface AdvancedFilterCreatingDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>

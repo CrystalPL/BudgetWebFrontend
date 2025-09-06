@@ -2,21 +2,17 @@ import {DialogShowingController} from "../../../controllers/DialogShowingControl
 import {HouseholdReloadKeyProps} from "../../../features/household/api/HouseholdModel";
 import {Dialog} from "@mui/material";
 import {StateProp} from "../../StateProp";
-import {AdvancedFilter} from "../api/AdvancedFilterModel";
+import {AdvancedField, AdvancedFilter} from "../api/AdvancedFilterModel";
 import {AdvancedConditionsEditorHeader} from "./AdvancedConditionsEditorHeader";
-import AdvancedConditionsEditorContent, {AdvancedField} from "./AdvancedConditionsEditorContent";
+import AdvancedConditionsEditorContent from "./AdvancedConditionsEditorContent";
 import * as React from "react";
 
-interface AdvancedConditionsEditorDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
+export interface AdvancedConditionsEditorDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
     fields: AdvancedField<any>[];
 }
 
 export default function AdvancedConditionsEditorDialog(props: AdvancedConditionsEditorDialogProps) {
-    if (!props.editedFilterProps.value) {
-        return <></>
-    }
-
     return (
         <Dialog
             open={props.openDialogStatus}
@@ -35,7 +31,7 @@ export default function AdvancedConditionsEditorDialog(props: AdvancedConditions
             }}
         >
             <AdvancedConditionsEditorHeader editedFilterProps={props.editedFilterProps}/>
-            <AdvancedConditionsEditorContent fields={props.fields}/>
+            <AdvancedConditionsEditorContent {...props}/>
         </Dialog>
     )
 }

@@ -3,13 +3,13 @@ import {HouseholdReloadKeyProps} from "../../features/household/api/HouseholdMod
 import CustomDialog from "../../components/CustomDialog";
 import {CustomFormControl} from "../../components/CustomFormControl";
 import * as React from "react";
-import {FieldProps, useFieldProps} from "./components/FieldPropsHook";
 import {AdvancedFilter, DuplicateFilterRequest} from "./api/AdvancedFilterModel";
 import {StateProp} from "../StateProp";
 import Stack from "@mui/material/Stack";
 import {useSnackbarContext} from "../../context/SnackbarContext";
 import {createCategory} from "../../features/categories/api/CategoryService";
 import {CreateAdvancedFilterMessage} from "./api/AdvancedFilterMessages";
+import {FieldProps, useFieldProps} from "./hooks/FieldPropsHook";
 
 interface AdvancedFilterDuplicateDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>

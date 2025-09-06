@@ -1,28 +1,20 @@
-import {Autocomplete, Box, Button, DialogContent, Paper, TextField, Typography} from "@mui/material";
+import {Box, Button, DialogContent, Typography} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {ColumnDataType, FilterOperator} from "@/features/receipts/types/FilterTypes";
-import {RenderOperatorField} from "../../OperatorFieldRendering";
-import {Condition, ConditionGroup} from "../api/AdvancedFilterModel";
+import {AdvancedField, Condition, ConditionGroup, RenderConditionLineProps} from "../api/AdvancedFilterModel";
+import * as React from "react";
 import {useState} from "react";
-import {StateProp} from "@/filter/StateProp";
-import {createCondition} from "@/filter/advanced/FieldSupplierUtil";
-import {ConditionUpdater} from "@/filter/advanced/ConditionUpdater";
-import {AutocompleteItem, RenderInput} from "@/filter/advanced/conditions/AdvancedFilterInputRendering";
+import {AutocompleteItem} from "@/filter/advanced/filter-editor/condition-line/components/RenderInput";
+import {ConditionFacade} from "@/filter/advanced/hooks/condition/ConditionFacade";
+import {RenderGroup} from "@/filter/advanced/filter-editor/RenderGroup";
+import {
+    RenderLogicalOperatorBetweenConditionGroups
+} from "@/filter/advanced/filter-editor/RenderLogicalOperatorBetweenConditionGroups";
+import {RenderFilterLogicPreview} from "@/filter/advanced/filter-editor/RenderFilterLogicPreview";
+import {AdvancedConditionsEditorFooter} from "@/filter/advanced/conditions/AdvancedConditionsEditorFooter";
+import {AdvancedConditionsEditorDialogProps} from "@/filter/advanced/conditions/AdvancedConditionsEditorDialog";
 
-interface AdvancedConditionsEditorContentProps {
-    fields: AdvancedField<any>[];
-}
-
-export interface AdvancedField<T> {
-    columnDataType: ColumnDataType
-    columnName: string
-    columnLabel: string
-    functionToGetSelectItems?: () => Promise<T[]>
-    functionToMapItem?: (item: T) => AutocompleteItem<T>
-}
-
-export default function AdvancedConditionsEditorContent(props: AdvancedConditionsEditorContentProps) {
-    const [conditionGroups, setConditionGroups] = useState<ConditionGroup[]>([{conditions: []}]);
+export default function AdvancedConditionsEditorContent(props: AdvancedConditionsEditorDialogProps) {
+    const [conditionGroups, setConditionGroups] = useState<ConditionGroup[]>(props.editedFilterProps.value?.filter || []);
     const [loading, setLoading] = useState<boolean>(false);
     const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>()
 
@@ -31,12 +23,25 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
     }
 
     const createGroup = () => {
-        setConditionGroups(prev => [...prev, {conditions: []}]);
+        setConditionGroups(prev => [...prev, {id: 0, conditions: [], logicalOperatorBefore: "OR"}]);
     };
 
     return (
-        <DialogContent>
-            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2}}>
+        <DialogContent
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mb: 2,
+                    flexShrink: 0,
+                }}
+            >
                 <Typography variant="subtitle1" sx={{fontWeight: 'bold'}}>
                     Grupy warunków
                 </Typography>
@@ -49,113 +54,43 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                     Dodaj grupę
                 </Button>
             </Box>
-            {conditionGroups.map((group, index) => (
-                <RenderGroup
-                    key={index}
-                    index={index}
-                    conditionGroup={group}
-                    fields={props.fields}
-                    conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
-                    loading={loading}
-                    fetchItemsByColumnName={fetchItemsByColumnName}
-                />
-            ))}
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    overflowY: 'auto',
+                    flexGrow: 1,
+                }}
+            >
+                {conditionGroups.map((group, conditionGroupIndex) => {
+                    return (
+                        <React.Fragment key={conditionGroupIndex}>
+                            <RenderLogicalOperatorBetweenConditionGroups
+                                conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
+                                conditionGroupIndex={conditionGroupIndex}
+                                conditionGroup={group}
+                            />
+                            <RenderGroup
+                                conditionGroupIndex={conditionGroupIndex}
+                                conditionGroup={group}
+                                fields={props.fields}
+                                conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
+                                loading={loading}
+                                fetchItemsByColumnName={fetchItemsByColumnName}
+                            />
+                        </React.Fragment>
+                    )
+                })}
+            </Box>
+            <RenderFilterLogicPreview conditionGroups={conditionGroups}/>
+            <AdvancedConditionsEditorFooter {...props}/>
         </DialogContent>
     )
 }
 
-export interface RenderGroupProps {
-    conditionGroup: ConditionGroup
-    fields: AdvancedField<any>[]
-    conditionGroupsState: StateProp<ConditionGroup[]>
-    index: number
-    loading: boolean
-    fetchItemsByColumnName: (column: AdvancedField<any>) => AutocompleteItem<any>[]
-}
-
-function RenderGroup(props: RenderGroupProps) {
-    return (
-        <Paper sx={{p: 2, border: '2px dashed #e0e0e0'}}>
-            <Button
-                variant="outlined"
-                startIcon={<AddIcon/>}
-                onClick={() => createCondition(props)}
-                size="small"
-            >
-                Dodaj warunek
-            </Button>
-            {props.conditionGroup.conditions.map((condition, index) => (
-                <RenderConditionLine
-                    key={index}
-                    conditionGroupIndex={props.index}
-                    conditionIndex={index}
-                    condition={condition}
-                    fields={props.fields}
-                    conditionGroupsState={props.conditionGroupsState}
-                    loading={props.loading}
-                    fetchItemsByColumnName={props.fetchItemsByColumnName}
-                />
-            ))}
-        </Paper>
-    )
-}
-
-export interface RenderConditionLineProps {
-    condition: Condition
-    fields: AdvancedField<any>[]
-    conditionGroupIndex: number
-    conditionIndex: number
-    conditionGroupsState: StateProp<ConditionGroup[]>
-    loading: boolean
-    fetchItemsByColumnName: (column: AdvancedField<any>) => AutocompleteItem<any>[]
-}
-
-function RenderConditionLine(props: RenderConditionLineProps) {
-    const updateOperator = (operator: FilterOperator) => {
-        const operatorUpdater: ConditionUpdater = new ConditionUpdater(props.conditionGroupsState, props.conditionGroupIndex, props.conditionIndex, 'operator', operator);
-        operatorUpdater.updateValue()
-    }
-
-    return (
-        <Box display='flex' flexDirection="row" gap={1} mt={2} maxWidth='60%'>
-            <RenderFieldList {...props}/>
-            <RenderOperatorField{...props.condition} columnType={props.condition.field.columnDataType}
-                                setOperator={updateOperator}/>
-            <RenderValueField {...props}/>
-        </Box>
-    )
-}
-
-function RenderValueField(props: RenderConditionLineProps) {
-    const updateField = (value: any) => {
-        const operatorUpdater: ConditionUpdater = new ConditionUpdater(props.conditionGroupsState, props.conditionGroupIndex, props.conditionIndex, 'value', value);
-        operatorUpdater.updateValue()
-    }
-
-    return (
-        <RenderInput<any> columnType={props.condition.field.columnDataType} loading={props.loading}
-                          value={props.condition.value}
-                          setValue={updateField} items={props.fetchItemsByColumnName(props.condition.field)}/>
-    )
-}
-
-function RenderFieldList(props: RenderConditionLineProps) {
-    const updateField = (value: AdvancedField<any>) => {
-        const operatorUpdater: ConditionUpdater = new ConditionUpdater(props.conditionGroupsState, props.conditionGroupIndex, props.conditionIndex, 'field', value);
-        operatorUpdater.updateValue()
-    }
-
-    return (
-        <Autocomplete
-            disableClearable={true}
-            fullWidth
-            size="small"
-            value={props.condition.field}
-            options={props.fields}
-            getOptionLabel={(option) => option.columnLabel}
-            isOptionEqualToValue={(option, value) => option.columnName === value.columnName}
-            onChange={(_event, newValue) => updateField(newValue)}
-            renderInput={(params) => <TextField {...params} label="Pole"/>}
-        />
-    );
+export function updateField(props: RenderConditionLineProps, updates: Partial<Condition>) {
+    const conditionFacade: ConditionFacade = new ConditionFacade();
+    conditionFacade.updateCondition(props.conditionGroupsState, props.conditionGroupIndex, props.conditionIndex, updates)
 }
