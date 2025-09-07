@@ -21,11 +21,12 @@ function RenderInputValue(props: RenderInputValueProps) {
     return (
         <Box maxWidth='160px'>
             <RenderInput<any>
-                columnType={props.condition.field.columnDataType}
+                field={props.condition.field}
                 loading={props.loading}
                 value={props.condition.value}
                 setValue={value => updateField(props, {[props.field]: value})}
-                items={props.fetchItemsByColumnName(props.condition.field)}
+                items={props.items}
+                functionToLoadItems={props.functionToLoadItems}
             />
         </Box>
     )

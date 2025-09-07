@@ -1,7 +1,7 @@
-import {StateProp} from "src/filter/StateProp";
-import {ConditionGroup} from "src/filter/advanced/api/AdvancedFilterModel";
 import * as React from "react";
 import {Box, FormControl, MenuItem, Paper, Select, Typography} from "@mui/material";
+import {StateProp} from "@/filter/StateProp";
+import {ConditionGroup} from "@/filter/advanced/api/AdvancedFilterModel";
 
 export interface RenderLogicalOperatorBetweenConditionGroupsProps {
     conditionGroupsState: StateProp<ConditionGroup[]>

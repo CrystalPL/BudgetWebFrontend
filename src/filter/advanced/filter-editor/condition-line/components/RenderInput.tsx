@@ -1,26 +1,26 @@
 import DateChooserComponent from "../../../../../features/receipts/components/DateChooserComponent";
 import * as React from "react";
-import {Autocomplete, CircularProgress, TextField} from "@mui/material";
-
-import {ColumnDataType} from "@/filter/FilterModel";
+import {Autocomplete, TextField} from "@mui/material";
+import {AdvancedField, BooleanValue} from "@/filter/advanced/api/AdvancedFilterModel";
 
 interface RenderInputProps<T> {
-    columnType: ColumnDataType
+    field: AdvancedField<T>
     loading: boolean
     value: T | null
     setValue: (value: T | null) => void
     items: AutocompleteItem<T>[]
+    functionToLoadItems: () => void
 }
 
 export function RenderInput<T>(props: RenderInputProps<T>) {
-    switch (props.columnType) {
+    switch (props.field.columnDataType) {
         case "number":
         case "text":
             return RenderTextField(props.value, props.setValue);
         case "date":
             return RenderDate(props.value as Date, props.setValue as (newValue: Date | null) => void);
         case "boolean":
-            return RenderBoolean(props.value as boolean, props.setValue as (newValue: boolean) => void)
+            return RenderBoolean(props.field.availableBooleanOptions ?? [], props.value as boolean, props.setValue as (newValue: boolean) => void)
         case "autocomplete":
             return RenderAutocomplete(props)
     }
@@ -48,23 +48,7 @@ function RenderTextField<T>(value: T, setValue: (newValue: T) => void) {
     )
 }
 
-interface BooleanValue {
-    label: string
-    value: boolean
-}
-
-const availableBooleanOptions: BooleanValue[] = [
-    {
-        label: "Tak",
-        value: true
-    },
-    {
-        label: "Nie",
-        value: false
-    }
-];
-
-function RenderBoolean(value: boolean, setValue: (newValue: boolean) => void) {
+function RenderBoolean(availableBooleanOptions: BooleanValue[], value: boolean, setValue: (newValue: boolean) => void) {
     return (
         <Autocomplete
             disableClearable={true}
@@ -92,6 +76,7 @@ function RenderAutocomplete<T>(props: RenderInputProps<T>) {
 
     return (
         <Autocomplete
+            onFocus={props.functionToLoadItems}
             clearIcon={false}
             options={props.items}
             getOptionLabel={(item) => item.renderAs}
@@ -102,23 +87,15 @@ function RenderAutocomplete<T>(props: RenderInputProps<T>) {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    sx={{width: '160px'}}
+                    sx={{
+                        width: '160px',
+                    }}
                     label="Wartość"
                     size="small"
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {props.loading ? <CircularProgress color="inherit" size={20}/> : null}
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
-                    }}
                 />
             )}
             fullWidth
             size="small"
-            disabled={props.loading}
         />
     );
 }

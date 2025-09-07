@@ -31,7 +31,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {pl} from "date-fns/locale";
 import {useEffect, useState} from "react";
-import {Bill, BillAttachment, CreateBillDetails} from "../api/BillModel";
+import {CreateBillDetails} from "../api/BillModel";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 import {createBill, getCreateBillDetails, updateBill, uploadBillAttachment} from "../api/BillService";
 import {
@@ -45,6 +45,7 @@ import {
     Person,
     Receipt
 } from "@mui/icons-material";
+import {Bill, BillAttachment} from "../../bills2/api/BillModel";
 
 interface Props {
     creatingController: DialogShowingController;

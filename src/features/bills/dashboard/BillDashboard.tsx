@@ -6,9 +6,10 @@ import BillsOverviewTable from "../tables/BillsOverviewTable";
 import {BillFilters} from "../components/BillFilters";
 import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
-import {Bill, CreateBillDetails} from "../api/BillModel";
+import {CreateBillDetails} from "../api/BillModel";
 import {BillDateFilter, BillFilter, BillSortConfig} from "../types";
 import CreateBillDialog from "../forms/CreateBillDialog";
+import {Bill} from "../../bills2/api/BillModel";
 
 interface BillDashboardData extends HouseholdReloadKeyProps {
     bills: Bill[];

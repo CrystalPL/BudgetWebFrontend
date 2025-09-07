@@ -7,13 +7,14 @@ import {DialogShowingController, GetShowingController} from "../../../../control
 import ConfirmationDialog from "../../../household/components/base/ConfirmationDialog";
 import {deleteReceipt} from "../../api/ReceiptService";
 import {Receipt, UserWhoPaid} from "../../api/ReceiptModel";
-import TableItem from "./TableItem";
+import ReceiptTableItem from "./TableItem";
 import {StateProp, useStateProp} from "../../../../filter/StateProp";
 import {FilterValue, GetFilter} from "../../../../filter/FilterModel";
 import AdvancedFilterMainDialog from "../../../../filter/advanced/main/AdvancedFilterMainDialog";
 import Button from "@mui/material/Button";
 
 import {AdvancedField} from "../../../../filter/advanced/api/AdvancedFilterModel";
+import {AutocompleteItem} from "../../../../filter/advanced/filter-editor/condition-line/components/RenderInput";
 
 interface ReceiptTableProps extends HouseholdReloadKeyProps {
     receipts: Receipt[]
@@ -79,8 +80,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
             columnName: 'whoPaid',
             columnLabel: "Kto zapłacił",
             functionToGetSelectItems: async () => [],
-            functionToMapItem: (item: UserWhoPaid) => ({
-                key: item.userId,
+            functionToMapItem: (item: UserWhoPaid): AutocompleteItem<any> => ({
                 value: item.userId,
                 renderAs: item.userName
             })
@@ -88,7 +88,17 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
         {
             columnDataType: 'boolean',
             columnName: 'settled',
-            columnLabel: "Paragon rozliczony"
+            columnLabel: "Paragon rozliczony",
+            availableBooleanOptions: [
+                {
+                    label: "Tak",
+                    value: true
+                },
+                {
+                    label: "Nie",
+                    value: false
+                }
+            ]
         },
     ]
 
@@ -156,6 +166,16 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                                 columnType: 'boolean',
                                 filterValue: settledFilter
                             }}
+                            availableBooleanOptions={[
+                                {
+                                    label: "Tak",
+                                    value: true
+                                },
+                                {
+                                    label: "Nie",
+                                    value: false
+                                }
+                            ]}
                         />
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>
@@ -163,9 +183,9 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                 </TableHead>
                 <TableBody>
                     {paginatedReceipts.map((receipt) => (
-                        <TableItem key={receipt.id} receipt={receipt} setEditedReceipt={props.setEditedReceipt}
-                                   createReceiptController={props.createReceiptController}
-                                   deleteReceiptDialogController={deleteReceiptDialogController}/>
+                        <ReceiptTableItem key={receipt.id} receipt={receipt} setEditedReceipt={props.setEditedReceipt}
+                                          createReceiptController={props.createReceiptController}
+                                          deleteReceiptDialogController={deleteReceiptDialogController}/>
                     ))}
                 </TableBody>
             </Table>

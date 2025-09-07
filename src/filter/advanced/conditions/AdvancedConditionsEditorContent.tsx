@@ -16,10 +16,24 @@ import {AdvancedConditionsEditorDialogProps} from "@/filter/advanced/conditions/
 export default function AdvancedConditionsEditorContent(props: AdvancedConditionsEditorDialogProps) {
     const [conditionGroups, setConditionGroups] = useState<ConditionGroup[]>(props.editedFilterProps.value?.filter || []);
     const [loading, setLoading] = useState<boolean>(false);
-    const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>()
+    const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>({})
 
-    const fetchItemsByColumnName = (column: AdvancedField<any>): AutocompleteItem<any>[] => {
-        return []
+    const fetchItemsByColumnName = (column: AdvancedField<any>) => {
+        console.log("SIEMA")
+        const autocompleteValue: AutocompleteItem<any>[] = autocompleteValues[column.columnName];
+        if (autocompleteValue) {
+            return
+        }
+
+        setLoading(true);
+        column.functionToGetSelectItems!().then(items => {
+            const mappedItems: AutocompleteItem<any>[] = items.map(item => column.functionToMapItem!(item));
+            setAutocompleteValues(prev => ({
+                ...prev,
+                [column.columnName]: mappedItems
+            }));
+            setLoading(false);
+        });
     }
 
     const createGroup = () => {
@@ -79,6 +93,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                                 conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
                                 loading={loading}
                                 fetchItemsByColumnName={fetchItemsByColumnName}
+                                allItems={autocompleteValues}
                             />
                         </React.Fragment>
                     )

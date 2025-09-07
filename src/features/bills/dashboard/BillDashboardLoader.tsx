@@ -1,8 +1,8 @@
 'use client'
 import {useEffect, useState} from "react";
 import BillMainDashboard from "./BillMainDashboard";
-import {Bill} from "../api/BillModel";
 import {getBills} from "../api/BillService";
+import {Bill} from "../../bills2/api/BillModel";
 
 interface BillMainDashboardLoaderProps {
     bills: Bill[]

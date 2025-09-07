@@ -17,11 +17,11 @@ import {
     Typography
 } from "@mui/material";
 import {Add as AddIcon, AttachFile, Delete, Edit, Visibility} from "@mui/icons-material";
-import {Bill} from "../api/BillModel";
 import {DialogShowingController} from "../../../controllers/DialogShowingController";
 import {deleteBill} from "../api/BillService";
 import {useState} from "react";
 import AttachmentViewer from "../components/AttachmentViewer";
+import {Bill} from "../../bills2/api/BillModel";
 
 interface Props {
     bills: Bill[];

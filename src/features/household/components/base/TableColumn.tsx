@@ -7,6 +7,7 @@ import {StateProp} from "../../../../filter/StateProp";
 import {ColumnDataType, FilterValue} from "../../../../filter/FilterModel";
 import {FilterMenuItemConfig} from "../../../../filter/basic/FilterInputRendering";
 import FilterDialog from "../../../../filter/basic/FilterDialog";
+import {BooleanValue} from "../../../../filter/advanced/api/AdvancedFilterModel";
 
 export type OrderType = 'asc' | 'desc';
 
@@ -15,6 +16,7 @@ interface TableColumnProps<T> {
     orderProps: StateProp<OrderType>
     setOrderBy: () => void
     tableFilterProps: TableFilterProps<T>
+    availableBooleanOptions?: BooleanValue[]
 }
 
 interface TableFilterProps<T> {
@@ -97,6 +99,7 @@ export default function TableColumn<T>(props: TableColumnProps<T>) {
                 columnName={props.columnName}
                 anchorEl={filterIconRef.current}
                 filterValue={props.tableFilterProps.filterValue}
+                availableBooleanOptions={props.availableBooleanOptions}
             />
         </TableCell>
     )

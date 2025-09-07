@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import {Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton} from '@mui/material';
 import {Add, Close, Save} from '@mui/icons-material';
 import {BillTypeForm} from './BillTypeForm';
-import {BillType} from '../api/BillModel';
+
+import {BillType} from "../../bills2/api/BillModel";
 
 interface BillTypeModalProps {
     open: boolean;

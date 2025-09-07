@@ -13,7 +13,8 @@ export interface RenderGroupProps {
     conditionGroupsState: StateProp<ConditionGroup[]>
     conditionGroupIndex: number
     loading: boolean
-    fetchItemsByColumnName: (column: AdvancedField<any>) => AutocompleteItem<any>[]
+    fetchItemsByColumnName: (column: AdvancedField<any>) => void
+    allItems: Record<string, AutocompleteItem<any>[]>
 }
 
 export function RenderGroup(props: RenderGroupProps) {
@@ -29,7 +30,8 @@ export function RenderGroup(props: RenderGroupProps) {
                     fields={props.fields}
                     conditionGroupsState={props.conditionGroupsState}
                     loading={props.loading}
-                    fetchItemsByColumnName={props.fetchItemsByColumnName}
+                    functionToLoadItems={() => props.fetchItemsByColumnName(condition.field)}
+                    items={props.allItems[condition.field.columnName] ?? []}
                 />
             ))}
         </Paper>

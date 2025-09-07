@@ -1,37 +1,8 @@
+import {BillType} from "@/features/bills2/api/BillModel";
+
 export interface UserWhoPaid {
     userId: number;
     userName: string;
-}
-
-export interface BillType {
-    id: number;
-    name: string;
-    icon?: string;
-    unit?: string; // jednostka zużycia np. "kWh", "m³", "GB"
-    description?: string; // opis typu rachunku
-}
-
-export interface BillAttachment {
-    id?: number;
-    fileName: string;
-    fileUrl: string;
-    fileType: 'image' | 'pdf' | 'document';
-    fileSize?: number;
-    uploadedAt?: Date;
-}
-
-export interface Bill {
-    id: number;
-    billType: BillType;
-    amount: number;
-    usage?: number; // zużycie mediów
-    dueDate: Date;
-    paymentDate: Date | null;
-    period: string; // np. "2025-01", "Q1 2025"
-    description?: string;
-    whoPaid: UserWhoPaid;
-    isPaid: boolean;
-    attachments?: BillAttachment[]; // zmiana z pojedynczych pól na tablicę załączników
 }
 
 export interface CreateBillDetails {

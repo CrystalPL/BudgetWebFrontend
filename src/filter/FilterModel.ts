@@ -14,6 +14,7 @@ export type FilterOperator =
     | 'between'
     | 'before'
     | 'after';
+
 export const operators: Record<FilterOperator, string> = {
     contains: "Zawiera",
     notContains: "Nie zawiera",

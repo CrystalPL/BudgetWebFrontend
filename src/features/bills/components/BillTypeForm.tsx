@@ -4,7 +4,7 @@ import {
     Box,
     Button,
     Card,
-    FormControl,
+    FormControl, Grid,
     InputLabel,
     MenuItem,
     Paper,
@@ -13,8 +13,8 @@ import {
     Typography
 } from '@mui/material';
 import {Add, Cancel, Save} from '@mui/icons-material';
-import {BillType} from '../api/BillModel';
 import Grid from "@mui/material/Grid";
+import {BillType} from "../../bills2/api/BillModel";
 
 interface BillTypeFormProps {
     editingType: BillType | null;

@@ -1,9 +1,17 @@
 import Container from "@mui/material/Container";
 import BillDashboardHeader from "./BillDashboardHeader";
 import React, {useState} from "react";
-import BillTab from "./tabs/BillTab";
+import BillTab from "./tabs/bill/BillTab";
+import {HouseholdReloadKeyProps} from "../../household/api/HouseholdModel";
+import {StateProp} from "../../../filter/StateProp";
 
-export default function BillDashboard() {
+import {Bill} from "../api/BillModel";
+
+interface BillDashboardProps extends HouseholdReloadKeyProps {
+    billsProp: StateProp<Bill[]>
+}
+
+export default function BillDashboard(props: BillDashboardProps) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
@@ -20,7 +28,7 @@ export default function BillDashboard() {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
             />
-            <BillTab/>
+            <BillTab {...props}/>
         </Container>
     );
 }

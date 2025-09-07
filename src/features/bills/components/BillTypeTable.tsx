@@ -17,7 +17,8 @@ import {
     Typography
 } from '@mui/material';
 import {Add, Delete, Edit} from '@mui/icons-material';
-import {BillType} from '../api/BillModel';
+
+import {BillType} from "../../bills2/api/BillModel";
 
 interface BillTypeTableProps {
     billTypes: BillType[];

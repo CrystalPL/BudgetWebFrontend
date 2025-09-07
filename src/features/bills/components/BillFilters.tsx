@@ -3,7 +3,7 @@ import {
     Box,
     Button,
     Card,
-    FormControl,
+    FormControl, Grid,
     InputAdornment,
     InputLabel,
     MenuItem,
@@ -27,8 +27,9 @@ import {
     Search
 } from '@mui/icons-material';
 import {BillDateFilter, BillFilter, BillSortConfig} from '../types';
-import {BillType, UserWhoPaid} from '../api/BillModel';
+import {UserWhoPaid} from '../api/BillModel';
 import Grid from "@mui/material/Grid";
+import {BillType} from "../../bills2/api/BillModel";
 
 interface BillFiltersProps {
     dateFilter: BillDateFilter;

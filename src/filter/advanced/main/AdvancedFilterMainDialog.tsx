@@ -14,13 +14,71 @@ interface AdvancedFilterListDialogProps {
     fields: AdvancedField<any>[];
 }
 
+export const exampleFilters: AdvancedFilter[] = [
+    {
+        id: 1,
+        name: 'Oferty IT 10k+',
+        description: 'Oferty w IT z wynagrodzeniem powyżej 10k',
+        active: true,
+        createdAt: new Date('2025-08-15T09:00:00Z'),
+        updatedAt: new Date('2025-08-15T09:00:00Z'),
+        filter: []
+    },
+    {
+        id: 2,
+        name: 'Tylko zdalne',
+        description: '',
+        active: false,
+        createdAt: new Date('2025-08-10T12:30:00Z'),
+        updatedAt: new Date('2025-08-18T14:45:00Z'),
+        filter: []
+    },
+    {
+        id: 3,
+        name: 'Staże i praktyki',
+        description: '',
+        active: true,
+        createdAt: new Date('2025-08-01T08:00:00Z'),
+        updatedAt: new Date('2025-08-05T16:00:00Z'),
+        filter: []
+    },
+    {
+        id: 4,
+        name: 'Staże i praktyki',
+        description: '',
+        active: true,
+        createdAt: new Date('2025-08-01T08:00:00Z'),
+        updatedAt: new Date('2025-08-05T16:00:00Z'),
+        filter: []
+    },
+    {
+        id: 5,
+        name: 'Staże i praktyki',
+        description: '',
+        active: true,
+        createdAt: new Date('2025-08-01T08:00:00Z'),
+        updatedAt: new Date('2025-08-05T16:00:00Z'),
+        filter: []
+    },
+    {
+        id: 6,
+        name: 'Staże i praktyki',
+        description: '',
+        active: true,
+        createdAt: new Date('2025-08-01T08:00:00Z'),
+        updatedAt: new Date('2025-08-05T16:00:00Z'),
+        filter: []
+    },
+];
+
+
 export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialogProps) {
     const creatingFilterController: DialogShowingController = GetShowingController();
     const duplicateFilterController: DialogShowingController = GetShowingController();
     const editConditionsFilterController: DialogShowingController = GetShowingController();
 
     const [reloadKey, setReloadKey] = useState(0)
-    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>([])
+    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>(exampleFilters)
     const editedFilterProps: StateProp<AdvancedFilter | null> = useStateProp<AdvancedFilter>();
     const reloadTable = () => {
         setReloadKey(reloadKey + 1);

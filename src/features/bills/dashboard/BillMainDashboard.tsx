@@ -2,12 +2,12 @@
 import React, {useEffect, useState} from 'react';
 import {BillTypeTable} from '../components/BillTypeTable';
 import {BillTypeModal} from '../components/BillTypeModal';
-import {Bill, BillType} from '../api/BillModel';
 import {createBillType, deleteBillType, getBillTypes, updateBillType} from '../api/BillTypeService';
 import {HouseholdReloadKeyProps} from '../../household/api/HouseholdModel';
 import Container from "@mui/material/Container";
 import BillDashboardHeader from "../../bills2/dashboard/BillDashboardHeader";
 import BillDashboard from "./BillDashboard";
+import {Bill, BillType} from "../../bills2/api/BillModel";
 
 interface BillMainDashboardProps extends HouseholdReloadKeyProps {
     bills: Bill[];

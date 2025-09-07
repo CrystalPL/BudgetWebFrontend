@@ -1,6 +1,7 @@
 import {API_URL} from "@/service/ResponseAPI";
 import axios from "axios";
-import {Bill, CreateBillDetails, CreateBillRequest, DEFAULT_BILL_TYPES, UpdateBillRequest} from "./BillModel";
+import {CreateBillDetails, CreateBillRequest, DEFAULT_BILL_TYPES, UpdateBillRequest} from "./BillModel";
+import {Bill} from "@/features/bills2/api/BillModel";
 
 export async function getBills(cookie?: string): Promise<Bill[]> {
     try {

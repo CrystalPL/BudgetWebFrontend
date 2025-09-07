@@ -3,22 +3,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
 import {History} from "@mui/icons-material";
-import {DialogShowingController} from "../../../../controllers/DialogShowingController";
+import {DialogShowingController} from "../../../../../controllers/DialogShowingController";
 
-interface CellWithActionsProps {
-    createReceiptController: DialogShowingController
-    deleteReceiptDialogController: DialogShowingController
+interface BillTableTableItemCellWithActionsProps {
+    deleteBillDialogController: DialogShowingController
     handleAction: (controller: DialogShowingController) => void
 }
 
-export function CellWithActions(props: CellWithActionsProps) {
+export default function BillTabTableItemCellWithActions(props: BillTableTableItemCellWithActionsProps) {
     return (
         <TableCell sx={{py: 1.5}} align="right">
             <Box display='flex' flexDirection='row' justifyContent='flex-end'>
-                <Tooltip title="Edytuj paragon">
+                <Tooltip title="Edytuj rachunek">
                     <IconButton
                         color="primary"
-                        onClick={() => props.handleAction(props.createReceiptController)}
+                        // onClick={() => props.handleAction(props.createReceiptController)}
                         sx={{
                             "&:hover": {
                                 backgroundColor: "rgba(75,187,71,0.2)",
@@ -28,10 +27,10 @@ export function CellWithActions(props: CellWithActionsProps) {
                         <EditIcon/>
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Usuń paragon">
+                <Tooltip title="Usuń rachunek">
                     <IconButton
                         color="error"
-                        onClick={() => props.handleAction(props.deleteReceiptDialogController)}
+                        onClick={() => props.handleAction(props.deleteBillDialogController)}
                         sx={{
                             "&:hover": {
                                 backgroundColor: "rgba(206,21,21,0.2)",
@@ -56,5 +55,5 @@ export function CellWithActions(props: CellWithActionsProps) {
                 </Tooltip>
             </Box>
         </TableCell>
-    );
+    )
 }

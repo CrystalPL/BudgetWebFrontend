@@ -4,9 +4,10 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
-import {ColumnDataType, FilterValue, GetFilter} from "../FilterModel";
+import {ColumnDataType, FilterOperator, FilterValue, GetFilter} from "../FilterModel";
 import {FilterMenuItemConfig, RenderInput} from "./FilterInputRendering";
 import {RenderOperatorField} from "../OperatorFieldRendering";
+import {BooleanValue} from "../advanced/api/AdvancedFilterModel";
 
 export interface FilterDialogProps<T> {
     controller: DialogShowingController
@@ -16,6 +17,7 @@ export interface FilterDialogProps<T> {
     filterValue: FilterValue<T>
     functionToGetSelectItems?: () => Promise<T[]>
     functionToMapItem?: (item: T) => FilterMenuItemConfig
+    availableBooleanOptions?: BooleanValue[]
 }
 
 export default function FilterDialog<T>(props: FilterDialogProps<T>) {
@@ -62,7 +64,6 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
         }
 
         const fetchItems = async () => {
-            console.log("siema")
             setLoading(true);
             const items: T[] = await props.functionToGetSelectItems!();
             const mappedItems: FilterMenuItemConfig[] = items.map(item => props.functionToMapItem!(item))
@@ -102,12 +103,13 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                     }/>
 
                     <RenderOperatorField operator={temporaryValues.operatorProp.value}
-                                         setOperator={temporaryValues.operatorProp.setValue}
+                                         setOperator={(operator: FilterOperator) => temporaryValues.operatorProp.setValue(operator)}
                                          columnType={props.columnType}/>
 
                     <Box sx={{mt: 1}}>
                         <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}
-                                     columnType={props.columnType}/>
+                                     columnType={props.columnType}
+                                     availableBooleanOptions={props.availableBooleanOptions}/>
                         {temporaryValues.operatorProp.value === 'between' && (
                             <RenderInput fieldProps={temporaryValues.valueTo} items={selectItems} loading={loading}
                                          columnType={props.columnType}/>

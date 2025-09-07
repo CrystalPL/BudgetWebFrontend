@@ -25,12 +25,18 @@ export interface DuplicateFilterRequest {
     newName: string
 }
 
+export interface BooleanValue {
+    label: string
+    value: boolean
+}
+
 export interface AdvancedField<T> {
     columnDataType: ColumnDataType
     columnName: string
     columnLabel: string
     functionToGetSelectItems?: () => Promise<T[]>
     functionToMapItem?: (item: T) => AutocompleteItem<T>
+    availableBooleanOptions?: BooleanValue[]
 }
 
 export interface Condition {
@@ -57,5 +63,6 @@ export interface RenderConditionLineProps {
     conditionIndex: number
     conditionGroupsState: StateProp<ConditionGroup[]>
     loading: boolean
-    fetchItemsByColumnName: (column: AdvancedField<any>) => AutocompleteItem<any>[]
+    functionToLoadItems: () => void
+    items: AutocompleteItem<any>[]
 }
