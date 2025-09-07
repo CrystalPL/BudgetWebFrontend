@@ -16,12 +16,9 @@ export default async function Page({params}: any) {
     }
 
     const response: ResponseAPI<GetRolePermissionMessages, Permissions> = await getPermissions(roleId, await getCookie())
-    console.log(response)
     if (!response.success) {
         return <PermissionRoleView content={response.message}></PermissionRoleView>
     }
-
-    console.log(response.additionalData.permissions)
 
     return <RolePermissionTable roleId={roleId}
                                 rolePermission={response.additionalData.permissions}></RolePermissionTable>

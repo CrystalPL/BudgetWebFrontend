@@ -19,7 +19,6 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
     const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>({})
 
     const fetchItemsByColumnName = (column: AdvancedField<any>) => {
-        console.log("SIEMA")
         const autocompleteValue: AutocompleteItem<any>[] = autocompleteValues[column.columnName];
         if (autocompleteValue) {
             return

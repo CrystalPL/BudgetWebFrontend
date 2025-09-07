@@ -4,7 +4,7 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
-import {ColumnDataType, FilterOperator, FilterValue, GetFilter} from "../FilterModel";
+import {ColumnDataType, filterForColumnType, FilterOperator, FilterValue, GetFilter} from "../FilterModel";
 import {FilterMenuItemConfig, RenderInput} from "./FilterInputRendering";
 import {RenderOperatorField} from "../OperatorFieldRendering";
 import {BooleanValue} from "../advanced/api/AdvancedFilterModel";
@@ -102,7 +102,8 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                         />
                     }/>
 
-                    <RenderOperatorField operator={temporaryValues.operatorProp.value}
+                    <RenderOperatorField
+                        operator={temporaryValues.operatorProp.value ?? filterForColumnType[props.columnType][0]}
                                          setOperator={(operator: FilterOperator) => temporaryValues.operatorProp.setValue(operator)}
                                          columnType={props.columnType}/>
 

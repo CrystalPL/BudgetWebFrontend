@@ -15,7 +15,7 @@ interface TableColumnProps<T> {
     columnName: string
     orderProps: StateProp<OrderType>
     setOrderBy: () => void
-    tableFilterProps: TableFilterProps<T>
+    tableFilterProps?: TableFilterProps<T>
     availableBooleanOptions?: BooleanValue[]
 }
 
@@ -66,41 +66,45 @@ export default function TableColumn<T>(props: TableColumnProps<T>) {
                     </Box>
                 </Tooltip>
 
-                <Tooltip title="Filtruj" arrow>
-                    <Box
-                        ref={filterIconRef}
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '50%',
-                            width: '30px',
-                            height: '30px',
-                            marginLeft: '4px',
-                            bgcolor: props.tableFilterProps.filterValue.activeProp.value ? 'primary.light' : 'transparent',
-                            '&:hover': {
-                                backgroundColor: '#e0e0e0',
-                                cursor: 'pointer',
-                            },
-                        }}
-                        onClick={filterShowingController.openDialog}
-                    >
-                        <FilterList sx={{
-                            fontSize: '1.2rem',
-                            color: props.tableFilterProps.filterValue.activeProp.value ? 'white' : 'inherit'
-                        }}/>
-                    </Box>
-                </Tooltip>
+                {props.tableFilterProps && (
+                    <Tooltip title="Filtruj" arrow>
+                        <Box
+                            ref={filterIconRef}
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '50%',
+                                width: '30px',
+                                height: '30px',
+                                marginLeft: '4px',
+                                bgcolor: props.tableFilterProps.filterValue.activeProp.value ? 'primary.light' : 'transparent',
+                                '&:hover': {
+                                    backgroundColor: '#e0e0e0',
+                                    cursor: 'pointer',
+                                },
+                            }}
+                            onClick={filterShowingController.openDialog}
+                        >
+                            <FilterList sx={{
+                                fontSize: '1.2rem',
+                                color: props.tableFilterProps.filterValue.activeProp.value ? 'white' : 'inherit'
+                            }}/>
+                        </Box>
+                    </Tooltip>
+                )}
             </Box>
 
-            <FilterDialog
-                controller={filterShowingController}
-                columnType={props.tableFilterProps.columnType}
-                columnName={props.columnName}
-                anchorEl={filterIconRef.current}
-                filterValue={props.tableFilterProps.filterValue}
-                availableBooleanOptions={props.availableBooleanOptions}
-            />
+            {props.tableFilterProps && (
+                <FilterDialog
+                    controller={filterShowingController}
+                    columnType={props.tableFilterProps.columnType}
+                    columnName={props.columnName}
+                    anchorEl={filterIconRef.current}
+                    filterValue={props.tableFilterProps.filterValue}
+                    availableBooleanOptions={props.availableBooleanOptions}
+                />
+            )}
         </TableCell>
     )
 }
