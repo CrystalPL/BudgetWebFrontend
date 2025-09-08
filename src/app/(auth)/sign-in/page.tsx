@@ -4,33 +4,24 @@ import {useEffect, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {Alert} from "@mui/material";
+import {Alert, Box, IconButton} from "@mui/material";
 import {useRouter} from "next/navigation";
-import {login} from "../../../auth/AuthenticationService";
-import {LoginMessage} from "../../../auth/ResponseMessages";
+import {login, RegistrationToken} from "../../../features/auth/api/AuthenticationService";
+import {LoginMessage} from "../../../features/auth/api/AuthResponseMessages";
+import {validateEmailFormat} from "../../../features/auth/util/DataValidator";
+import Stack from "@mui/material/Stack";
+import {readCookie} from "../../../features/auth/util/Cookies";
 
-function readCookie(name: string): string | null {
-    const nameEQ = `${name}=`;
-    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-
-    for (const cookie of cookies) {
-        if (cookie.startsWith(nameEQ)) {
-            return cookie.substring(nameEQ.length);
-        }
-    }
-
-    return null;
-}
+import {ResponseAPI} from "../../../service/ResponseAPI";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function SignIn() {
     const router = useRouter();
@@ -38,32 +29,41 @@ export default function SignIn() {
     const [error, setError] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
+
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const email = data.get("email") as string;
-        const password = data.get("password") as string;
-        if (!email) {
-            setError("Podaj adres e-mail")
+
+        validateEmail()
+        if (emailError !== '') {
             return
         }
 
-        if (!email.includes("@")) {
-            setError("Adres email musi mieć znak @!")
+        validatePasswordHandler()
+        if (passwordError !== '') {
             return
         }
 
-        if (!password) {
-            setError("Podaj hasło")
-            return
-        }
-
-        const response = await login(email, password, rememberMe);
+        const response: ResponseAPI<LoginMessage, RegistrationToken> = await login(email, password, rememberMe);
         if (!response.success) {
-            if (response.message === LoginMessage.ACCOUNT_NOT_CONFIRMED) {
-                router.push('/account-inactive');
-            } else {
-                setError(response.message)
+            const message: string = response.message;
+            switch (message) {
+                case LoginMessage.ACCOUNT_NOT_CONFIRMED:
+                    router.push(`/account-inactive?registrationToken=${response.additionalData.registrationToken}`);
+                    break
+                case LoginMessage.USER_NOT_EXIST:
+                    setEmailError(message)
+                    break
+                case LoginMessage.BAD_CREDENTIALS:
+                    setPasswordError(message)
+                    break
+                default:
+                    setError(response.message)
             }
 
             return
@@ -74,13 +74,9 @@ export default function SignIn() {
             router.push(cookiePath)
             document.cookie = `redirectPath=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
         } else {
-            router.push('/dashboard');
+            router.push('/');
         }
     };
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
 
     useEffect(() => {
         const handleBeforeUnload = () => {
@@ -94,6 +90,54 @@ export default function SignIn() {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, []);
+
+    const validatePasswordHandler = (): string => {
+        if (!password) {
+            return LoginMessage.MISSING_PASSWORD
+        }
+
+        return ""
+    }
+
+    const passwordFieldProps: CustomFormControlProps = {
+        valueState: [password, setPassword],
+        errorState: [passwordError, setPasswordError],
+        label: 'Nowe hasło',
+        name: 'password',
+        type: showPassword ? 'text' : 'password',
+        validateFunction: validatePasswordHandler,
+        endAdornment: (
+            <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+                style={{color: 'black'}}
+            >
+                {showPassword ? <VisibilityOff/> : <Visibility/>}
+            </IconButton>
+        ),
+    };
+
+    const validateEmail = () => {
+        if (!email) {
+            return LoginMessage.MISSING_EMAIL
+        }
+
+        if (!validateEmailFormat(email)) {
+            return LoginMessage.INVALID_EMAIL
+        }
+
+        return ""
+    }
+
+    const emailFieldProps: CustomFormControlProps = {
+        valueState: [email, setEmail],
+        errorState: [emailError, setEmailError],
+        label: 'Adres e-mail',
+        name: 'email',
+        validateFunction: validateEmail
+    };
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
@@ -112,61 +156,31 @@ export default function SignIn() {
                 {error !== "" && (
                     <Alert sx={{mt: 2}} severity="error">{error}</Alert>
                 )}
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Adres e-mail"
-                        name="email"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Hasło"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                            endAdornment: showPassword ? <Visibility
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(false);
-                                }}/> : <VisibilityOff
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(true);
-                                }}/>
-                        }}
-                    />
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1, width: '100%'}}>
+                    <Stack sx={{mt: 1}} spacing={1}>
+                        <CustomFormControl {...emailFieldProps}></CustomFormControl>
+                        <CustomFormControl {...passwordFieldProps}></CustomFormControl>
+                    </Stack>
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary"
                                            onChange={(event) => setRememberMe(event.target.checked)}/>}
-                        label="Zapamiętaj mnie"
+                        label="Zapamiętaj mnie" sx={{pl: 1}}
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={{mb: 2}}
                     >
                         Zaloguj
                     </Button>
                     <Grid container>
-                        <Grid item xs>
+                        <Grid>
                             <Link href="password-recovery" variant="body2" underline="none" fontWeight="bold">
                                 Zapomniałeś hasła?
                             </Link>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <Link href="sign-up" variant="body2" underline="none" fontWeight="bold">
                                 Nie masz konta? Zarejestruj się!
                             </Link>

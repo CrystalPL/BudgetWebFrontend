@@ -4,58 +4,57 @@ import {useEffect, useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import {Alert} from '@mui/material';
+import {Alert, IconButton} from '@mui/material';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {resetPassword} from "../../../auth/AuthenticationService";
+import {resetPassword} from "../../../features/auth/api/AuthenticationService";
+import {PasswordResetMessage, PasswordValidationMessage} from "../../../features/auth/api/AuthResponseMessages";
+import {validatePassword} from "../../../features/auth/util/DataValidator";
+import Stack from "@mui/material/Stack";
+import {CustomFormControl, CustomFormControlProps} from "../../../components/CustomFormControl";
 
 export default function ResetPasswordForm() {
     const [status, setStatus] = useState<'success' | 'error'>('error');
     const [statusMessage, setStatusMessage] = useState<string>("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [token, setToken] = useState<string | null>();
 
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
+
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         const tokenFromUrl = queryParams.get('token');
         if (!tokenFromUrl) {
-            setStatusMessage("Token aktywacyjny jest wymagany.");
+            setStatusMessage(PasswordResetMessage.MISSING_TOKEN);
             return
         }
 
         setToken(tokenFromUrl);
     }, []);
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!token) {
-            setStatusMessage("Token aktywacyjny jest wymagany.");
+            setStatusMessage(PasswordResetMessage.MISSING_TOKEN);
             return
         }
 
-        const data = new FormData(event.currentTarget);
-        const password = data.get("password") as string;
-        const confirmPassword = data.get("confirmPassword") as string;
-
-        if (!password) {
-            setStatusMessage("Podaj nowe hasło");
-            return;
+        validateNewPassword()
+        if (passwordError !== '') {
+            return
         }
 
-        if (password.length < 6) {
-            setStatusMessage("Hasło musi mieć co najmniej 6 znaków");
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setStatusMessage("Hasła nie są zgodne");
-            return;
+        validateConfirmPassword()
+        if (confirmPasswordError !== '') {
+            return
         }
 
         const response = await resetPassword(token, password, confirmPassword);
@@ -63,9 +62,76 @@ export default function ResetPasswordForm() {
         setStatusMessage(response.message)
 
         if (response.success) {
-            setNewPassword("");
+            setPassword("");
             setConfirmPassword("");
         }
+    };
+
+    const validateNewPassword = () => {
+        if (!password) {
+            setPasswordError(PasswordResetMessage.MISSING_PASSWORD)
+            return ""
+        }
+
+        const validatePasswordResult: PasswordValidationMessage = validatePassword(password)
+        if (validatePasswordResult !== PasswordValidationMessage.OK) {
+            setPasswordError(validatePasswordResult)
+            return ""
+        }
+
+        return ""
+    }
+
+    const newPasswordFieldProps: CustomFormControlProps = {
+        valueState: [password, setPassword],
+        errorState: [passwordError, setPasswordError],
+        label: 'Nowe hasło',
+        name: 'newPassword',
+        type: showPassword ? 'text' : 'password',
+        validateFunction: validateNewPassword,
+        endAdornment: (
+            <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+                style={{color: 'black'}}
+            >
+                {showPassword ? <VisibilityOff/> : <Visibility/>}
+            </IconButton>
+        ),
+    };
+
+    const validateConfirmPassword = () => {
+        if (!confirmPassword) {
+            setConfirmPasswordError(PasswordResetMessage.MISSING_CONFIRM_PASSWORD)
+            return ""
+        }
+
+        if (password !== confirmPassword) {
+            setConfirmPasswordError(PasswordResetMessage.PASSWORD_MISMATCH)
+            return ""
+        }
+
+        return ""
+    }
+
+    const confirmNewPasswordFieldProps: CustomFormControlProps = {
+        valueState: [confirmPassword, setConfirmPassword],
+        errorState: [confirmPasswordError, setConfirmPasswordError],
+        label: 'Potwierdź nowe hasło',
+        name: 'confirmNewPassword',
+        type: showConfirmPassword ? 'text' : 'password',
+        validateFunction: validateConfirmPassword,
+        endAdornment: (
+            <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                edge="end"
+                style={{color: 'black'}}
+            >
+                {showConfirmPassword ? <VisibilityOff/> : <Visibility/>}
+            </IconButton>
+        ),
     };
 
     return (
@@ -84,64 +150,21 @@ export default function ResetPasswordForm() {
                 </Avatar>
                 <Typography component="h1" variant="h5">Resetowanie hasła</Typography>
                 {statusMessage && (
-                    <Alert sx={{mt: 2}} severity={status}>{statusMessage}</Alert>
+                    <Alert sx={{mt: 1, mb: 1}} severity={status}>{statusMessage}</Alert>
                 )}
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Nowe hasło"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        autoComplete="new-password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        InputProps={{
-                            endAdornment: showPassword ? <Visibility
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(false);
-                                }}/> : <VisibilityOff
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(true);
-                                }}/>
-                        }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="confirmPassword"
-                        label="Potwierdź hasło"
-                        type={showPassword ? 'text' : 'password'}
-                        id="confirmPassword"
-                        autoComplete="new-password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        InputProps={{
-                            endAdornment: showPassword ? <Visibility
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(false);
-                                }}/> : <VisibilityOff
-                                cursor="pointer"
-                                onClick={(): void => {
-                                    setShowPassword(true);
-                                }}/>
-                        }}
-                    />
+
+                <Stack component="form" onSubmit={handleSubmit} sx={{mt: 1, width: '90%'}} spacing={1}>
+                    <CustomFormControl {...newPasswordFieldProps}></CustomFormControl>
+                    <CustomFormControl {...confirmNewPasswordFieldProps}></CustomFormControl>
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={{mt: 1}}
                     >
                         Potwierdź
                     </Button>
-                </Box>
+                </Stack>
             </Box>
         </Container>
     );

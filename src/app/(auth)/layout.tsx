@@ -1,6 +1,6 @@
 'use client'
-import ThemeProvider from "../../components/theme/ThemeProvider";
 import {PropsWithChildren} from "react";
+import ThemeProvider from "../../styles/ThemeProvider";
 
 export default function RootLayout(props: PropsWithChildren) {
     return (

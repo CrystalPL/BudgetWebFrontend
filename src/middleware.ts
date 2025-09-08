@@ -1,7 +1,7 @@
 import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
 import {HttpStatusCode} from "axios";
-import {VerifyAccess} from "./auth/AuthorizationService";
+import {VerifyAccess} from "@/features/auth/api/AuthorizationService";
 
 export async function middleware(request: NextRequest) {
 
@@ -10,31 +10,30 @@ export async function middleware(request: NextRequest) {
     const authToken = cookies.get('auth_token') || '';
 
     const hasAccess = await VerifyAccess(authToken);
-    if (hasAccess !== HttpStatusCode.Ok) {
-        // console.log(url.pathname)
-        // if (url.pathname.startsWith('/sign-in') || url.pathname.startsWith('/account-inactive')) {
-        //     return NextResponse.next();
-        // }
+    const url = request.nextUrl.clone();
+    switch (hasAccess) {
+        case HttpStatusCode.Ok:
+            if (url.pathname.startsWith('/sign-in')) {
+                url.pathname = '/';
+                return NextResponse.redirect(url);
+            }
 
-        const url = request.nextUrl.clone();
-        const response = NextResponse.redirect(url);
-        switch (hasAccess) {
-            case HttpStatusCode.Unauthorized:
-                url.pathname = '/sign-in';
-                response.headers.set('Set-Cookie', `redirectPath=${request.nextUrl.pathname}; Path=/;`);
-                return NextResponse.redirect(url);
-            case HttpStatusCode.Forbidden:
-                url.pathname = '/account-inactive';
-                return NextResponse.redirect(url);
-            default:
-                console.error('Wystąpił błąd podczas weryfikacji: ', hasAccess);
-                return NextResponse.error();
-        }
+            return NextResponse.next();
+        case HttpStatusCode.Unauthorized:
+            if (url.pathname.startsWith('/sign-in')) {
+                return NextResponse.next();
+            }
+
+            url.pathname = '/sign-in';
+            const response = NextResponse.redirect(url);
+            response.headers.set('Set-Cookie', `redirectPath=${request.nextUrl.pathname}; Path=/;`);
+            return NextResponse.redirect(url);
+        default:
+            console.error('Wystąpił błąd podczas weryfikacji: ', hasAccess);
+            return NextResponse.error();
     }
-
-    return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/profile/:path*', '/users/:path*', '/logs/:path*', '/'],
+    matcher: ['/profile/:path*', '/household/:path*', '/logs/:path*', '/', '/sign-in'],
 };
