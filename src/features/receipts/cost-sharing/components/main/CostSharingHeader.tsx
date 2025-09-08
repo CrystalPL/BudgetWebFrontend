@@ -4,8 +4,8 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 export function CostSharingHeader() {
     return (
         <DialogTitle sx={{
-            mb: 2,
-            pb: 2,
+            mb: 1,
+            pb: 1,
             background: "#a9be77",
             color: "white",
         }}>

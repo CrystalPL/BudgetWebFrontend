@@ -5,7 +5,7 @@ import {usePathname} from "next/navigation";
 import {MobileSidebarController} from "../../controllers/MobileSidebarController";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
-import {Analytics, Category, Groups, Receipt, Report, RequestQuote} from "@mui/icons-material";
+import {Category, Groups, Receipt} from "@mui/icons-material";
 
 interface SidebarItem {
     buttonName: string
@@ -67,36 +67,6 @@ function GetSidebarItems(): React.JSX.Element {
                 buttonName="Paragony"
                 href="/household/receipts"
                 icon={<Receipt/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Analizy i raporty"
-                href="/household/analytics"
-                icon={<Analytics/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Rozliczenia"
-                href="/household/settlements"
-                icon={<RequestQuote/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Statystyki"
-                href="/household/statistics"
-                icon={<RequestQuote/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Rachunki"
-                href="/household/bills"
-                icon={<RequestQuote/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Rachunki2"
-                href="/household/bills2"
-                icon={<RequestQuote/>}
-            ></CreateSidebarButton>
-            <CreateSidebarButton
-                buttonName="Raporty"
-                href="/household/reports"
-                icon={<Report/>}
             ></CreateSidebarButton>
         </Stack>
     );

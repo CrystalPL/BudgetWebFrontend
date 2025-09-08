@@ -60,7 +60,7 @@ export default function EditableProductRow(props: Props) {
         value = value.replace(",", ".")
         const numberValue = Number(value);
         if (!isNaN(numberValue)) {
-            handleFieldChange(field, value);
+            handleFieldChange(field, numberValue);
         } else {
             showSnackbar("Niepoprawna wartość pola liczbowego")
         }

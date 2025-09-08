@@ -16,21 +16,22 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
 import {useState} from "react";
 import {sort} from "../../../../util/SortUtil";
-import TableColumn from "../base/TableColumn";
+import TableColumn, {OrderType} from "../base/TableColumn";
 import {HouseholdMember, HouseholdMemberRole, HouseholdReloadKeyProps} from "../../api/HouseholdModel";
 import ChangeUserRoleDialog from "../dialogs/ChangeUserRoleDialog";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import {deleteUser, transferHouseholdOwner} from "../../api/HouseholdService";
 import ConfirmationDialog from "../base/ConfirmationDialog";
 import {FaCrown} from "react-icons/fa";
+import {StateProp, useStateProp} from "../../../../filter/StateProp";
 
 interface UserTableProps extends HouseholdReloadKeyProps {
     householdMembers: HouseholdMember[]
 }
 
 export default function UserTable({householdMembers: members, reloadTable}: UserTableProps) {
-    const [orderUsername, setOrderUsername] = useState<'asc' | 'desc'>('asc');
-    const [orderRole, setOrderRole] = useState<'asc' | 'desc'>('asc');
+    const usernameOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
+    const roleOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
     const [orderBy, setOrderBy] = useState<'username' | 'role'>('username');
     const [editedMember, setEditedMember] = useState<HouseholdMember | null>(null);
     const editUserRoleDialogController: DialogShowingController = GetShowingController()
@@ -38,8 +39,8 @@ export default function UserTable({householdMembers: members, reloadTable}: User
     const transferOwnerDialogController: DialogShowingController = GetShowingController()
 
     const sortedMembers: HouseholdMember[] = orderBy === 'username'
-        ? sort(orderUsername, members, value => value.username)
-        : sort(orderRole, members, value => value.role.name);
+        ? sort(usernameOrderState.value, members, value => value.username)
+        : sort(roleOrderState.value, members, value => value.role.name);
 
     const getRoleChip = (role: HouseholdMemberRole) => {
         return <Chip label={role.name} sx={{
@@ -65,11 +66,16 @@ export default function UserTable({householdMembers: members, reloadTable}: User
             <Table>
                 <TableHead sx={{backgroundColor: '#f5f5f5'}}>
                     <TableRow>
-                        <TableColumn columnName="Nazwa użytkownika" orderType={orderUsername}
-                                     setOrderType={setOrderUsername}
-                                     setOrderBy={() => setOrderBy('username')}></TableColumn>
-                        <TableColumn columnName="Rola" orderType={orderRole} setOrderType={setOrderRole}
-                                     setOrderBy={() => setOrderBy('role')}></TableColumn>
+                        <TableColumn
+                            columnName="Nazwa użytkownika"
+                            orderProps={usernameOrderState}
+                            setOrderBy={() => setOrderBy('username')}
+                        />
+                        <TableColumn
+                            columnName="Rola"
+                            orderProps={roleOrderState}
+                            setOrderBy={() => setOrderBy('role')}
+                        />
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>
                     </TableRow>

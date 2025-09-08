@@ -11,7 +11,7 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import TableColumn from "../../household/components/base/TableColumn";
+import TableColumn, {OrderType} from "../../household/components/base/TableColumn";
 import * as React from "react";
 import {useState} from "react";
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,14 +28,15 @@ import {FaCrown} from "react-icons/fa";
 import {useSnackbarContext} from "../../../context/SnackbarContext";
 import {deleteRole, makeRoleDefault} from "../api/RoleService";
 import {Role} from "../api/RoleModel";
+import {StateProp, useStateProp} from "../../../filter/StateProp";
 
 interface RolesTableProps extends HouseholdReloadKeyProps {
     roles: Role[]
 }
 
 export default function RoleTable(props: RolesTableProps) {
-    const [orderRoleName, setOrderRoleName] = useState<'asc' | 'desc'>('asc');
-    const sortedRoles: Role[] = sort(orderRoleName, props.roles, value => value.name)
+    const roleNameOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
+    const sortedRoles: Role[] = sort(roleNameOrderState.value, props.roles, value => value.name)
     const [editedRole, setEditedRole] = useState<Role | null>(null)
     const editRoleDialogController: DialogShowingController = GetShowingController()
     const deleteRoleDialogController: DialogShowingController = GetShowingController()
@@ -127,10 +128,11 @@ export default function RoleTable(props: RolesTableProps) {
             <Table>
                 <TableHead sx={{backgroundColor: '#f5f5f5'}}>
                     <TableRow>
-                        <TableColumn columnName="Nazwa roli" orderType={orderRoleName}
-                                     setOrderType={setOrderRoleName}
-                                     setOrderBy={() => {
-                                     }}></TableColumn>
+                        <TableColumn
+                            columnName="Nazwa roli"
+                            orderProps={roleNameOrderState}
+                            setOrderBy={() => {
+                            }}/>
                         <TableCell sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Kolor</TableCell>
                         <TableCell align="right"
                                    sx={{fontWeight: 'bold', borderBottom: '1px solid #ddd'}}>Akcje</TableCell>

@@ -100,8 +100,6 @@ function ChatOverlay() {
         const previousMessage = messages[index - 1];
 
         // Wyświetl czas, jeśli nadawca jest inny niż poprzedni
-        console.log(currentMessage.nickname)
-        console.log(previousMessage.nickname)
         return currentMessage.nickname !== previousMessage.nickname
     }
 
