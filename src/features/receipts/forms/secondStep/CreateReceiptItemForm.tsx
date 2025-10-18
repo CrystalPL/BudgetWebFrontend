@@ -20,6 +20,7 @@ import {suggestCategory} from "../../api/ReceiptService";
 import {CreateReceiptItemMessage} from "../../api/ReceiptMessages";
 import {DialogShowingController} from "../../../../controllers/DialogShowingController";
 import {AILoaderProps} from "../../ai/AILoader";
+import {CreateReceiptItemValidationConstraints} from "../../../../validator/ValidationModel";
 
 interface Props {
     productList: GetProductListResponse[]
@@ -31,6 +32,7 @@ interface Props {
     setAiProcessing: (value: boolean) => void
     aiLoader: AILoaderProps
     aiProductRecognitionDialogController: DialogShowingController
+    receiptItemConstraints: CreateReceiptItemValidationConstraints | undefined
 }
 
 export default function CreateReceiptItemForm(props: Props) {
@@ -102,10 +104,10 @@ export default function CreateReceiptItemForm(props: Props) {
         if (productName === '') {
             setProductNameError(CreateReceiptItemMessage.PRODUCT_NAME_EMPTY);
             hasError = true;
-        } else if (productName.length <= 1) {
+        } else if (productName.length <= props.receiptItemConstraints!.receiptItem.productNameMinLength) {
             setProductNameError(CreateReceiptItemMessage.PRODUCT_NAME_TOO_SHORT);
             hasError = true;
-        } else if (productName.length > 64) {
+        } else if (productName.length > props.receiptItemConstraints!.receiptItem.productNameMaxLength) {
             setProductNameError(CreateReceiptItemMessage.PRODUCT_NAME_TOO_LONG);
             hasError = true;
         }

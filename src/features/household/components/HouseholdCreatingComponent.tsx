@@ -9,15 +9,20 @@ import {useSnackbarContext} from "../../../context/SnackbarContext";
 import {HouseholdReloadKeyProps} from "../api/HouseholdModel";
 import {validateHouseholdName} from "../HouseholdUtil";
 import CustomDialog from "../../../components/CustomDialog";
+import {CreateHouseholdValidationConstraints} from "../../../validator/ValidationModel";
 
-export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProps) {
+interface HouseholdCreatingComponentProps extends HouseholdReloadKeyProps {
+    householdValidationConstraints: CreateHouseholdValidationConstraints
+}
+
+export default function HouseholdNotExists(props: HouseholdCreatingComponentProps) {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState('');
     const [nameError, setNameError] = React.useState('');
     const snackbarController = useSnackbarContext();
 
     const handleCreate = async () => {
-        setNameError(validateHouseholdName(name))
+        setNameError(validateHouseholdName(props.householdValidationConstraints.household, name))
         if (nameError !== '') {
             return
         }
@@ -32,7 +37,7 @@ export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProp
         snackbarController.setStatusMessage(CreateHouseholdMessage.SUCCESS)
         snackbarController.setStatus('success')
         snackbarController.setOpenSnackbar(true)
-        reloadTable()
+        props.reloadTable()
     };
 
     const handleClose = () => {
@@ -46,7 +51,7 @@ export default function HouseholdNotExists({reloadTable}: HouseholdReloadKeyProp
         errorState: [nameError, setNameError],
         label: 'Nazwa gospodarstwa',
         name: 'username',
-        validateFunction: () => validateHouseholdName(name)
+        validateFunction: () => validateHouseholdName(props.householdValidationConstraints.household, name)
     };
 
     return (

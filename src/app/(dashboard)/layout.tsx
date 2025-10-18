@@ -13,7 +13,7 @@ import SnackbarProvider from "../../context/SnackbarContext";
 export default function RootLayout(props: PropsWithChildren) {
     return (
         <html lang="pl">
-        <body>
+        <body suppressHydrationWarning={true}>
         <AppRouterCacheProvider>
             <ThemeProvider>
                 <GlobalStyles styles={{

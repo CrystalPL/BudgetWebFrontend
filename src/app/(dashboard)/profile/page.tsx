@@ -1,11 +1,14 @@
-'use client'
 import {Container, Stack, Typography} from "@mui/material";
 import {AccountDetails} from "../../../features/account/components/AccountDetails";
 import AccountInfo from "../../../features/account/components/AccountInfo";
 import Grid from "@mui/material/Grid";
 import LoginHistory from "../../../features/account/LoginHistory";
+import {getValidators} from "../../../validator/ValidationService";
+import {SignUpValidationConstraints} from "../../../validator/ValidationModel";
 
-export default function Page() {
+export default async function Page() {
+    const validators = await getValidators<SignUpValidationConstraints>(['EMAIL', 'PASSWORD', 'USERNAME']);
+
     return (
         <Container
             sx={{
@@ -24,7 +27,7 @@ export default function Page() {
                         <AccountInfo/>
                     </Grid>
                     <Grid size={12}>
-                        <AccountDetails/>
+                        <AccountDetails {...validators}></AccountDetails>
                     </Grid>
                     <Grid size={12}>
                         <LoginHistory/>

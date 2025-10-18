@@ -6,9 +6,11 @@ import {HouseholdReloadKeyProps} from "../household/api/HouseholdModel";
 import * as React from "react";
 import CreateCategoryDialog from "./components/CreateCategoryDialog";
 import {Category} from "./api/CategoryModel";
+import {CategoryValidationConstraints} from "../../validator/ValidationModel";
 
 interface CategoryDashboardData extends HouseholdReloadKeyProps {
     categories: Category[],
+    categoryConstraints: CategoryValidationConstraints
 }
 
 export default function CategoryDashboard(props: CategoryDashboardData) {
@@ -28,7 +30,10 @@ export default function CategoryDashboard(props: CategoryDashboardData) {
                 openCreateCategoryDialog={createCategoryDialogController.openDialog}></CategoryDashboardHeader>
             <CategoriesTable reloadTable={props.reloadTable} categories={props.categories}></CategoriesTable>
             <CreateCategoryDialog
-                reloadTable={props.reloadTable} {...createCategoryDialogController}></CreateCategoryDialog>
+                reloadTable={props.reloadTable}
+                {...createCategoryDialogController}
+                categoryConstraints={props.categoryConstraints}
+            />
         </Container>
     )
 }

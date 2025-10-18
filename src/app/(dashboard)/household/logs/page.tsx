@@ -4,16 +4,17 @@ import {
     Timeline,
     TimelineConnector,
     TimelineContent,
-    TimelineDot,
     TimelineItem,
-    TimelineOppositeContent,
     timelineOppositeContentClasses,
     TimelineSeparator
 } from '@mui/lab';
-import {Paper, Typography} from '@mui/material';
+import {Paper} from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import Typography from "@mui/material/Typography";
 
 const HouseholdTimeline = () => {
     const events = [

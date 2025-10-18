@@ -9,7 +9,10 @@ export enum EditCategoryResponseMessage {
 export enum CreateCategoryResponseMessage {
     SUCCESS = "Kategoria została pomyślnie utworzona.",
     CATEGORY_EXISTS = "Kategoria o takiej nazwie już istnieje.",
-    NO_PERMISSION = "Brak uprawnień do tworzenia kategorii."
+    NO_PERMISSION = "Brak uprawnień do tworzenia kategorii.",
+    MISSING_NAME = "Podaj nazwę kategorii",
+    NAME_TOO_SHORT = "Nazwa kategorii musi być dłuższa niż {MIN_LENGTH}",
+    NAME_TOO_LONG = "Nazwa kategorii musi być krótsza niż {MAX_LENGTH}"
 }
 
 export enum DeleteCategoryResponseMessage {

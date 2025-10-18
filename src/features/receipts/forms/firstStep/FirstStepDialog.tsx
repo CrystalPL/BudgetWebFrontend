@@ -7,12 +7,13 @@ import {useEffect, useState} from "react";
 import {CreateReceiptDetails, Receipt} from "../../api/ReceiptModel";
 import AITransactionDetailsDialog from "../../ai/AITransactionDetailsDialog";
 import {getCreateReceiptDetails} from "../../api/ReceiptService";
-import {validateLength} from "../../../auth/util/DataValidator";
 import {CreateReceiptDetailMessage} from "../../api/ReceiptMessages";
 import FirstStepFooterForm from "./FirstStepFooterForm";
 import FirstStepFormContent from "./FirstStepFormContent";
 import {FirstStepFormState} from "./FirstStepFormState";
 import {AILoaderProps} from "../../ai/AILoader";
+import {CreateReceiptValidationConstraints} from "../../../../validator/ValidationModel";
+import {getValidators} from "../../../../validator/ValidationService";
 
 interface Props {
     creatingController: DialogShowingController
@@ -29,13 +30,17 @@ export const steps = ["Informacje o paragonie", "Dodaj produkty"]
 
 export default function FirstStepDialog(props: Props) {
     const [aiProcessing, setAiProcessing] = useState<boolean>(false);
+    const [createReceiptConstraints, setCreateReceiptConstraints] = useState<CreateReceiptValidationConstraints>()
     const aiTransactionDetailsDialog: DialogShowingController = GetShowingController()
 
     useEffect(() => {
         if (props.creatingController.openDialogStatus) {
             const fetchCreateReceiptDetails = async () => {
                 const response = await getCreateReceiptDetails();
+                const validators = await getValidators<CreateReceiptValidationConstraints>(['RECEIPT']);
+
                 props.setCreateReceiptDetails(response);
+                setCreateReceiptConstraints(validators);
             };
 
             if (props.editedReceipt) {
@@ -88,10 +93,10 @@ export default function FirstStepDialog(props: Props) {
         if (!props.firstStepFormState.shopName) {
             props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_EMPTY);
             isValid = false;
-        } else if (validateLength(props.firstStepFormState.shopName, 1)) {
+        } else if (props.firstStepFormState.shopName.length < createReceiptConstraints!.receipt.shopNameMinLength) {
             props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_SHORT);
             isValid = false;
-        } else if (!validateLength(props.firstStepFormState.shopName, 64)) {
+        } else if (props.firstStepFormState.shopName.length > createReceiptConstraints!.receipt.shopNameMaxLength) {
             props.firstStepFormState.setShopNameError(CreateReceiptDetailMessage.SHOP_NAME_TOO_LONG);
             isValid = false;
         }

@@ -10,10 +10,12 @@ import {DialogShowingController, GetShowingController} from "../../controllers/D
 import ChangeHouseholdNameDialog from "./components/dialogs/ChangeHouseholdNameDialog";
 import {deleteHouseholdRequest, leaveHousehold} from "./api/HouseholdService";
 import ConfirmationDialog from "./components/base/ConfirmationDialog";
+import {CreateHouseholdValidationConstraints} from "../../validator/ValidationModel";
 
 interface HouseholdDashboardData extends HouseholdReloadKeyProps {
     householdMembers: HouseholdMember[],
     householdInviteMembers: HouseholdInvitedMember[]
+    householdValidationConstraints: CreateHouseholdValidationConstraints
 }
 
 export default function HouseholdDashboard(data: HouseholdDashboardData) {
@@ -43,7 +45,10 @@ export default function HouseholdDashboard(data: HouseholdDashboardData) {
                               reloadTable={data.reloadTable}></InvitedUserTable>
 
             <InviteUserDialog reloadTable={data.reloadTable} {...inviteUserDialogController}></InviteUserDialog>
-            <ChangeHouseholdNameDialog {...changeHouseholdNameDialogController}></ChangeHouseholdNameDialog>
+            <ChangeHouseholdNameDialog
+                householdValidationConstraints={data.householdValidationConstraints}
+                {...changeHouseholdNameDialogController}
+            />
 
             {/*Dialog do opuszczania gospodarstwa*/}
             <ConfirmationDialog

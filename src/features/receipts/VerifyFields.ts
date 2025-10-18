@@ -1,12 +1,13 @@
 import {CreateReceiptItemMessage} from "@/features/receipts/api/ReceiptMessages";
 import {ReceiptItem} from "@/features/receipts/api/ReceiptModel";
+import {ReceiptItemValidationConstraints} from "@/validator/ValidationModel";
 
-export function verifyFields(receiptItem: ReceiptItem): string {
+export function verifyFields(validationConstraints: ReceiptItemValidationConstraints, receiptItem: ReceiptItem): string {
     if (receiptItem.productName === '') {
         return CreateReceiptItemMessage.PRODUCT_NAME_EMPTY;
-    } else if (receiptItem.productName.length <= 1) {
+    } else if (receiptItem.productName.length <= validationConstraints.productNameMinLength) {
         return CreateReceiptItemMessage.PRODUCT_NAME_TOO_SHORT;
-    } else if (receiptItem.productName.length > 64) {
+    } else if (receiptItem.productName.length > validationConstraints.productNameMaxLength) {
         return CreateReceiptItemMessage.PRODUCT_NAME_TOO_LONG;
     }
 

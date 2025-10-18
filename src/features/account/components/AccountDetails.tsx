@@ -10,20 +10,21 @@ import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import CustomDialog from "../../../components/CustomDialog";
+import {SignUpValidationConstraints} from "../../../validator/ValidationModel";
 
-export function AccountDetails(): React.JSX.Element {
+export function AccountDetails(validators: SignUpValidationConstraints): React.JSX.Element {
     const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
 
     return (
         <Grid container spacing={4}>
             <Grid size={12}>
-                <ChangeEmailForm></ChangeEmailForm>
+                <ChangeEmailForm {...validators.email}></ChangeEmailForm>
             </Grid>
             <Grid size={12}>
-                <ChangePasswordForm></ChangePasswordForm>
+                <ChangePasswordForm {...validators.password}></ChangePasswordForm>
             </Grid>
             <Grid size={12}>
-                <ChangeNicknameForm></ChangeNicknameForm>
+                <ChangeNicknameForm {...validators.username}></ChangeNicknameForm>
             </Grid>
             <Grid size={12}>
                 <Card sx={{border: '1px solid red'}}>

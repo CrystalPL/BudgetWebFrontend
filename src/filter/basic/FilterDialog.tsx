@@ -104,8 +104,8 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
 
                     <RenderOperatorField
                         operator={temporaryValues.operatorProp.value ?? filterForColumnType[props.columnType][0]}
-                                         setOperator={(operator: FilterOperator) => temporaryValues.operatorProp.setValue(operator)}
-                                         columnType={props.columnType}/>
+                        setOperator={(operator: FilterOperator) => temporaryValues.operatorProp.setValue(operator)}
+                        columnType={props.columnType}/>
 
                     <Box sx={{mt: 1}}>
                         <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}

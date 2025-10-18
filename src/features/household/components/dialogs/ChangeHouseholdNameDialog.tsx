@@ -9,8 +9,13 @@ import {ChangeHouseholdNameMessage} from "../../api/HouseholdMessage";
 import {validateHouseholdName} from "../../HouseholdUtil";
 import {changeHouseholdName} from "../../api/HouseholdService";
 import {useSnackbarContext} from "../../../../context/SnackbarContext";
+import {CreateHouseholdValidationConstraints} from "../../../../validator/ValidationModel";
 
-export default function ChangeHouseholdNameDialog({openDialogStatus: open, closeDialog}: DialogShowingController) {
+interface ChangeHouseholdNameDialogProps extends DialogShowingController {
+    householdValidationConstraints: CreateHouseholdValidationConstraints
+}
+
+export default function ChangeHouseholdNameDialog(props: ChangeHouseholdNameDialogProps) {
     const [householdName, setHouseholdName] = useState("");
     const [householdError, setHouseholdError] = useState<string>("")
     const snackbarController = useSnackbarContext();
@@ -20,17 +25,17 @@ export default function ChangeHouseholdNameDialog({openDialogStatus: open, close
         errorState: [householdError, setHouseholdError],
         label: 'Nazwa gospodarstwa',
         name: 'householdName',
-        validateFunction: () => validateHouseholdName(householdName)
+        validateFunction: () => validateHouseholdName(props.householdValidationConstraints.household, householdName)
     };
 
     const handleClose = () => {
-        closeDialog()
+        props.closeDialog()
         setHouseholdError("")
         setHouseholdName("")
     }
 
     const handleChangeName = async () => {
-        setHouseholdError(validateHouseholdName(householdName))
+        setHouseholdError(validateHouseholdName(props.householdValidationConstraints.household, householdName))
         if (householdError !== '') {
             return
         }
@@ -49,7 +54,7 @@ export default function ChangeHouseholdNameDialog({openDialogStatus: open, close
 
     return (
         <CustomDialog
-            open={open}
+            open={props.openDialogStatus}
             onClose={handleClose}
             title="Zmień nazwę gospodarstwa"
             content={<Box mt={1}><CustomFormControl {...householdNameProps} /></Box>}

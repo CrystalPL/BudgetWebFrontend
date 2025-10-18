@@ -9,8 +9,9 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import BasicForm from "./BasicForm";
 import {CustomFormControl, CustomFormControlProps} from "../../../../components/CustomFormControl";
 import {useSnackbarContext} from "../../../../context/SnackbarContext";
+import {EmailValidationConstraints} from "../../../../validator/ValidationModel";
 
-export default function ChangeEmailForm() {
+export default function ChangeEmailForm(emailConstraints: EmailValidationConstraints) {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
 
@@ -71,7 +72,7 @@ export default function ChangeEmailForm() {
             return ChangeEmailMessage.MISSING_EMAIL
         }
 
-        if (!validateEmailFormat(email)) {
+        if (!validateEmailFormat(emailConstraints, email)) {
             return ChangeEmailMessage.INVALID_EMAIL
         }
 
@@ -91,7 +92,7 @@ export default function ChangeEmailForm() {
             return ChangeEmailMessage.MISSING_EMAIL
         }
 
-        if (!validateEmailFormat(confirmEmail)) {
+        if (!validateEmailFormat(emailConstraints, confirmEmail)) {
             return ChangeEmailMessage.INVALID_EMAIL
         }
 
