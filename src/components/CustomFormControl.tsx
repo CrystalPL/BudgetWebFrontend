@@ -1,8 +1,7 @@
 import * as React from "react";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import {FormHelperText, Typography} from "@mui/material";
+import {FormHelperText, OutlinedInput, Typography} from "@mui/material";
 import {ErrorOutline} from "@mui/icons-material";
 
 export interface CustomFormControlProps {
@@ -42,6 +41,8 @@ export function CustomFormControl(props: CustomFormControlProps) {
             }}
         >{props.label}</InputLabel>
         <OutlinedInput
+            autoComplete="off"
+            type={props.type}
             label={<Typography>{props.label} + {""}</Typography>}
             name={props.name}
             value={value}

@@ -7,8 +7,9 @@ import {changeNickname} from "../../api/AccountService";
 import {useAvatarContext} from "../../../../context/AccountHeaderInfo";
 import {CustomFormControl, CustomFormControlProps} from "../../../../components/CustomFormControl";
 import {useSnackbarContext} from "../../../../context/SnackbarContext";
+import {UsernameValidationConstraints} from "../../../../validator/ValidationModel";
 
-export default function ChangeNicknameForm() {
+export default function ChangeNicknameForm(usernameConstraints: UsernameValidationConstraints) {
     const [nickname, setNickname] = useState('');
     const [nicknameError, setNicknameError] = useState('');
     const avatarContext = useAvatarContext();
@@ -38,7 +39,7 @@ export default function ChangeNicknameForm() {
             return ChangeNicknameMessage.MISSING_USERNAME
         }
 
-        if (nickname.length > 64) {
+        if (nickname.length > usernameConstraints.usernameMaxLength) {
             return ChangeNicknameMessage.TOO_LONG_USERNAME
         }
 

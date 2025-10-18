@@ -17,6 +17,7 @@ import * as React from "react";
 import {useState} from "react";
 import {Category, GetProductListResponse, ReceiptItem, UserWhoPaid} from "../api/ReceiptModel";
 import EditableProductRow from "./EditableProductRow";
+import {CreateReceiptItemValidationConstraints} from "../../../validator/ValidationModel";
 
 interface Props {
     items: ReceiptItem[];
@@ -24,6 +25,7 @@ interface Props {
     productList: GetProductListResponse[]
     categoryList: Category[]
     users: UserWhoPaid[]
+    receiptItemConstraints: CreateReceiptItemValidationConstraints | undefined
 }
 
 export default function ReceiptProductsTable(props: Props) {
@@ -88,7 +90,9 @@ export default function ReceiptProductsTable(props: Props) {
                                                                 setItems={props.setItems}
                                                                 items={props.items} productList={props.productList}
                                                                 categoryList={props.categoryList}
-                                                                users={props.users}></EditableProductRow>
+                                                                users={props.users}
+                                                                receiptItemConstraints={props.receiptItemConstraints}
+                                            />
                                         ) : (
                                             <>
                                                 <TableCell

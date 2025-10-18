@@ -1,16 +1,16 @@
 import {CreateHouseholdMessage} from "@/features/household/api/HouseholdMessage";
-import {validateLength} from "@/features/auth/util/DataValidator";
+import {HouseholdValidationConstraints} from "@/validator/ValidationModel";
 
-export function validateHouseholdName(name: string) {
+export function validateHouseholdName(constraints: HouseholdValidationConstraints, name: string) {
     if (!name || name.trim() === '') {
         return CreateHouseholdMessage.NAME_NOT_EXISTS
     }
 
-    if (!validateLength(name, 65)) {
+    if (name.length > constraints.householdNameMaxLength) {
         return CreateHouseholdMessage.NAME_TOO_LONG
     }
 
-    if (validateLength(name, 1)) {
+    if (name.length < constraints.householdNameMinLength) {
         return CreateHouseholdMessage.NAME_TOO_SHORT
     }
 

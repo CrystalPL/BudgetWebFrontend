@@ -5,6 +5,7 @@ import * as React from "react";
 import {Category, GetProductListResponse, ReceiptItem, UserWhoPaid} from "../api/ReceiptModel";
 import {useSnackbarContext} from "../../../context/SnackbarContext";
 import {verifyFields} from "../VerifyFields";
+import {CreateReceiptItemValidationConstraints} from "../../../validator/ValidationModel";
 
 interface Props {
     editedItem: ReceiptItem | null
@@ -16,6 +17,7 @@ interface Props {
     productList: GetProductListResponse[]
     categoryList: Category[]
     users: UserWhoPaid[]
+    receiptItemConstraints: CreateReceiptItemValidationConstraints | undefined
 }
 
 export default function EditableProductRow(props: Props) {
@@ -36,7 +38,7 @@ export default function EditableProductRow(props: Props) {
 
     const saveEditing = () => {
         if (props.editingIndex !== null && props.editedItem) {
-            const error = verifyFields(props.editedItem);
+            const error = verifyFields(props.receiptItemConstraints!.receiptItem, props.editedItem);
             if (error !== "") {
                 showSnackbar(error)
                 return

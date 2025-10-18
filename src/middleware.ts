@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
             url.pathname = '/sign-in';
             const response = NextResponse.redirect(url);
             response.headers.set('Set-Cookie', `redirectPath=${request.nextUrl.pathname}; Path=/;`);
-            return NextResponse.redirect(url);
+            return response;
         default:
             console.error('Wystąpił błąd podczas weryfikacji: ', hasAccess);
             return NextResponse.error();

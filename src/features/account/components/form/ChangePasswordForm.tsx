@@ -10,8 +10,9 @@ import {ResponseAPI} from "../../../../service/ResponseAPI";
 import {changePassword} from "../../api/AccountService";
 import {CustomFormControl, CustomFormControlProps} from "../../../../components/CustomFormControl";
 import {useSnackbarContext} from "../../../../context/SnackbarContext";
+import {PasswordValidationConstraints} from "../../../../validator/ValidationModel";
 
-export default function ChangePasswordForm() {
+export default function ChangePasswordForm(passwordConstraints: PasswordValidationConstraints) {
     const [oldPassword, setOldPassword] = useState('');
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [oldPasswordError, setOldPasswordError] = useState('');
@@ -104,7 +105,7 @@ export default function ChangePasswordForm() {
             return ChangePasswordMessage.MISSING_PASSWORD
         }
 
-        const validatePasswordResult: PasswordValidationMessage = validatePassword(newPassword)
+        const validatePasswordResult: PasswordValidationMessage = validatePassword(passwordConstraints, newPassword)
         if (validatePasswordResult !== PasswordValidationMessage.OK) {
             return validatePasswordResult
         }

@@ -1,16 +1,7 @@
 import React from 'react';
-import {
-    ListItemText,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Typography
-} from '@mui/material';
+import {ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const LoginHistory = () => {
     const rows = [

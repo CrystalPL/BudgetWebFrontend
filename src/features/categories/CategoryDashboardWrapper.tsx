@@ -3,9 +3,11 @@ import {useEffect, useState} from "react";
 import CategoryDashboard from "./CategoryDashboard";
 import {Category} from "./api/CategoryModel";
 import {getCategories} from "./api/CategoryService";
+import {CreateCategoryValidationConstraints} from "../../validator/ValidationModel";
 
 interface Props {
     categories: Category[]
+    categoryConstraints: CreateCategoryValidationConstraints
 }
 
 export default function CategoryDashboardWrapper(props: Props) {
@@ -26,5 +28,11 @@ export default function CategoryDashboardWrapper(props: Props) {
         }
     }, [reloadKey]);
 
-    return <CategoryDashboard categories={categories} reloadTable={reloadTable}></CategoryDashboard>
+    return (
+        <CategoryDashboard
+            categories={categories}
+            reloadTable={reloadTable}
+            categoryConstraints={props.categoryConstraints.category}
+        />
+    )
 }

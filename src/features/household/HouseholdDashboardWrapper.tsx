@@ -5,19 +5,18 @@ import {HouseholdInvitedMember, HouseholdMember} from "./api/HouseholdModel";
 import HouseholdDashboard from "./HouseholdDashboard";
 import HouseholdNotExists from "./components/HouseholdCreatingComponent";
 import {getInvitedMembers, getMembers} from "./api/HouseholdService";
+import {CreateHouseholdValidationConstraints} from "../../validator/ValidationModel";
 
 interface Props {
     initialMembers: HouseholdMember[]
     initialInvitedMembers: HouseholdInvitedMember[]
+    householdValidationConstraints: CreateHouseholdValidationConstraints
 }
 
-export default function HouseholdDashboardWrapper({
-                                                      initialMembers,
-                                                      initialInvitedMembers,
-                                                  }: Props) {
+export default function HouseholdDashboardWrapper(props: Props) {
     const [reloadKey, setReloadKey] = useState(0)
-    const [members, setMembers] = useState(initialMembers)
-    const [invitedMembers, setInvitedMembers] = useState(initialInvitedMembers)
+    const [members, setMembers] = useState(props.initialMembers)
+    const [invitedMembers, setInvitedMembers] = useState(props.initialInvitedMembers)
 
     const reloadTable = () => {
         setReloadKey(prev => prev + 1)
@@ -35,13 +34,21 @@ export default function HouseholdDashboardWrapper({
 
     }, [reloadKey])
 
-    return members.length !== 0 ? (
+    if (members.length === 0) {
+        return (
+            <HouseholdNotExists
+                householdValidationConstraints={props.householdValidationConstraints}
+                reloadTable={reloadTable}
+            />
+        )
+    }
+
+    return (
         <HouseholdDashboard
             householdMembers={members}
             householdInviteMembers={invitedMembers}
             reloadTable={reloadTable}
+            householdValidationConstraints={props.householdValidationConstraints}
         />
-    ) : (
-        <HouseholdNotExists reloadTable={reloadTable}/>
     )
 }

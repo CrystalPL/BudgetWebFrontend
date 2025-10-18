@@ -8,17 +8,37 @@ import {useSnackbarContext} from "../../../context/SnackbarContext";
 import Stack from "@mui/material/Stack";
 import {MuiColorInput} from "mui-color-input";
 import {createCategory} from "../api/CategoryService";
+import {CategoryValidationConstraints} from "../../../validator/ValidationModel";
+import {CreateCategoryResponseMessage} from "../api/CategoryMessages";
 
 interface CreateCategoryProps extends DialogShowingController, HouseholdReloadKeyProps {
+    categoryConstraints: CategoryValidationConstraints
 }
 
-export default function CreateCategoryDialog({openDialogStatus: open, closeDialog, reloadTable}: CreateCategoryProps) {
+export default function CreateCategoryDialog({
+                                                 openDialogStatus: open,
+                                                 closeDialog,
+                                                 reloadTable,
+                                                 categoryConstraints
+                                             }: CreateCategoryProps) {
     const [categoryName, setCategoryName] = useState("");
     const [categoryNameError, setCategoryNameError] = useState<string>("")
     const [colorPickerValue, setColorPickerValue] = React.useState('#ffffff')
     const snackbarController = useSnackbarContext();
 
     const validateCategoryName = () => {
+        if (categoryName === "") {
+            return CreateCategoryResponseMessage.MISSING_NAME
+        }
+
+        if (categoryName.length < categoryConstraints.categoryNameMinLength) {
+            return CreateCategoryResponseMessage.NAME_TOO_SHORT.replace("{MIN_LENGTH}", categoryConstraints.categoryNameMinLength.toString())
+        }
+
+        if (categoryName.length > categoryConstraints.categoryNameMaxLength) {
+            return CreateCategoryResponseMessage.NAME_TOO_LONG.replace("{MAX_LENGTH}", categoryConstraints.categoryNameMaxLength.toString())
+        }
+
         return ""
     }
 

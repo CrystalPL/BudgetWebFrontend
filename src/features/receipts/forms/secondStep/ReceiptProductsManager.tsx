@@ -23,6 +23,8 @@ import {SaveReceiptAdditionalMessage, SaveReceiptMessage} from "../../api/Receip
 import AIProductRecognitionDialog from "../../ai/AIProductRecognitionDialog";
 import {AILoaderProps} from "../../ai/AILoader";
 import CostSharingDialog from "../../cost-sharing/CostSharingDialog";
+import {CreateReceiptItemValidationConstraints} from "../../../../validator/ValidationModel";
+import {getValidators} from "../../../../validator/ValidationService";
 
 interface Props extends HouseholdReloadKeyProps {
     addItemController: DialogShowingController,
@@ -39,6 +41,7 @@ export default function ReceiptProductsManager(props: Props) {
     const [productList, setProductList] = useState<GetProductListResponse[]>([])
     const getProductsByAIController: DialogShowingController = GetShowingController()
     const [aiProcessing, setAiProcessing] = useState(false);
+    const [receiptItemConstraints, setReceiptItemConstraints] = useState<CreateReceiptItemValidationConstraints>()
     const snackbarController = useSnackbarContext();
     const costSharingDialogController: DialogShowingController = GetShowingController()
 
@@ -54,6 +57,9 @@ export default function ReceiptProductsManager(props: Props) {
                 if (props.editedReceipt !== null && items.length == 0) {
                     setItems(await getReceiptItems(props.editedReceipt.id));
                 }
+
+                const validators = await getValidators<CreateReceiptItemValidationConstraints>(['RECEIPT_ITEM']);
+                setReceiptItemConstraints(validators)
             };
 
             fetchDetails();
@@ -141,14 +147,20 @@ export default function ReceiptProductsManager(props: Props) {
                                            userWhoPaid={props.userWhoPaid} addItem={addItem}
                                            addItemController={props.addItemController} aiProcessing={aiProcessing}
                                            setAiProcessing={setAiProcessing} aiLoader={props.aiLoader}
-                                           aiProductRecognitionDialogController={getProductsByAIController}></CreateReceiptItemForm>
+                                           aiProductRecognitionDialogController={getProductsByAIController}
+                                           receiptItemConstraints={receiptItemConstraints}
+                    />
 
                     {/* Divider for mobile */}
                     <Divider sx={{display: {xs: "block", lg: "none"}, my: 2}}/>
 
                     {/* Right column - Table */}
-                    <ReceiptProductsTable setItems={setItems} items={items} productList={productList}
-                                          categoryList={categoryList} users={props.userWhoPaid}></ReceiptProductsTable>
+                    <ReceiptProductsTable setItems={setItems} items={items}
+                                          productList={productList}
+                                          categoryList={categoryList}
+                                          users={props.userWhoPaid}
+                                          receiptItemConstraints={receiptItemConstraints}
+                    />
                 </Box>
 
                 {/* Footer */}
