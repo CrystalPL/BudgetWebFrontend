@@ -23,7 +23,7 @@ function RenderInputValue(props: RenderInputValueProps) {
             <RenderInput<any>
                 field={props.condition.field}
                 loading={props.loading}
-                value={props.condition.value}
+                value={props.condition[props.field]}
                 setValue={value => updateField(props, {[props.field]: value})}
                 items={props.items}
                 functionToLoadItems={props.functionToLoadItems}
