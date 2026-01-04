@@ -8,7 +8,8 @@ import {
     Receipt,
     ReceiptItem,
     SaveReceiptRequest,
-    SuggestCategoryResponse
+    SuggestCategoryResponse,
+    UserWhoPaid
 } from "@/features/receipts/api/ReceiptModel";
 import {
     DeleteReceiptMessage,
@@ -84,4 +85,10 @@ export async function uploadFotoToAI(formData: FormData): Promise<ResponseAPI<Up
             'Content-Type': 'multipart/form-data'
         }
     });
+}
+
+export async function getWhoPaidList() {
+    const response = await axios.get<UserWhoPaid[]>(API_URL + `/receipts/whoPaidList`, {withCredentials: true,})
+
+    return response.data
 }

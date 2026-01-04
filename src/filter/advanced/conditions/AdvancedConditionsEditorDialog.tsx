@@ -36,6 +36,7 @@ export default function AdvancedConditionsEditorDialog(props: AdvancedConditions
         <Dialog
             open={props.openDialogStatus}
             onClose={() => {
+                props.editedFilterProps.setValue(null)
                 setConditionGroup([])
                 props.closeDialog()
             }}

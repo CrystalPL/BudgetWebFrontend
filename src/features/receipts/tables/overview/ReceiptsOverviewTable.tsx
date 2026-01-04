@@ -1,17 +1,26 @@
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from "@mui/material";
+import {
+    Button,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow
+} from "@mui/material";
 import TableColumn, {OrderType} from "../../../household/components/base/TableColumn";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {HouseholdReloadKeyProps} from "../../../household/api/HouseholdModel";
 import {DialogShowingController, GetShowingController} from "../../../../controllers/DialogShowingController";
 import ConfirmationDialog from "../../../household/components/base/ConfirmationDialog";
-import {deleteReceipt} from "../../api/ReceiptService";
+import {deleteReceipt, getWhoPaidList} from "../../api/ReceiptService";
 import {Receipt, UserWhoPaid} from "../../api/ReceiptModel";
 import ReceiptTableItem from "./TableItem";
 import {StateProp, useStateProp} from "../../../../filter/StateProp";
 import {FilterValue, GetFilter} from "../../../../filter/FilterModel";
 import AdvancedFilterMainDialog from "../../../../filter/advanced/main/AdvancedFilterMainDialog";
-import Button from "@mui/material/Button";
 
 import {AdvancedField} from "../../../../filter/advanced/api/AdvancedFilterModel";
 import {AutocompleteItem} from "../../../../filter/advanced/filter-editor/condition-line/components/RenderInput";
@@ -84,7 +93,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
             columnDataType: 'autocomplete',
             columnName: 'whoPaid',
             columnLabel: "Kto zapłacił",
-            functionToGetSelectItems: async () => [],
+            functionToGetSelectItems: getWhoPaidList,
             functionToMapItem: (item: UserWhoPaid): AutocompleteItem<any> => ({
                 value: item.userId,
                 renderAs: item.userName

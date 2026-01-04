@@ -115,7 +115,6 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
 }
 
 export function updateField(props: RenderConditionLineProps, updates: Partial<Condition>) {
-    console.log(props.conditionGroupsState.value[0])
     const conditionFacade: ConditionFacade = new ConditionFacade();
     conditionFacade.updateCondition(props.conditionGroupsState, props.conditionGroupIndex, props.conditionIndex, updates)
 }
