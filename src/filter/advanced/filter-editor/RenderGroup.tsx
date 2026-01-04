@@ -37,16 +37,7 @@ export const RenderGroup = memo(function RenderGroup(props: RenderGroupProps) {
             ))}
         </Paper>
     )
-}, (prevProps, nextProps) => {
-    return (
-        prevProps.conditionGroupIndex === nextProps.conditionGroupIndex &&
-        prevProps.conditionGroup === nextProps.conditionGroup &&
-        prevProps.loading === nextProps.loading &&
-        prevProps.fields === nextProps.fields &&
-        prevProps.allItems === nextProps.allItems
-    );
 });
-
 
 function GroupHeader(props: RenderGroupProps) {
     const createCondition = () => {

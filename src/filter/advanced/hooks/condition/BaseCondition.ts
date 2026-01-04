@@ -9,15 +9,15 @@ export abstract class BaseCondition {
     }
 
     updateValue() {
-        const updatedGroups = this.conditionGroupsState.value.map((conditionGroup, conditionGroupIndex) => {
-            if (conditionGroupIndex !== this.conditionGroupIndex) {
-                return conditionGroup
-            }
+        this.conditionGroupsState.setValue(prevGroups => {
+            return prevGroups.map((conditionGroup, index) => {
+                if (index !== this.conditionGroupIndex) {
+                    return conditionGroup;
+                }
 
-            return this.getUpdatedConditionGroups(conditionGroup)
+                return this.getUpdatedConditionGroups(conditionGroup);
+            });
         });
-
-        this.conditionGroupsState.setValue(updatedGroups);
     }
 
     protected abstract getUpdatedConditionGroups(group: ConditionGroup): ConditionGroup;

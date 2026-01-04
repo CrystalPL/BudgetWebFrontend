@@ -5,8 +5,13 @@ import {AdvancedConditionsEditorDialogProps} from "@/filter/advanced/conditions/
 import {ConditionGroup, SaveFilterConditionRequest} from "@/filter/advanced/api/AdvancedFilterModel";
 import {saveFilterConditionRequest} from "@/filter/advanced/api/AdvancedFilterAPIService";
 import {useSnackbarContext} from "@/context/SnackbarContext";
+import {StateProp} from "@/filter/StateProp";
 
-export function AdvancedConditionsEditorFooter(props: AdvancedConditionsEditorDialogProps) {
+interface AdvancedConditionsEditorFooterProps extends AdvancedConditionsEditorDialogProps {
+    conditionGroupProp: StateProp<ConditionGroup[]>
+}
+
+export function AdvancedConditionsEditorFooter(props: AdvancedConditionsEditorFooterProps) {
     const snackbarController = useSnackbarContext();
 
     const cancel = () => {

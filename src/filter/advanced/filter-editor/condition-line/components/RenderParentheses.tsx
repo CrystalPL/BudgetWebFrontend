@@ -16,6 +16,7 @@ export function RenderParentheses(props: RenderParenthesesProps) {
         <TextField
             sx={{
                 maxWidth: "100px",
+                minWidth: "80px",
                 "& .MuiOutlinedInput-root": {
                     p: 0,
                     "& fieldset": {

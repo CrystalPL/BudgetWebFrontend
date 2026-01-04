@@ -3,12 +3,12 @@ import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from '@mui/
 import {Add as AddIcon, FilterList as FilterListIcon} from '@mui/icons-material';
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
 import AdvancedFilterEditorDialog from "../AdvancedFilterEditorDialog";
-import {AdvancedField, AdvancedFilter, AdvancedFilterEntityType, ConditionGroup} from "../api/AdvancedFilterModel";
+import {AdvancedField, AdvancedFilter, AdvancedFilterEntityType} from "../api/AdvancedFilterModel";
 import {StateProp, useStateProp} from "../../StateProp";
 import {GetFilters} from "./AdvancedFilterListGetter";
 import AdvancedFilterDuplicateDialog from "../AdvancedFilterDuplicateDialog";
 import AdvancedConditionsEditorDialog from "../conditions/AdvancedConditionsEditorDialog";
-import {getAdvancedFilters, getConditionGroups} from "../api/AdvancedFilterAPIService";
+import {getAdvancedFilters} from "../api/AdvancedFilterAPIService";
 
 interface AdvancedFilterListDialogProps {
     dialogController: DialogShowingController
@@ -23,23 +23,10 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
 
     const [reloadKey, setReloadKey] = useState(0)
     const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>([])
-    const [conditionGroup, setConditionGroup] = useState<ConditionGroup[]>([])
     const editedFilterProps: StateProp<AdvancedFilter | null> = useStateProp<AdvancedFilter>();
     const reloadTable = () => {
         setReloadKey(reloadKey + 1);
     }
-
-    console.log("dziwny refresz")
-
-    useEffect(() => {
-        async function fetchConditions() {
-            if (editConditionsFilterController.openDialogStatus) {
-                setConditionGroup(await getConditionGroups(editedFilterProps.value?.id ?? 0, props.fields))
-            }
-        }
-
-        fetchConditions()
-    }, [editConditionsFilterController.openDialogStatus]);
 
     useEffect(() => {
         async function fetchFiltersByReloadKey() {
@@ -119,10 +106,7 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
             editedFilterProps={editedFilterProps}
             {...editConditionsFilterController}
             reloadTable={reloadTable}
-            conditionGroupProp={{
-                value: conditionGroup,
-                setValue: setConditionGroup
-            }}
+
         />
     </>)
 }

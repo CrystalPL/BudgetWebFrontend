@@ -92,8 +92,8 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                     Filtrowanie: {props.columnName}
                 </Typography>
 
-                <Box sx={{mt: 2}}>
-                    <FormControlLabel label="Filtr aktywny" control={
+                <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+                    <FormControlLabel sx={{ml: 0}} label="Filtr aktywny" control={
                         <Switch
                             checked={temporaryValues.activeProp.value}
                             onChange={(e) => temporaryValues.activeProp.setValue(e.target.checked)}
@@ -107,7 +107,7 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                         setOperator={(operator: FilterOperator) => temporaryValues.operatorProp.setValue(operator)}
                         columnType={props.columnType}/>
 
-                    <Box sx={{mt: 1}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
                         <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}
                                      columnType={props.columnType}
                                      availableBooleanOptions={props.availableBooleanOptions}/>

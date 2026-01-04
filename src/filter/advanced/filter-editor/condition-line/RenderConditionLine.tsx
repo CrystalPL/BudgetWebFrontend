@@ -31,4 +31,18 @@ export const RenderConditionLine = memo(function RenderConditionLine(props: Rend
             <RenderConditionDelete {...props}/>
         </Box>
     )
+}, (prev, next) => {
+    if (prev === next) {
+        return true;
+    }
+
+    const isConditionSame = JSON.stringify(prev.condition) === JSON.stringify(next.condition);
+
+    const isItemsSame = prev.items === next.items ||
+        (prev.items.length === next.items.length && JSON.stringify(prev.items) === JSON.stringify(next.items));
+
+    const isContextSame = prev.loading === next.loading &&
+        prev.conditionIndex === next.conditionIndex;
+
+    return isConditionSame && isItemsSame && isContextSame;
 });

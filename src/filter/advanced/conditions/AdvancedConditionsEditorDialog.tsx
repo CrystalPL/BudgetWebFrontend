@@ -6,19 +6,37 @@ import {AdvancedField, AdvancedFilter, ConditionGroup} from "../api/AdvancedFilt
 import {AdvancedConditionsEditorHeader} from "./AdvancedConditionsEditorHeader";
 import AdvancedConditionsEditorContent from "./AdvancedConditionsEditorContent";
 import * as React from "react";
+import {useEffect, useState} from "react";
+import {getConditionGroups} from "@/filter/advanced/api/AdvancedFilterAPIService";
 
 export interface AdvancedConditionsEditorDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
     fields: AdvancedField<any>[];
-    conditionGroupProp: StateProp<ConditionGroup[]>
 }
 
 export default function AdvancedConditionsEditorDialog(props: AdvancedConditionsEditorDialogProps) {
+    const [conditionGroup, setConditionGroup] = useState<ConditionGroup[]>([])
+
+    useEffect(() => {
+        async function fetchConditions() {
+            if (props.openDialogStatus) {
+                setConditionGroup(await getConditionGroups(props.editedFilterProps.value?.id ?? 0, props.fields))
+            }
+        }
+
+        fetchConditions()
+    }, [props.openDialogStatus]);
+
+    const conditionGroupProp: StateProp<ConditionGroup[]> = {
+        value: conditionGroup,
+        setValue: setConditionGroup
+    }
+
     return (
         <Dialog
             open={props.openDialogStatus}
             onClose={() => {
-                props.conditionGroupProp.setValue([])
+                setConditionGroup([])
                 props.closeDialog()
             }}
             maxWidth="lg"
@@ -35,8 +53,8 @@ export default function AdvancedConditionsEditorDialog(props: AdvancedConditions
             }}
         >
             <AdvancedConditionsEditorHeader editedFilterProps={props.editedFilterProps}
-                                            conditionGroupProp={props.conditionGroupProp}/>
-            <AdvancedConditionsEditorContent {...props} conditionGroupProp={props.conditionGroupProp}/>
+                                            conditionGroupProp={conditionGroupProp}/>
+            <AdvancedConditionsEditorContent {...props} conditionGroupProp={conditionGroupProp}/>
         </Dialog>
     )
 }
