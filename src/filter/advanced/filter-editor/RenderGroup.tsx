@@ -6,6 +6,7 @@ import {AutocompleteItem} from "@/filter/advanced/filter-editor/condition-line/c
 import {alpha, Box, Button, Paper} from "@mui/material";
 import {RenderConditionLine} from "@/filter/advanced/filter-editor/condition-line/RenderConditionLine";
 import {ConditionFacade} from "@/filter/advanced/hooks/condition/ConditionFacade";
+import {memo} from "react";
 
 export interface RenderGroupProps {
     conditionGroup: ConditionGroup
@@ -17,7 +18,7 @@ export interface RenderGroupProps {
     allItems: Record<string, AutocompleteItem<any>[]>
 }
 
-export function RenderGroup(props: RenderGroupProps) {
+export const RenderGroup = memo(function RenderGroup(props: RenderGroupProps) {
     return (
         <Paper sx={{p: 2, border: '2px dashed #e0e0e0', minWidth: '100%', width: 'fit-content'}}>
             <GroupHeader {...props} />
@@ -36,7 +37,16 @@ export function RenderGroup(props: RenderGroupProps) {
             ))}
         </Paper>
     )
-}
+}, (prevProps, nextProps) => {
+    return (
+        prevProps.conditionGroupIndex === nextProps.conditionGroupIndex &&
+        prevProps.conditionGroup === nextProps.conditionGroup &&
+        prevProps.loading === nextProps.loading &&
+        prevProps.fields === nextProps.fields &&
+        prevProps.allItems === nextProps.allItems
+    );
+});
+
 
 function GroupHeader(props: RenderGroupProps) {
     const createCondition = () => {

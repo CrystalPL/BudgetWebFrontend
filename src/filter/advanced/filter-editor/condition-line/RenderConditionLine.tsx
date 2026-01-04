@@ -9,9 +9,10 @@ import {
 } from "@/filter/advanced/filter-editor/condition-line/components";
 import {Box} from "@mui/material";
 import {RenderOperatorField} from "@/filter/OperatorFieldRendering";
+import {memo} from "react";
 
 
-export function RenderConditionLine(props: RenderConditionLineProps) {
+export const RenderConditionLine = memo(function RenderConditionLine(props: RenderConditionLineProps) {
     return (
         <Box display='flex' flexDirection="row" gap={1} mt={2}>
             <RenderLogicalOperatorField {...props}/>
@@ -30,4 +31,4 @@ export function RenderConditionLine(props: RenderConditionLineProps) {
             <RenderConditionDelete {...props}/>
         </Box>
     )
-}
+});

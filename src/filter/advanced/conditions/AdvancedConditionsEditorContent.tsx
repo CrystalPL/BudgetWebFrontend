@@ -2,7 +2,7 @@ import {Box, Button, DialogContent, Typography} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {AdvancedField, Condition, ConditionGroup, RenderConditionLineProps} from "../api/AdvancedFilterModel";
 import * as React from "react";
-import {useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {AutocompleteItem} from "@/filter/advanced/filter-editor/condition-line/components/RenderInput";
 import {ConditionFacade} from "@/filter/advanced/hooks/condition/ConditionFacade";
 import {RenderGroup} from "@/filter/advanced/filter-editor/RenderGroup";
@@ -22,7 +22,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
     const [loading, setLoading] = useState<boolean>(false);
     const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>({})
 
-    const fetchItemsByColumnName = (column: AdvancedField<any>) => {
+    const fetchItemsByColumnName = useCallback((column: AdvancedField<any>) => {
         const autocompleteValue: AutocompleteItem<any>[] = autocompleteValues[column.columnName];
         if (autocompleteValue) {
             return
@@ -37,11 +37,17 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
             }));
             setLoading(false);
         });
-    }
+    }, [autocompleteValues]);
 
-    const createGroup = () => {
+    const createGroup = useCallback(() => {
         props.conditionGroupProp.setValue(prev => [...prev, {id: 0, conditions: [], logicalOperatorBefore: "OR"}]);
-    };
+    }, [props.conditionGroupProp]);
+
+    // Zmemoizuj state object
+    const conditionGroupsState = useMemo(() => ({
+        value: props.conditionGroupProp.value,
+        setValue: props.conditionGroupProp.setValue
+    }), [props.conditionGroupProp.value, props.conditionGroupProp.setValue]);
 
     return (
         <DialogContent
@@ -85,10 +91,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                     return (
                         <React.Fragment key={conditionGroupIndex}>
                             <RenderLogicalOperatorBetweenConditionGroups
-                                conditionGroupsState={{
-                                    value: props.conditionGroupProp.value,
-                                    setValue: props.conditionGroupProp.setValue
-                                }}
+                                conditionGroupsState={conditionGroupsState}
                                 conditionGroupIndex={conditionGroupIndex}
                                 conditionGroup={group}
                             />
@@ -96,10 +99,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                                 conditionGroupIndex={conditionGroupIndex}
                                 conditionGroup={group}
                                 fields={props.fields}
-                                conditionGroupsState={{
-                                    value: props.conditionGroupProp.value,
-                                    setValue: props.conditionGroupProp.setValue
-                                }}
+                                conditionGroupsState={conditionGroupsState}
                                 loading={loading}
                                 fetchItemsByColumnName={fetchItemsByColumnName}
                                 allItems={autocompleteValues}
