@@ -18,7 +18,7 @@ export class ConditionCreator extends BaseCondition {
             id: 0,
             field: firstField,
             operator: filterForColumnType[firstField.columnDataType][0],
-            value: null
+            firstValue: null
         }
 
         return {

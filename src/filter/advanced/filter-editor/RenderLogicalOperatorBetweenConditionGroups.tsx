@@ -1,7 +1,8 @@
 import * as React from "react";
 import {Box, FormControl, MenuItem, Paper, Select, Typography} from "@mui/material";
 import {StateProp} from "@/filter/StateProp";
-import {ConditionGroup} from "@/filter/advanced/api/AdvancedFilterModel";
+import {ConditionGroup, LogicalOperator} from "@/filter/advanced/api/AdvancedFilterModel";
+import {ConditionFacade} from "@/filter/advanced/hooks/condition/ConditionFacade";
 
 export interface RenderLogicalOperatorBetweenConditionGroupsProps {
     conditionGroupsState: StateProp<ConditionGroup[]>
@@ -13,6 +14,13 @@ export function RenderLogicalOperatorBetweenConditionGroups(props: RenderLogical
     if (props.conditionGroupIndex == 0) {
         return <></>
     }
+
+    const handleUpdateLogicalOperator = (operator: LogicalOperator) => {
+        const conditionFacade = new ConditionFacade();
+        conditionFacade.updateGroup(props.conditionGroupsState, props.conditionGroupIndex, {
+            logicalOperatorBefore: operator
+        });
+    };
 
     return (
         <Box sx={{
@@ -29,7 +37,7 @@ export function RenderLogicalOperatorBetweenConditionGroups(props: RenderLogical
                     <FormControl size="small" sx={{minWidth: 100}}>
                         <Select
                             value={props.conditionGroup.logicalOperatorBefore}
-                            // onChange={(e) => handleUpdateGroupLogicalOperatorBefore(group.id, e.target.value as LogicalOperator)}
+                            onChange={(e) => handleUpdateLogicalOperator(e.target.value as LogicalOperator)}
                             variant="outlined"
                             sx={{fontSize: '0.875rem'}}
                         >

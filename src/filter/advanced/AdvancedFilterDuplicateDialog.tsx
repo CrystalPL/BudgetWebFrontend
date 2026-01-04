@@ -7,9 +7,9 @@ import {AdvancedFilter, DuplicateFilterRequest} from "./api/AdvancedFilterModel"
 import {StateProp} from "../StateProp";
 import Stack from "@mui/material/Stack";
 import {useSnackbarContext} from "../../context/SnackbarContext";
-import {createCategory} from "../../features/categories/api/CategoryService";
 import {CreateAdvancedFilterMessage} from "./api/AdvancedFilterMessages";
 import {FieldProps, useFieldProps} from "./hooks/FieldPropsHook";
+import {duplicateFilter} from "./api/AdvancedFilterAPIService";
 
 interface AdvancedFilterDuplicateDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
@@ -27,14 +27,13 @@ export default function AdvancedFilterDuplicateDialog(props: AdvancedFilterDupli
     const fieldProps: FieldProps = useFieldProps("Nazwa", "duplicateFilter", validateFilterName, '');
     const snackbarController = useSnackbarContext();
 
-    const duplicateFilter = async () => {
+    const runDuplicateFilter = async () => {
         const duplicateFilterRequest: DuplicateFilterRequest = {
-            baseFilter: props.editedFilterProps.value!,
-            newName: fieldProps.stateProp.value
+            id: props.editedFilterProps.value!.id,
+            name: fieldProps.stateProp.value
         }
 
-        // const response = await duplicateFilter(duplicateFilterRequest); TODO
-        const response = await createCategory("", "");
+        const response = await duplicateFilter(duplicateFilterRequest);
         if (!response.success) {
             fieldProps.errorStateProp.setValue(response.message)
             return
@@ -45,7 +44,7 @@ export default function AdvancedFilterDuplicateDialog(props: AdvancedFilterDupli
         snackbarController.setStatus('success')
         snackbarController.setOpenSnackbar(true)
 
-        props.reloadTable()
+        props.closeDialog()
     }
 
     const handleClose = () => {
@@ -68,7 +67,7 @@ export default function AdvancedFilterDuplicateDialog(props: AdvancedFilterDupli
                 </Stack>
             }
             confirmText="Utwórz"
-            confirmAction={duplicateFilter}
+            confirmAction={runDuplicateFilter}
         />
     )
 }

@@ -10,9 +10,9 @@ interface RenderInputValueProps extends RenderConditionLineProps {
 
 export function RenderValueField(props: RenderConditionLineProps) {
     return (<>
-        <RenderInputValue {...props} field='value'/>
-        {props.condition.operator === 'between' && (
-            <RenderInputValue {...props} field='value2'/>
+        <RenderInputValue {...props} field='firstValue'/>
+        {props.condition.operator === 'BETWEEN' && (
+            <RenderInputValue {...props} field='secondValue'/>
         )}
     </>)
 }

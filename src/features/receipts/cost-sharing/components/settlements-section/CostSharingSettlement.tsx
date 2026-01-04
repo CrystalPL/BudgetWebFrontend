@@ -33,7 +33,7 @@ export function CostSharingSettlement(props: CostSharingSettlementProps) {
                 p: 1,
                 "&:last-child": {pb: 2}
             }}>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box display="flex" alignItems="center" justifyContent="space-BETWEEN">
                     <AboutDebtor userDebt={props.userDebt} mainSectionProps={props.mainSectionProps}/>
                     <DebtValueAndProductCount userDebt={props.userDebt}/>
                 </Box>

@@ -12,9 +12,13 @@ import {
 import {RenderFilterLogicPreview} from "@/filter/advanced/filter-editor/RenderFilterLogicPreview";
 import {AdvancedConditionsEditorFooter} from "@/filter/advanced/conditions/AdvancedConditionsEditorFooter";
 import {AdvancedConditionsEditorDialogProps} from "@/filter/advanced/conditions/AdvancedConditionsEditorDialog";
+import {StateProp} from "@/filter/StateProp";
 
-export default function AdvancedConditionsEditorContent(props: AdvancedConditionsEditorDialogProps) {
-    const [conditionGroups, setConditionGroups] = useState<ConditionGroup[]>(props.editedFilterProps.value?.filter || []);
+interface AdvancedConditionsEditorContent extends AdvancedConditionsEditorDialogProps {
+    conditionGroupProp: StateProp<ConditionGroup[]>
+}
+
+export default function AdvancedConditionsEditorContent(props: AdvancedConditionsEditorContent) {
     const [loading, setLoading] = useState<boolean>(false);
     const [autocompleteValues, setAutocompleteValues] = useState<Record<string, AutocompleteItem<any>[]>>({})
 
@@ -36,7 +40,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
     }
 
     const createGroup = () => {
-        setConditionGroups(prev => [...prev, {id: 0, conditions: [], logicalOperatorBefore: "OR"}]);
+        props.conditionGroupProp.setValue(prev => [...prev, {id: 0, conditions: [], logicalOperatorBefore: "OR"}]);
     };
 
     return (
@@ -77,11 +81,14 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                     flexGrow: 1,
                 }}
             >
-                {conditionGroups.map((group, conditionGroupIndex) => {
+                {props.conditionGroupProp.value.map((group, conditionGroupIndex) => {
                     return (
                         <React.Fragment key={conditionGroupIndex}>
                             <RenderLogicalOperatorBetweenConditionGroups
-                                conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
+                                conditionGroupsState={{
+                                    value: props.conditionGroupProp.value,
+                                    setValue: props.conditionGroupProp.setValue
+                                }}
                                 conditionGroupIndex={conditionGroupIndex}
                                 conditionGroup={group}
                             />
@@ -89,7 +96,10 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                                 conditionGroupIndex={conditionGroupIndex}
                                 conditionGroup={group}
                                 fields={props.fields}
-                                conditionGroupsState={{value: conditionGroups, setValue: setConditionGroups}}
+                                conditionGroupsState={{
+                                    value: props.conditionGroupProp.value,
+                                    setValue: props.conditionGroupProp.setValue
+                                }}
                                 loading={loading}
                                 fetchItemsByColumnName={fetchItemsByColumnName}
                                 allItems={autocompleteValues}
@@ -98,7 +108,7 @@ export default function AdvancedConditionsEditorContent(props: AdvancedCondition
                     )
                 })}
             </Box>
-            <RenderFilterLogicPreview conditionGroups={conditionGroups}/>
+            <RenderFilterLogicPreview conditionGroups={props.conditionGroupProp.value}/>
             <AdvancedConditionsEditorFooter {...props}/>
         </DialogContent>
     )

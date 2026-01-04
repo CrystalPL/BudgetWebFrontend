@@ -1,7 +1,6 @@
 import {HouseholdReloadKeyProps} from "../../../features/household/api/HouseholdModel";
 import {AdvancedFilter} from "../api/AdvancedFilterModel";
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
-import {deleteReceipt} from "../../../features/receipts/api/ReceiptService";
 import React, {useState} from 'react';
 import {
     Box,
@@ -21,6 +20,7 @@ import {ContentCopy, Delete, MoreVert as MoreVertIcon, Settings} from '@mui/icon
 import ConfirmationDialog from "../../../features/household/components/base/ConfirmationDialog";
 import InfoIcon from "@mui/icons-material/Info";
 import {StateProp} from "../../StateProp";
+import {activateFilter, deleteFilter} from "../api/AdvancedFilterAPIService";
 
 interface FilterInfoProps extends HouseholdReloadKeyProps {
     allFilters: AdvancedFilter[]
@@ -36,7 +36,7 @@ export default function FilterInfo(props: FilterInfoProps) {
     const deleteFilterDialogController: DialogShowingController = GetShowingController();
 
     const handleActivateFilter = async () => {
-        // TODO REQUEST DO BAZY, WSZYSTKIE INNE FILTRY OZNACZA JAKO NIEAKTYWNE, A TEN JAKO AKTYWNY activateFilter()
+        await activateFilter(props.currentFilter.id)
         props.reloadTable()
     }
 
@@ -44,24 +44,6 @@ export default function FilterInfo(props: FilterInfoProps) {
         setMoreOptionsAnchor(null)
         props.editedFilterProps.setValue(props.currentFilter)
         controller.openDialog();
-    }
-
-    const editFilterInformation = () => {
-        setMoreOptionsAnchor(null)
-        props.editedFilterProps.setValue(props.currentFilter)
-        props.creatingFilterController.openDialog();
-    }
-
-    const editFilterConditions = () => {
-        setMoreOptionsAnchor(null)
-        props.editedFilterProps.setValue(props.currentFilter)
-        props.creatingFilterController.openDialog();
-    }
-
-    const duplicateFilter = () => {
-        setMoreOptionsAnchor(null)
-        props.editedFilterProps.setValue(props.currentFilter)
-        props.duplicateFilterController.openDialog();
     }
 
     const filter: AdvancedFilter = props.currentFilter;
@@ -126,10 +108,8 @@ export default function FilterInfo(props: FilterInfoProps) {
                     </Typography>
                     <Box sx={{mt: 1}}>
                         <Typography variant="caption" color="text.secondary">
-                            Grup warunków: TU TRZEBA TO ZROBIĆ,
-                            Warunków: TU TRZEBA TO ZROBIĆ
-                            {/*Grup warunków: {filter.groups.length},*/}
-                            {/*Warunków: {filter.groups.reduce((sum, g) => sum + g.conditions.length, 0)}*/}
+                            Grup warunków: {filter.totalGroups},
+                            Warunków: {filter.totalConditions}
                         </Typography>
                     </Box>
                 </>}
@@ -169,7 +149,10 @@ export default function FilterInfo(props: FilterInfoProps) {
             content="Czy na pewno chcesz usunąć ten filter?"
             confirmText="Usuń"
             confirmColor="error"
-            action={() => deleteReceipt(999)} //TODO USUWANIE FILTRU
+            action={() => {
+                setMoreOptionsAnchor(null)
+                return deleteFilter(props.currentFilter.id)
+            }}
             reloadTable={props.reloadTable}
         />
     </>)

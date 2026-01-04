@@ -3,6 +3,7 @@ import {AdvancedField, Condition, ConditionGroup} from "@/filter/advanced/api/Ad
 import {ConditionDeleter} from "@/filter/advanced/hooks/condition/ConditionDeleter";
 import {ConditionUpdater} from "@/filter/advanced/hooks/condition/ConditionUpdater";
 import {ConditionCreator} from "@/filter/advanced/hooks/condition/ConditionCreator";
+import {ConditionGroupUpdater} from "@/filter/advanced/hooks/condition/ConditionGroupUpdater";
 
 export class ConditionFacade {
 
@@ -28,5 +29,14 @@ export class ConditionFacade {
     ) {
         const conditionCreator: ConditionCreator = new ConditionCreator(conditionGroupsState, conditionGroupIndex, fields);
         conditionCreator.updateValue();
+    }
+
+    public updateGroup(
+        conditionGroupsState: StateProp<ConditionGroup[]>,
+        conditionGroupIndex: number,
+        updates: Partial<ConditionGroup>
+    ) {
+        const groupUpdater: ConditionGroupUpdater = new ConditionGroupUpdater(conditionGroupsState, conditionGroupIndex, updates);
+        groupUpdater.updateValue();
     }
 }

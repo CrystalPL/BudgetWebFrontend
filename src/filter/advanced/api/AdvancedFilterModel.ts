@@ -4,6 +4,13 @@ import {ColumnDataType, FilterOperator} from "@/filter/FilterModel";
 
 export type LogicalOperator = 'AND' | 'OR';
 
+export const logicalOperators: Record<LogicalOperator, string> = {
+    AND: 'i',
+    OR: 'lub'
+};
+
+export type AdvancedFilterEntityType = 'RECEIPT';
+
 export interface AdvancedFilter {
     id: number
     name: string
@@ -11,18 +18,42 @@ export interface AdvancedFilter {
     active: boolean
     createdAt: Date
     updatedAt: Date
-    filter: ConditionGroup[]
+    totalConditions: number
+    totalGroups: number
 }
 
 export interface SaveFilterRequest {
-    id: number,
+    id: number | null,
     name: string
     description: string
+    advancedFilterEntityType: AdvancedFilterEntityType
+}
+
+export interface SaveFilterConditionRequest {
+    advancedFilterId: number
+    conditionGroups: SaveConditionGroupRequest[]
+}
+
+export interface SaveConditionGroupRequest {
+    conditionGroupId: number
+    logicalOperatorBefore: LogicalOperator
+    conditions: SaveConditionRequest[]
+}
+
+export interface SaveConditionRequest {
+    conditionId: number
+    fieldName: string
+    firstValue: string | number | boolean | null;
+    secondValue?: string | number | boolean | null;
+    openParenthesisNumber?: number;
+    closeParenthesisNumber?: number;
+    logicalOperatorBefore: LogicalOperator | null
+    operator: FilterOperator
 }
 
 export interface DuplicateFilterRequest {
-    baseFilter: AdvancedFilter
-    newName: string
+    id: number
+    name: string
 }
 
 export interface BooleanValue {
@@ -42,8 +73,8 @@ export interface AdvancedField<T> {
 export interface Condition {
     id: number
     field: AdvancedField<any>
-    value: string | number | boolean | null;
-    value2?: string | number | boolean | null;
+    firstValue: string | number | boolean | null;
+    secondValue?: string | number | boolean | null;
     openParenthesis?: number;
     closeParenthesis?: number;
     logicalOperatorBefore?: LogicalOperator

@@ -7,11 +7,11 @@ export function RenderFieldList(props: RenderConditionLineProps) {
     const updateFields = (newValue: AdvancedField<any>) => {
         const options = filterForColumnType[newValue.columnDataType];
         if (options.includes(props.condition.operator)) {
-            updateField(props, {field: newValue, value: null})
+            updateField(props, {field: newValue, firstValue: null, secondValue: null})
             return
         }
 
-        updateField(props, {field: newValue, value: null, operator: options[0]})
+        updateField(props, {field: newValue, firstValue: null, secondValue: null, operator: options[0]})
     }
 
     return (

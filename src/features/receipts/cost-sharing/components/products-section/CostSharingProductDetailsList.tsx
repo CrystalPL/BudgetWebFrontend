@@ -28,7 +28,7 @@ export function GetProductListForUser(props: GetProductListForUserProps) {
 
 function CostSharingProductDetailsList(props: ProductInListProps) {
     return (
-        <Box display="flex" justifyContent="space-between" alignItems="center" p={1} borderRadius={1} bgcolor="white"
+        <Box display="flex" justifyContent="space-BETWEEN" alignItems="center" p={1} borderRadius={1} bgcolor="white"
              border="1px solid" borderColor="grey.200" flexShrink={0}
              sx={{
                  "&:hover": {

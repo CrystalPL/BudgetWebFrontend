@@ -3,74 +3,18 @@ import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from '@mui/
 import {Add as AddIcon, FilterList as FilterListIcon} from '@mui/icons-material';
 import {DialogShowingController, GetShowingController} from "../../../controllers/DialogShowingController";
 import AdvancedFilterEditorDialog from "../AdvancedFilterEditorDialog";
-import {AdvancedField, AdvancedFilter} from "../api/AdvancedFilterModel";
+import {AdvancedField, AdvancedFilter, AdvancedFilterEntityType, ConditionGroup} from "../api/AdvancedFilterModel";
 import {StateProp, useStateProp} from "../../StateProp";
 import {GetFilters} from "./AdvancedFilterListGetter";
 import AdvancedFilterDuplicateDialog from "../AdvancedFilterDuplicateDialog";
 import AdvancedConditionsEditorDialog from "../conditions/AdvancedConditionsEditorDialog";
+import {getAdvancedFilters, getConditionGroups} from "../api/AdvancedFilterAPIService";
 
 interface AdvancedFilterListDialogProps {
     dialogController: DialogShowingController
     fields: AdvancedField<any>[];
+    advancedFilterEntityType: AdvancedFilterEntityType
 }
-
-export const exampleFilters: AdvancedFilter[] = [
-    {
-        id: 1,
-        name: 'Oferty IT 10k+',
-        description: 'Oferty w IT z wynagrodzeniem powyżej 10k',
-        active: true,
-        createdAt: new Date('2025-08-15T09:00:00Z'),
-        updatedAt: new Date('2025-08-15T09:00:00Z'),
-        filter: []
-    },
-    {
-        id: 2,
-        name: 'Tylko zdalne',
-        description: '',
-        active: false,
-        createdAt: new Date('2025-08-10T12:30:00Z'),
-        updatedAt: new Date('2025-08-18T14:45:00Z'),
-        filter: []
-    },
-    {
-        id: 3,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-        filter: []
-    },
-    {
-        id: 4,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-        filter: []
-    },
-    {
-        id: 5,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-        filter: []
-    },
-    {
-        id: 6,
-        name: 'Staże i praktyki',
-        description: '',
-        active: true,
-        createdAt: new Date('2025-08-01T08:00:00Z'),
-        updatedAt: new Date('2025-08-05T16:00:00Z'),
-        filter: []
-    },
-];
-
 
 export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialogProps) {
     const creatingFilterController: DialogShowingController = GetShowingController();
@@ -78,21 +22,44 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
     const editConditionsFilterController: DialogShowingController = GetShowingController();
 
     const [reloadKey, setReloadKey] = useState(0)
-    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>(exampleFilters)
+    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>([])
+    const [conditionGroup, setConditionGroup] = useState<ConditionGroup[]>([])
     const editedFilterProps: StateProp<AdvancedFilter | null> = useStateProp<AdvancedFilter>();
     const reloadTable = () => {
         setReloadKey(reloadKey + 1);
     }
 
+    console.log("dziwny refresz")
+
     useEffect(() => {
-        async function fetchFilters() {
-            // setAdvancedFilters(await getAdvancedFilters()) //TODO ogarnac pobieranie filtrów
+        async function fetchConditions() {
+            if (editConditionsFilterController.openDialogStatus) {
+                setConditionGroup(await getConditionGroups(editedFilterProps.value?.id ?? 0, props.fields))
+            }
+        }
+
+        fetchConditions()
+    }, [editConditionsFilterController.openDialogStatus]);
+
+    useEffect(() => {
+        async function fetchFiltersByReloadKey() {
+            setAdvancedFilters(await getAdvancedFilters(props.advancedFilterEntityType))
         }
 
         if (reloadKey != 0) {
-            fetchFilters()
+            fetchFiltersByReloadKey()
         }
     }, [reloadKey]);
+
+    useEffect(() => {
+        async function fetchFilters() {
+            if (props.dialogController.openDialogStatus) {
+                setAdvancedFilters(await getAdvancedFilters(props.advancedFilterEntityType))
+            }
+        }
+
+        fetchFilters()
+    }, [props.dialogController.openDialogStatus]);
 
     return (<>
         <Dialog
@@ -140,6 +107,7 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
             {...creatingFilterController}
             reloadTable={reloadTable}
             editedFilterProps={editedFilterProps}
+            advancedFilterEntityType={props.advancedFilterEntityType}
         />
         <AdvancedFilterDuplicateDialog
             editedFilterProps={editedFilterProps}
@@ -151,6 +119,10 @@ export default function AdvancedFilterMainDialog(props: AdvancedFilterListDialog
             editedFilterProps={editedFilterProps}
             {...editConditionsFilterController}
             reloadTable={reloadTable}
+            conditionGroupProp={{
+                value: conditionGroup,
+                setValue: setConditionGroup
+            }}
         />
     </>)
 }

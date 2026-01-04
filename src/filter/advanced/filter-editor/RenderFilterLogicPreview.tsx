@@ -1,53 +1,56 @@
-import {ConditionGroup} from "../api/AdvancedFilterModel";
+import {ConditionGroup, logicalOperators} from "../api/AdvancedFilterModel";
 import {operators} from "../../FilterModel";
 import {Paper, Typography} from "@mui/material";
 
 
 function generateFilterLogicPreview(filter: ConditionGroup[]): string {
-    const groupPreviews = filter.map((group, groupIndex) => {
-        const conditionPreviews = group.conditions.map((condition, conditionIndex) => {
+    return filter.map((group, groupIndex) => {
+        const groupText = group.conditions.map((condition, conditionIndex) => {
             const openParenthesis = '('.repeat(condition.openParenthesis || 0);
             const closeParenthesis = ')'.repeat(condition.closeParenthesis || 0);
-
             const column = condition.field.columnLabel.toLowerCase() || '[pole]';
             const operator = operators[condition.operator].toLowerCase()
-            const value = formatDate(condition.value);
-            const value2 = condition.value2 ? ` i ${formatDate(condition.value2)}` : '';
+            const value = formatDate(condition.firstValue);
+            const value2 = condition.secondValue ? ` i ${formatDate(condition.secondValue)}` : '';
 
             const conditionText = `${openParenthesis}${column} ${operator} ${value}${value2}${closeParenthesis}`;
 
-            if (conditionIndex === 0) return conditionText;
+            if (conditionIndex === 0) {
+                return conditionText;
+            }
 
-            const logicalOp = condition.logicalOperatorBefore || 'AND';
-            return ` ${logicalOp} ${conditionText}`;
+            const logicalOperator = condition.logicalOperatorBefore
+                ? logicalOperators[condition.logicalOperatorBefore]
+                : '[operator]';
+            return ` ${logicalOperator} ${conditionText}`;
         }).join('');
 
-        const groupText = conditionPreviews;
+        if (groupIndex === 0) {
+            return groupText;
+        }
 
-        if (groupIndex === 0) return groupText;
-
-        const groupOperator = group.logicalOperatorBefore || 'AND';
+        const groupOperator = group.logicalOperatorBefore || '[operator]';
         return ` ${groupOperator} (${groupText})`;
     }).join('');
-    return groupPreviews;
 
 }
 
 function formatDate(value: any): string {
-    if (value === null || value === undefined) return '[wartość]';
+    if (value === null || value === undefined) {
+        return '[wartość]';
+    }
 
-    // jeśli to nie string/number/Date, traktujemy jako zwykły string
-    if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+    if (!(value instanceof Date)) {
         return value.toString();
     }
 
-    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(value.getTime())) {
+        return value.toString();
+    }
 
-    if (isNaN(date.getTime())) return value.toString(); // niepoprawna data
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const day = String(value.getDate()).padStart(2, '0');
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const year = value.getFullYear();
 
     return `${day}.${month}.${year}`;
 }

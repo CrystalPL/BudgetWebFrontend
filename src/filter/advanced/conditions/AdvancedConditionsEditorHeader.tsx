@@ -1,10 +1,11 @@
 import {Box, Chip, DialogTitle, Typography} from "@mui/material";
 import {Settings} from '@mui/icons-material';
 import {StateProp} from "../../StateProp";
-import {AdvancedFilter} from "../api/AdvancedFilterModel";
+import {AdvancedFilter, ConditionGroup} from "../api/AdvancedFilterModel";
 
 interface AdvancedConditionsEditorHeaderProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
+    conditionGroupProp: StateProp<ConditionGroup[]>
 }
 
 export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHeaderProps) {
@@ -13,7 +14,7 @@ export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHe
     }
 
     const getTotalConditions = () => {
-        return props.editedFilterProps.value?.filter.reduce((sum: number, conditionGroup) => sum + conditionGroup.conditions.length, 0) || 0;
+        return props.conditionGroupProp.value.reduce((sum: number, conditionGroup) => sum + conditionGroup.conditions.length, 0) || 0;
     };
 
     return (
@@ -33,7 +34,7 @@ export function AdvancedConditionsEditorHeader(props: AdvancedConditionsEditorHe
                 <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Chip
                         label={<Typography
-                            color="white">{`${props.editedFilterProps.value?.filter.length} grup` || 0}</Typography>}
+                            color="white">{`${props.conditionGroupProp.value.length} grup` || 0}</Typography>}
                         sx={{borderColor: "white", borderWidth: "2px", padding: "13px"}}
                         size="small"
                         variant="outlined"

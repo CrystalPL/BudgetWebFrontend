@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {Alert, IconButton} from "@mui/material";
+import {Alert, Box, IconButton} from "@mui/material";
 import {useRouter} from "next/navigation";
 import {login, RegistrationToken} from "../../../features/auth/api/AuthenticationService";
 import {LoginMessage} from "../../../features/auth/api/AuthResponseMessages";
@@ -162,7 +162,7 @@ export default function SignIn(props: SignInValidationConstraints) {
                     >
                         Zaloguj
                     </Button>
-                    <Grid container justifyContent='space-between'>
+                    <Grid container justifyContent='space-BETWEEN'>
                         <Grid>
                             <Link href="password-recovery" variant="body2" underline="none" fontWeight="bold">
                                 Zapomniałeś hasła?

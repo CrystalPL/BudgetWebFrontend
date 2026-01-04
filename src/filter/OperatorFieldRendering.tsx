@@ -9,7 +9,6 @@ export interface RenderOperatorFieldProps {
 
 export function RenderOperatorField(props: RenderOperatorFieldProps) {
     const options = filterForColumnType[props.columnType];
-
     return (
         <Autocomplete
             disableClearable={true}

@@ -23,7 +23,7 @@ export function RenderConditionLine(props: RenderConditionLineProps) {
                 <RenderOperatorField {...props.condition} columnType={props.condition.field.columnDataType}
                                      setOperator={operator => updateField(props, {operator: operator})}/>
             </Box>
-            <Box sx={{minWidth: 320, display: 'flex', flexDirection: 'row', gap: 1}}>
+            <Box sx={{minWidth: 330, display: 'flex', flexDirection: 'row', gap: 1}}>
                 <RenderValueField {...props}/>
             </Box>
             <RenderParentheses type={'close'} {...props}/>

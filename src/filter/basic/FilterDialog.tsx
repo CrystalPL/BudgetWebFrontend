@@ -111,7 +111,7 @@ export default function FilterDialog<T>(props: FilterDialogProps<T>) {
                         <RenderInput fieldProps={temporaryValues.valueFrom} items={selectItems} loading={loading}
                                      columnType={props.columnType}
                                      availableBooleanOptions={props.availableBooleanOptions}/>
-                        {temporaryValues.operatorProp.value === 'between' && (
+                        {temporaryValues.operatorProp.value === 'BETWEEN' && (
                             <RenderInput fieldProps={temporaryValues.valueTo} items={selectItems} loading={loading}
                                          columnType={props.columnType}/>
                         )}

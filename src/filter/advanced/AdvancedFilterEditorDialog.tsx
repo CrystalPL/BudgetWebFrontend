@@ -5,14 +5,15 @@ import * as React from "react";
 import {DialogShowingController} from "../../controllers/DialogShowingController";
 import {StateProp} from "../StateProp";
 import {HouseholdReloadKeyProps} from "../../features/household/api/HouseholdModel";
-import {CreateAdvancedFilterMessage} from "./api/AdvancedFilterMessages";
-import {createCategory} from "../../features/categories/api/CategoryService";
+import {CreateAdvancedFilterMessage, SaveFilterMessage} from "./api/AdvancedFilterMessages";
 import {useSnackbarContext} from "../../context/SnackbarContext";
-import {AdvancedFilter, SaveFilterRequest} from "./api/AdvancedFilterModel";
+import {AdvancedFilter, AdvancedFilterEntityType, SaveFilterRequest} from "./api/AdvancedFilterModel";
 import {FieldProps, useFieldProps} from "./hooks/FieldPropsHook";
+import {saveFilterRequest} from "./api/AdvancedFilterAPIService";
 
 interface AdvancedFilterCreatingDialogProps extends DialogShowingController, HouseholdReloadKeyProps {
     editedFilterProps: StateProp<AdvancedFilter | null>
+    advancedFilterEntityType: AdvancedFilterEntityType
 }
 
 export default function AdvancedFilterEditorDialog(props: AdvancedFilterCreatingDialogProps) {
@@ -32,23 +33,23 @@ export default function AdvancedFilterEditorDialog(props: AdvancedFilterCreating
 
     const saveFilter = async () => {
         const saveFilterProps: SaveFilterRequest = {
-            id: props.editedFilterProps.value ? props.editedFilterProps.value.id : 0,
+            id: props.editedFilterProps.value ? props.editedFilterProps.value.id : null,
             name: filterNameFieldProps.stateProp.value,
-            description: filterDescriptionFieldProps.stateProp.value
+            description: filterDescriptionFieldProps.stateProp.value,
+            advancedFilterEntityType: props.advancedFilterEntityType
         }
 
-        //TODO wysłanie requesta do bazy danych o utworzeniu nowego filtra przy uzyciu CreateFilter
-        // const response = await saveFilterRequest(saveFilterProps);
-        const response = await createCategory("", "");
+        const response = await saveFilterRequest(saveFilterProps);
         if (!response.success) {
             filterNameFieldProps.errorStateProp.setValue(response.message)
             return
         }
 
         props.reloadTable()
-        snackbarController.setStatusMessage(response.message)
+        snackbarController.setStatusMessage(props.editedFilterProps.value ? SaveFilterMessage.SUCCESS_UPDATE : SaveFilterMessage.SUCCESS_CREATE)
         snackbarController.setStatus('success')
         snackbarController.setOpenSnackbar(true)
+        props.closeDialog()
     }
 
     return (

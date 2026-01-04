@@ -29,7 +29,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
     const receiptAmountOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
     const whoPaidOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
     const settledOrderState: StateProp<OrderType> = useStateProp<OrderType>('asc');
-    const [orderBy, setOrderBy] = useState<'shop' | 'shoppingDate' | 'receiptAmount' | 'whoPaid' | 'settled'>('shop');
+    const [orderBy, setOrderBy] = useState<'shop' | 'shoppingTime' | 'amount' | 'whoPaid' | 'settled'>('shop');
 
     const shopFilter: FilterValue<string> = GetFilter();
     const shoppingTimeFilter: FilterValue<Date> = GetFilter();
@@ -61,18 +61,23 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
 
     const fields: AdvancedField<any>[] = [
         {
+            columnDataType: 'date',
+            columnName: 'creationTime',
+            columnLabel: "Data utworzenia"
+        },
+        {
             columnDataType: 'text',
             columnName: 'shop',
             columnLabel: "Sklep"
         },
         {
             columnDataType: 'date',
-            columnName: 'shoppingDate',
+            columnName: 'shoppingTime',
             columnLabel: "Data zakupów"
         },
         {
             columnDataType: 'number',
-            columnName: 'receiptAmount',
+            columnName: 'amount',
             columnLabel: "Kwota"
         },
         {
@@ -104,7 +109,8 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
 
     return (<>
         <Button sx={{bgcolor: 'green'}} onClick={advancedFilterShowingController.openDialog}></Button>
-        <AdvancedFilterMainDialog fields={fields} dialogController={advancedFilterShowingController}/>
+        <AdvancedFilterMainDialog fields={fields} dialogController={advancedFilterShowingController}
+                                  advancedFilterEntityType='RECEIPT'/>
         <TableContainer
             component={Paper}
             sx={{
@@ -128,7 +134,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                         <TableColumn<Date>
                             columnName="Data zakupów"
                             orderProps={shoppingDateOrderState}
-                            setOrderBy={() => setOrderBy('shoppingDate')}
+                            setOrderBy={() => setOrderBy('shoppingTime')}
                             tableFilterProps={{
                                 columnType: 'date',
                                 filterValue: shoppingTimeFilter
@@ -137,7 +143,7 @@ export default function ReceiptsOverviewTable(props: ReceiptTableProps) {
                         <TableColumn<number>
                             columnName="Kwota"
                             orderProps={receiptAmountOrderState}
-                            setOrderBy={() => setOrderBy('receiptAmount')}
+                            setOrderBy={() => setOrderBy('amount')}
                             tableFilterProps={{
                                 columnType: 'number',
                                 filterValue: amountFilter
